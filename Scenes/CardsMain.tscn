@@ -1,0 +1,155 @@
+[gd_scene load_steps=8 format=3 uid="uid://bihfrey7tbna8"]
+
+[ext_resource type="PackedScene" uid="uid://cfqk5py7ftiyd" path="res://Scenes/Card.tscn" id="1_l36xa"]
+[ext_resource type="Script" path="res://Code/CardsMain.cs" id="1_neeh6"]
+[ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_bk6p0"]
+[ext_resource type="Script" path="res://Code/Dealer.cs" id="2_ulk2x"]
+[ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="5_28htt"]
+[ext_resource type="PackedScene" uid="uid://cm7emu4o0npsx" path="res://Scenes/CardTableBox.tscn" id="5_064hd"]
+[ext_resource type="Texture2D" uid="uid://daxq8j1nf14nf" path="res://Assets/Bar.png" id="6_qgrjx"]
+
+[node name="CardsMain" type="Node2D"]
+script = ExtResource("1_neeh6")
+
+[node name="Dealer" type="Node" parent="."]
+script = ExtResource("2_ulk2x")
+
+[node name="Deal" type="Button" parent="Dealer"]
+offset_left = 80.0
+offset_top = 271.0
+offset_right = 187.0
+offset_bottom = 334.0
+theme_override_font_sizes/font_size = 40
+text = "DEAL"
+
+[node name="DealerChip" type="Sprite2D" parent="Dealer"]
+position = Vector2(121, 91)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("2_bk6p0")
+
+[node name="PotContainer" type="VBoxContainer" parent="."]
+offset_left = 928.0
+offset_top = 254.0
+offset_right = 1433.0
+offset_bottom = 395.0
+metadata/_edit_group_ = true
+
+[node name="PotLabel" type="Label" parent="PotContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Pot"
+vertical_alignment = 1
+uppercase = true
+
+[node name="PotValueLabel" type="Label" parent="PotContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "1"
+vertical_alignment = 1
+
+[node name="TableBoxes" type="Node2D" parent="."]
+scale = Vector2(0.75, 0.75)
+
+[node name="CardTableBox1" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(615.333, 405.333)
+
+[node name="CardTableBox2" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(616, 700.667)
+
+[node name="CardTableBox3" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(614.667, 995.333)
+
+[node name="CardTableBox4" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1948, 405.333)
+
+[node name="CardTableBox5" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1946.67, 700)
+
+[node name="CardTableBox6" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1948, 997.333)
+
+[node name="CardTableBox7" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1006.67, 996)
+
+[node name="CardTableBox8" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1557.33, 997.333)
+
+[node name="CardTableBox9" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1004, 405.333)
+
+[node name="CardTableBox10" parent="TableBoxes" instance=ExtResource("5_064hd")]
+position = Vector2(1556, 404)
+
+[node name="Coin4" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_28htt")
+
+[node name="Bar" type="Sprite2D" parent="."]
+position = Vector2(730, 479)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("6_qgrjx")
+
+[node name="Card" parent="." instance=ExtResource("1_l36xa")]
+visible = false
+scale = Vector2(0.75, 0.75)
+RotationPerSecond = 0.5
+Speed = 300
+
+[node name="PositionContainer" type="HBoxContainer" parent="."]
+visible = false
+offset_left = 517.0
+offset_top = 7.0
+offset_right = 1022.0
+offset_bottom = 102.0
+metadata/_edit_group_ = true
+
+[node name="CardPositionLabel" type="Label" parent="PositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "Card Postion: "
+
+[node name="CardPositionValueLabel" type="Label" parent="PositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "0
+"
+
+[node name="RotationContainer" type="HBoxContainer" parent="."]
+visible = false
+offset_left = 235.0
+offset_top = 980.0
+offset_right = 600.0
+offset_bottom = 1075.0
+metadata/_edit_group_ = true
+
+[node name="CardRotationLabel" type="Label" parent="RotationContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "Rotation: "
+
+[node name="CardRotationValueLabel" type="Label" parent="RotationContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "0"
+
+[node name="VelocityContainer" type="HBoxContainer" parent="."]
+visible = false
+offset_left = 1011.0
+offset_top = 975.0
+offset_right = 1527.0
+offset_bottom = 1070.0
+metadata/_edit_group_ = true
+
+[node name="CardVelocityLabel" type="Label" parent="VelocityContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "Card Velocity: "
+
+[node name="CardVelocityValueLabel" type="Label" parent="VelocityContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 69
+text = "0
+"
+
+[connection signal="pressed" from="Dealer/Deal" to="Dealer" method="OnDealPressed"]

@@ -1,0 +1,66 @@
+[gd_scene load_steps=9 format=3 uid="uid://cm7emu4o0npsx"]
+
+[ext_resource type="Texture2D" uid="uid://x0kae0ye32lw" path="res://Assets/CardGroupingTableBox.png" id="1_re76y"]
+[ext_resource type="Script" path="res://Code/CardTableBox.cs" id="1_txsa2"]
+[ext_resource type="Texture2D" uid="uid://bas77fj5xq4wq" path="res://Assets/Cards/md1.png" id="2_w35vb"]
+[ext_resource type="Texture2D" uid="uid://dcdxlk1btbjcr" path="res://Assets/Cards/md8.png" id="3_nfe5t"]
+[ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="4_5rbua"]
+[ext_resource type="Texture2D" uid="uid://b2sd0u6sylthi" path="res://Assets/Cards/md5.png" id="6_0kgug"]
+[ext_resource type="Texture2D" uid="uid://y736qs74v0fh" path="res://Assets/Cards/md4.png" id="6_43oc2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fy3no"]
+size = Vector2(211, 146)
+
+[node name="CardTableBox" type="Node2D"]
+script = ExtResource("1_txsa2")
+
+[node name="Box" type="Area2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Box"]
+scale = Vector2(1.1, 1)
+texture = ExtResource("1_re76y")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box"]
+position = Vector2(-2.5, -3)
+shape = SubResource("RectangleShape2D_fy3no")
+
+[node name="Slot1" type="Marker2D" parent="Box"]
+position = Vector2(-90, 0)
+
+[node name="Slot2" type="Marker2D" parent="Box"]
+position = Vector2(-45, 0)
+
+[node name="Slot3" type="Marker2D" parent="Box"]
+
+[node name="Slot4" type="Marker2D" parent="Box"]
+position = Vector2(45, 0)
+
+[node name="Slot5" type="Marker2D" parent="Box"]
+position = Vector2(90, 0)
+
+[node name="Cards" type="Node2D" parent="."]
+visible = false
+
+[node name="Md9" type="Sprite2D" parent="Cards"]
+position = Vector2(281, -5)
+texture = ExtResource("4_5rbua")
+
+[node name="Md8" type="Sprite2D" parent="Cards"]
+position = Vector2(454, -7)
+texture = ExtResource("3_nfe5t")
+
+[node name="Md5" type="Sprite2D" parent="Cards"]
+position = Vector2(632, -8)
+texture = ExtResource("6_0kgug")
+
+[node name="Md4" type="Sprite2D" parent="Cards"]
+position = Vector2(810, -8)
+texture = ExtResource("6_43oc2")
+
+[node name="Md1" type="Sprite2D" parent="Cards"]
+position = Vector2(986, -6)
+texture = ExtResource("2_w35vb")
+
+[node name="CardStack" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="Box" to="." method="HandleOnBoxBodyEntered"]

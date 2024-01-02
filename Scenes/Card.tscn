@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfqk5py7ftiyd"]
+
+[ext_resource type="Script" path="res://Code/Card.cs" id="1_w6urc"]
+[ext_resource type="Texture2D" uid="uid://cfcki5ycy0gsq" path="res://Assets/Cards/mdback.png" id="2_wv264"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i26t4"]
+size = Vector2(162, 264)
+
+[node name="Card" type="StaticBody2D"]
+script = ExtResource("1_w6urc")
+RotationPerSecond = 1.5
+Speed = 400
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_wv264")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["card"]]
+position = Vector2(-1.90735e-06, -1.90735e-06)
+shape = SubResource("RectangleShape2D_i26t4")
