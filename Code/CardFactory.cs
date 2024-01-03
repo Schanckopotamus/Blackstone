@@ -10,56 +10,58 @@ namespace Blackstone.Code
 {
     public static class CardFactory
     {
-        private static PackedScene CardScene { get; set; }
-        private static string cardTexturePath = "res://Assets/Cards/md{x}.png";
-
         static CardFactory()
         {
-            CardScene = ResourceLoader.Load<PackedScene>("res://Scenes/Card.tscn");
+            
         }
 
         // 0 makes back of card result.
-        public static Card GetCard(int cardValue)
-        {
-            var card = CreateDefaultCardScene();
+        //public static Card GetCard(int cardValue)
+        //{
+        //    var card = CreateDefaultCardScene();
+        //    //InstantiateCardToTree(card);
 
-            if (cardValue <= 0 || cardValue > 10) 
-            {
-                return card;
-            }
+        //    if (cardValue <= 0 || cardValue > 10) 
+        //    {
+        //        return card;
+        //    }
 
-            var path = cardTexturePath.Replace("{x}", cardValue.ToString());
+        //    var path = cardTexturePath.Replace("{x}", cardValue.ToString());
 
-            if (!FileAccess.FileExists(path))
-            {
-                GD.Print($"CardFactory.GetCard; Card Asset Path Does NOT Exist\n=> Path: {path}");
-                return card;
-            }
+        //    if (!FileAccess.FileExists(path))
+        //    {
+        //        GD.Print($"CardFactory.GetCard; Card Asset Path Does NOT Exist\n=> Path: {path}");
+        //        return card;
+        //    }
 
-            var texture = GD.Load<Texture2D>(path);
-            card.ChangeTexture(texture);
+        //    var texture = GD.Load<Texture2D>(path);
+        //    card.ChangeTexture(texture);
 
-            return card;
-        }
+        //    return card;
+        //}
 
         public static CardDeck CreateDeck()
         {
             return new CardDeck();
         }
 
-        /// <summary>
-        /// Create a Card scene from the Packed scene.
-        /// Default texture is card back.
-        /// </summary>
-        /// <returns>Unparented Card scene</returns>
-        private static Card CreateDefaultCardScene()
-        { 
-            var card = CardScene.Instantiate<Card>();
+        ///// <summary>
+        ///// Create a Card scene from the Packed scene.
+        ///// Default texture is card back.
+        ///// </summary>
+        ///// <returns>Unparented Card scene</returns>
+        //private static Card CreateDefaultCardScene()
+        //{ 
+        //    var card = CardScene.Instantiate<Card>();
+
+        //    return card;
+        //}
+
+        private static void InstantiateCardToTree(Card card)
+        {
             var tree = new Tree();
             tree.AddChild(card);
             card.GetParent().RemoveChild(card);
-
-            return card;
         }
     }
 

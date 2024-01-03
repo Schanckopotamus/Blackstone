@@ -20,7 +20,7 @@ script = ExtResource("1_txsa2")
 scale = Vector2(1.1, 1)
 texture = ExtResource("1_re76y")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Box"]
+[node name="CollisionBox" type="CollisionShape2D" parent="Box"]
 position = Vector2(-2.5, -3)
 shape = SubResource("RectangleShape2D_fy3no")
 
@@ -63,4 +63,4 @@ texture = ExtResource("2_w35vb")
 
 [node name="CardStack" type="Node2D" parent="."]
 
-[connection signal="body_entered" from="Box" to="." method="HandleOnBoxBodyEntered"]
+[connection signal="area_entered" from="Box" to="." method="HandleOnAreaEntered"]

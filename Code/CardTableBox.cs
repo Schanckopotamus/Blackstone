@@ -1,9 +1,12 @@
 using Godot;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class CardTableBox : Node2D
 {
+	[Signal]
+	public delegate void OnCardCollidedEventHandler(CardTableBox box);
+
 	private HBoxContainer _container;
 	private Area2D _box;
     private Rect2 _windowSize;
@@ -25,6 +28,7 @@ public partial class CardTableBox : Node2D
 	private List<Marker2D> _markers = new List<Marker2D>();
 	private Stack<Node2D> _slots = new Stack<Node2D>();
 	private Node2D _cardStack;
+	private CollisionShape2D _collisionBox;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -34,10 +38,12 @@ public partial class CardTableBox : Node2D
 		_m3 = GetNode<Marker2D>("Box/Slot3");
 		_m4 = GetNode<Marker2D>("Box/Slot4");
 		_m5 = GetNode<Marker2D>("Box/Slot5");
-
-		IsBoxFull = false;
+		
 		_box = GetNode<Area2D>("Box");
 		_cardStack = GetNode<Node2D>("CardStack");
+		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionBox");
+
+        IsBoxFull = false;
         _windowSize = GetViewport().GetVisibleRect();
 		_markers.AddRange(new Marker2D[] {_m1, _m2, _m3, _m4, _m5});
 		_numSlots = _markers.Count;
@@ -60,7 +66,7 @@ public partial class CardTableBox : Node2D
         #endregion
     }
 
-	public bool TryAdd(Node2D node)
+	public bool TryAdd(Card card)
 	{
 		if (IsBoxFull || _slots.Count >= _numSlots)
 		{
@@ -70,21 +76,25 @@ public partial class CardTableBox : Node2D
 		{
 			// If the 'node' is already parented adding to new parent fails
 			// must first be removed from a parent before adding to a new one.
-			if (node.GetParent() != null)
+			if (card.GetParent() != null)
 			{
-				node.GetParent().RemoveChild(node);
+				card.GetParent().RemoveChild(card);
 			}
-			
-			_cardStack.AddChild(node);
+
+			card.SetCollisionLayerValue(1, false);
+			card.SetCollisionLayerValue(2, true);
+			_cardStack.AddChild(card);
 
 			// Set newly added card to the corresponding marker
             var stackCount = _cardStack.GetChildren().Count;
             var markerIndex = stackCount - 1;
 			var marker = _markers[markerIndex];
-			node.GlobalPosition = marker.GlobalPosition;
+			card.GlobalPosition = marker.GlobalPosition;
 
             if (stackCount == 5) 
 			{
+				//_collisionBox.Disabled = true;
+				_collisionBox.SetDeferred("disabled", true);
 				IsBoxFull = true;
 			}
 
@@ -97,8 +107,13 @@ public partial class CardTableBox : Node2D
 	{
 	}
 
-	private void HandleOnBoxBodyEntered(Node2D node)
-	{ 
-		// TODO: Create custom signal in this class to notify the CardsMain script that a collision happened.
-	}
+	public void HandleOnAreaEntered(Area2D area)
+	{
+        if (area.GetGroups().Any(x => x == "card"))
+        {
+            var card = (Card)area;
+			card.QueueFree();
+			EmitSignal(SignalName.OnCardCollided, this);
+        }
+    }
 }

@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class CardsMain : Node2D
+public partial class CardTable : Node2D
 {
 	private Card _card;
 	private Sprite2D _testCard;
@@ -42,9 +42,9 @@ public partial class CardsMain : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		_positionLabel.Text = _card.GlobalPosition.ToString("0.0");
-		_rotationLabel.Text = _card.GlobalRotation.ToString("0.0");
-		_velocityLabel.Text = _card.Velocity.ToString();
+		//_positionLabel.Text = _card.GlobalPosition.ToString("0.0");
+		//_rotationLabel.Text = _card.GlobalRotation.ToString("0.0");
+		//_velocityLabel.Text = _card.Velocity.ToString();
 	}
 
 	private void InitializeCardBoxes()
@@ -60,7 +60,19 @@ public partial class CardsMain : Node2D
         _box9 = GetNode<CardTableBox>("TableBoxes/CardTableBox9");
         _box10 = GetNode<CardTableBox>("TableBoxes/CardTableBox10");
 
-		_tableBoxes = new List<CardTableBox>
+
+        _box1.OnCardCollided += _dealer.DeliverCardToBox;
+        _box2.OnCardCollided += _dealer.DeliverCardToBox;
+        _box3.OnCardCollided += _dealer.DeliverCardToBox;
+        _box4.OnCardCollided += _dealer.DeliverCardToBox;
+        _box5.OnCardCollided += _dealer.DeliverCardToBox;
+        _box6.OnCardCollided += _dealer.DeliverCardToBox;
+        _box7.OnCardCollided += _dealer.DeliverCardToBox;
+		_box8.OnCardCollided += _dealer.DeliverCardToBox;
+		_box9.OnCardCollided += _dealer.DeliverCardToBox;
+        _box10.OnCardCollided += _dealer.DeliverCardToBox;
+
+        _tableBoxes = new List<CardTableBox>
 		{
             _box1,
             _box2,

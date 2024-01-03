@@ -1,31 +1,37 @@
+using Blackstone.Code;
 using Godot;
 using System;
 
-public partial class Card : StaticBody2D
+public partial class Card : Area2D
 {
 	private float _radiansPerRotation = 6.28318f;
 	//private float _rotationPerSecond;
 	private Rect2 _windowSize;
 
-	public Vector2 Velocity;
-
+	public int ModeganCardValue { get; set; }
 	private Sprite2D _cardSprite;
 
-	[Export]
+    [Export]
 	public float RotationPerSecond { get; set; }
 
 	// Movement per second
-	[Export]
+	//[Export]
 	public int Speed { get; set; }
+	public Vector2 Velocity { get; set; }
+
+	// NOTE: Should probably be internally controlled in the future
+	public bool isDealt = false;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		//_rotationPerSecond = 0.25f;
-		_windowSize = GetViewport().GetVisibleRect();
+		_windowSize = GetViewport().GetVisibleRect(); 
 		//this.Position = new Vector2(_windowSize.Size.X / 2, _windowSize.Size.Y / 2);
 		// Start by moving to the right
-		Velocity = new Vector2(1, 0);
+		Velocity = Vector2.Zero;//= new Vector2(1, 0);
+		Speed = 0;
+
 		_cardSprite = GetNode<Sprite2D>("Sprite2D");
 	}
 
@@ -34,7 +40,13 @@ public partial class Card : StaticBody2D
 	{
 		var floatDelta = (float)delta;
 
-		//ProcessRotation(floatDelta);
+		if (isDealt) 
+		{
+            ProcessMovement(floatDelta);
+		    ProcessRotation(floatDelta);
+        }
+		
+
 
 		//ProcessSpeed(floatDelta);		
 	}
@@ -42,6 +54,13 @@ public partial class Card : StaticBody2D
 	public void ChangeTexture(Texture2D texture)
 	{
 		_cardSprite.Texture = texture;
+	}
+
+	private void ProcessMovement(float delta)
+	{
+		var distance = Velocity.Normalized() * Speed;
+
+		Position += distance * delta;
 	}
 
 	private void ProcessSpeed(float delta)
