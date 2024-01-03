@@ -6,10 +6,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i26t4"]
 size = Vector2(162, 264)
 
-[node name="Card" type="StaticBody2D"]
+[node name="Card" type="Area2D" groups=["card"]]
 script = ExtResource("1_w6urc")
 RotationPerSecond = 1.5
-Speed = 400
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_wv264")
