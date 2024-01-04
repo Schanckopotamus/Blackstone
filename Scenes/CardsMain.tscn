@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://bihfrey7tbna8"]
+[gd_scene load_steps=9 format=3 uid="uid://bihfrey7tbna8"]
 
 [ext_resource type="Script" path="res://Code/CardTable.cs" id="1_cr66u"]
+[ext_resource type="PackedScene" uid="uid://b6a4miv24v4aq" path="res://Scenes/PlayerScene.tscn" id="2_4qlsy"]
 [ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_bk6p0"]
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="2_ulk2x"]
 [ext_resource type="Script" path="res://Code/CardGenerator.cs" id="4_63y8u"]
@@ -10,6 +11,15 @@
 
 [node name="CardTable" type="Node2D"]
 script = ExtResource("1_cr66u")
+
+[node name="Players" type="Node2D" parent="."]
+scale = Vector2(0.15, 0.15)
+
+[node name="PlayerSeat1" parent="Players" instance=ExtResource("2_4qlsy")]
+position = Vector2(6553.33, 353.333)
+
+[node name="PlayerSeat2" parent="Players" instance=ExtResource("2_4qlsy")]
+position = Vector2(6613.33, 6686.67)
 
 [node name="Dealer" type="Node2D" parent="."]
 scale = Vector2(0.75, 0.75)

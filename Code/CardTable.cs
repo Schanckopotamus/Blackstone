@@ -95,12 +95,15 @@ public partial class CardTable : Node2D
     public void OnDealRequested()
 	{
 		var firstFillableBox = GetFirstBoxThatIsFillable();
-		var boxPosition = firstFillableBox.GlobalPosition;
-
-		if (boxPosition != _dealer.TargetDealPosition) 
+		if (firstFillableBox != null) 
 		{
-			_dealer.TargetDealPosition = boxPosition;	
-		}		
+            var boxPosition = firstFillableBox.GlobalPosition;
+
+            if (boxPosition != _dealer.TargetDealPosition)
+            {
+                _dealer.TargetDealPosition = boxPosition;
+            }
+        }	
 	}
 
 	private CardTableBox GetFirstBoxThatIsFillable()
