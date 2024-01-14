@@ -16,3 +16,41 @@ texture = ExtResource("2_wv264")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["card"]]
 position = Vector2(-1.90735e-06, -1.90735e-06)
 shape = SubResource("RectangleShape2D_i26t4")
+
+[node name="PositionLabel" type="Node2D" parent="."]
+visible = false
+position = Vector2(115, -111)
+
+[node name="PositionLabelTitle" type="Label" parent="PositionLabel"]
+offset_right = 116.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "Position"
+
+[node name="PositionValue" type="Label" parent="PositionLabel"]
+offset_left = 6.0
+offset_top = 53.0
+offset_right = 46.0
+offset_bottom = 76.0
+theme_override_font_sizes/font_size = 30
+text = "(0,0)"
+
+[node name="GPositionLabel" type="Node2D" parent="."]
+visible = false
+position = Vector2(-2, 138)
+
+[node name="GPositionLabelTitle" type="Label" parent="GPositionLabel"]
+offset_left = 117.0
+offset_top = -113.0
+offset_right = 233.0
+offset_bottom = -71.0
+theme_override_font_sizes/font_size = 30
+text = "Global Position"
+
+[node name="GPositionValue" type="Label" parent="GPositionLabel"]
+offset_left = 122.0
+offset_top = -60.0
+offset_right = 184.0
+offset_bottom = -18.0
+theme_override_font_sizes/font_size = 30
+text = "(0,0)"

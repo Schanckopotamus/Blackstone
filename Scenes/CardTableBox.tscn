@@ -21,7 +21,6 @@ scale = Vector2(1.1, 1)
 texture = ExtResource("1_re76y")
 
 [node name="CollisionBox" type="CollisionShape2D" parent="Box"]
-position = Vector2(-2.5, -3)
 shape = SubResource("RectangleShape2D_fy3no")
 
 [node name="Slot1" type="Marker2D" parent="Box"]

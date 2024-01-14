@@ -22,8 +22,12 @@ public partial class Card : Area2D
 	// NOTE: Should probably be internally controlled in the future
 	public bool isDealt = false;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+    private Label _positionLabel;
+	private Label _gPositionLabel;
+
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 		//_rotationPerSecond = 0.25f;
 		_windowSize = GetViewport().GetVisibleRect(); 
@@ -33,7 +37,11 @@ public partial class Card : Area2D
 		Speed = 0;
 
 		_cardSprite = GetNode<Sprite2D>("Sprite2D");
-	}
+
+		_positionLabel = GetNode<Label>("PositionLabel/PositionValue");
+        _gPositionLabel = GetNode<Label>("GPositionLabel/GPositionValue");
+
+    }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -45,18 +53,52 @@ public partial class Card : Area2D
             ProcessMovement(floatDelta);
 		    ProcessRotation(floatDelta);
         }
-		
 
 
-		//ProcessSpeed(floatDelta);		
-	}
+        _positionLabel.Text = this.Position.ToString();
+        _gPositionLabel.Text = this.GlobalPosition.ToString();
+
+        //ProcessSpeed(floatDelta);		
+    }
 
 	public void ChangeTexture(Texture2D texture)
 	{
 		_cardSprite.Texture = texture;
 	}
 
-	private void ProcessMovement(float delta)
+	/// <summary>
+	/// Makes sure the card scene doesn't rotate, is not being dealt, no speed & no velocity (direction)
+	/// </summary>
+	public void SetToLayFlat()
+	{ 
+		this.isDealt = false;
+		this.Velocity = Vector2.Zero;
+		this.Speed = 0;
+		this.Rotation = 0;
+		this.Visible = true;
+	}
+
+	/// <summary>
+	/// Same functionality as 'SetToLayFlat' but in addition sets position
+	/// </summary>
+	/// <param name="position">Vector2 Position</param>
+	/// <param name="isGlobal">Indicates if position should be set to global parameter or not</param>
+    public void SetToLayFlatAt(Vector2 position, bool isGlobal = false)
+    {
+		this.SetToLayFlat();
+
+		if (isGlobal)
+		{
+			this.GlobalPosition = position;
+			this.Position = Vector2.Zero;
+		}
+		else 
+		{
+			this.Position = position;
+		}
+    }
+
+    private void ProcessMovement(float delta)
 	{
 		var distance = Velocity.Normalized() * Speed;
 
