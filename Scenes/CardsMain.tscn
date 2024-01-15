@@ -27,10 +27,10 @@ position = Vector2(853.333, 6526.67)
 position = Vector2(3860, 6473.33)
 
 [node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(7720, 6453.33)
+position = Vector2(7140, 6453.33)
 
 [node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(10660, 6493.33)
+position = Vector2(10206.7, 6466.67)
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
 offset_left = 928.0
@@ -57,41 +57,33 @@ scale = Vector2(0.75, 0.75)
 script = ExtResource("4_kvw87")
 
 [node name="CardTableBox1" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1080, 173.333)
+position = Vector2(613.333, 404)
 
 [node name="CardTableBox2" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1472.67, 173.333)
+position = Vector2(1006, 404)
 
 [node name="CardTableBox3" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1556, 405.333)
 
 [node name="CardTableBox4" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1948, 405.333)
 
 [node name="CardTableBox5" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(612, 994.667)
 
 [node name="CardTableBox6" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1005.33, 994.667)
 
 [node name="CardTableBox7" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1554.67, 992)
 
 [node name="CardTableBox8" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1948, 990.667)
 
 [node name="CardTableBox9" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(613.333, 698.667)
 
 [node name="CardTableBox10" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-visible = false
 position = Vector2(1946.67, 698.667)
 
 [node name="Coin4" type="Sprite2D" parent="."]

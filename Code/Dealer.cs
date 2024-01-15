@@ -119,7 +119,7 @@ public partial class Dealer : Node2D
 				DealToPlayer(player);
 
 				GD.Print("Timer started.");
-				await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
+				await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
 				GD.Print("Timer ended.");
 			}
 
@@ -180,7 +180,6 @@ public partial class Dealer : Node2D
 
 		foreach (var player in players) 
 		{
-			//player.DisableCollisionBox();
 			var playerCards = player.GetCardsInHand();
 
 			foreach (var card in playerCards) 
@@ -199,7 +198,6 @@ public partial class Dealer : Node2D
 					card.Speed = _dealSpeed;
 				}
 			}
-			//player.EnableCollisionBox();
         }
 
         await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);

@@ -7,6 +7,9 @@ public partial class CardTableBox : Node2D
 	[Signal]
 	public delegate void OnCardCollidedEventHandler(CardTableBox box);
 
+	[Signal]
+	public delegate void OnCardBoxFullEventHandler(CardTableBox box);
+
 	private HBoxContainer _container;
 	private Area2D _box;
 	private Rect2 _windowSize;
@@ -97,12 +100,13 @@ public partial class CardTableBox : Node2D
 			card.GlobalScale = new Vector2(1, 1);
 			card.SetToLayFlatAt(marker.Position, isGlobal: false);
 
-			if (stackCount == 5) 
+			if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
 			{
 				//_collisionBox.Disabled = true;
 				_collisionBox.SetDeferred("disabled", true);
 				IsBoxFull = true;
 				IsBoxActive = false;
+				EmitSignal(SignalName.OnCardBoxFull, this);
 			}
 
 			return true;

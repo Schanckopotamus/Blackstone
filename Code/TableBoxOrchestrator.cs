@@ -44,17 +44,6 @@ public partial class TableBoxOrchestrator : Node2D
         _box9 = GetNode<CardTableBox>("CardTableBox9");
         _box10 = GetNode<CardTableBox>("CardTableBox10");
 
-        //_box1.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box2.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box3.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box4.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box5.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box6.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box7.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box8.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box9.OnCardCollided += _dealer.DeliverCardToBox;
-        //_box10.OnCardCollided += _dealer.DeliverCardToBox;
-
         TableBoxes = new List<CardTableBox>
         {
             _box1,
@@ -68,6 +57,8 @@ public partial class TableBoxOrchestrator : Node2D
             _box9,
             _box10
         };
+
+        SubscribeBoxesToOnFullSignal();
 
         _tableBoxPairs = new List<CardTableBoxPair>
         {
@@ -111,5 +102,34 @@ public partial class TableBoxOrchestrator : Node2D
         }
 
         return null;
+    }
+
+    private void SubscribeBoxesToOnFullSignal()
+    {
+        foreach (var box in TableBoxes)
+        {
+            box.OnCardBoxFull += HandleOnCardBoxFull;
+        }
+    }
+
+    /// <summary>
+    /// Activate new pair of boxes if the last active box is full.
+    /// </summary>
+    private void HandleOnCardBoxFull(CardTableBox box)
+    {
+        var boxId = box.GetInstanceId();
+
+        var pair = _tableBoxPairs.First(tb => tb.Box1.GetInstanceId() == boxId || tb.Box2.GetInstanceId() == boxId);
+
+        if (!pair.IsActivePair) // Both boxes full
+        {
+            var pairIndex = _tableBoxPairs.IndexOf(pair);
+
+            if (pairIndex > -1 && pairIndex < _tableBoxPairs.Count()-1)
+            {
+                var nextActivePair = _tableBoxPairs[++pairIndex];
+                nextActivePair.SetPairAsActive();
+            }
+        }
     }
 }
