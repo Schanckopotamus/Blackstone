@@ -1,10 +1,12 @@
+using Blackstone.Code;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class CardTable : Node2D
 {
-	private Card _card;
+	//private Card _card;
 	private Sprite2D _testCard;
 	private Label _positionLabel;
 	private Label _rotationLabel;
@@ -12,31 +14,31 @@ public partial class CardTable : Node2D
 
 	private Dealer _dealer;
 
-	private CardTableBox _box1;
-	private CardTableBox _box2;
-	private CardTableBox _box3;
-	private CardTableBox _box4;
-	private CardTableBox _box5;
-	private CardTableBox _box6;
-	private CardTableBox _box7;
-	private CardTableBox _box8;
-	private CardTableBox _box9;
-	private CardTableBox _box10;
-
-	private List<CardTableBox> _tableBoxes;
-
+	private TableBoxOrchestrator _tableBoxOrchestrator;
+	private PlayerOrchestrator _playerOrchestrator;
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_dealer = GetNode<Dealer>("Dealer");
-		_card = GetNode<Card>("Card");
+		_tableBoxOrchestrator = GetNode<TableBoxOrchestrator>("TableBoxOrchestrator");
+        _playerOrchestrator = GetNode<PlayerOrchestrator>("PlayerOrchestrator");
+
+		//TODO: Will need to be able to change the seating arrangment based on the number of players whenever a setup screen is created.
+		var players = _playerOrchestrator.GetChildren();
+		foreach (PlayerScene p in players)
+		{
+			p.OnCardCollided += OnPlayerCardCollision;
+		}
+
 		_positionLabel = GetNode<Label>("PositionContainer/CardPositionValueLabel");
 		_rotationLabel = GetNode<Label>("RotationContainer/CardRotationValueLabel");
 		_velocityLabel = GetNode<Label>("VelocityContainer/CardVelocityValueLabel");
 		
-		InitializeCardBoxes();
-
 		_dealer.OnDealRequested += OnDealRequested;
+		_dealer.FirstPlayerFound += HandleFirstPlayerFound;
+
+		SubscribeDealerToBoxes();
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -45,47 +47,16 @@ public partial class CardTable : Node2D
 		//_positionLabel.Text = _card.GlobalPosition.ToString("0.0");
 		//_rotationLabel.Text = _card.GlobalRotation.ToString("0.0");
 		//_velocityLabel.Text = _card.Velocity.ToString();
+
+		// TODO: Keep track of active CardBoxPairs for visibility and active. Only one Pair should be active at any time.
+		//var activePairs = _tableBoxPairs.Where(tb => tb.GetActiveBoxes().Any());
+		//if (activePairs.Count() > 1)
+		//{
+
+		//}
 	}
 
-	private void InitializeCardBoxes()
-	{ 
-		_box1 = GetNode<CardTableBox>("TableBoxes/CardTableBox1");
-		_box2 = GetNode<CardTableBox>("TableBoxes/CardTableBox2");
-        _box3 = GetNode<CardTableBox>("TableBoxes/CardTableBox3");
-        _box4 = GetNode<CardTableBox>("TableBoxes/CardTableBox4");
-        _box5 = GetNode<CardTableBox>("TableBoxes/CardTableBox5");
-        _box6 = GetNode<CardTableBox>("TableBoxes/CardTableBox6");
-        _box7 = GetNode<CardTableBox>("TableBoxes/CardTableBox7");
-        _box8 = GetNode<CardTableBox>("TableBoxes/CardTableBox8");
-        _box9 = GetNode<CardTableBox>("TableBoxes/CardTableBox9");
-        _box10 = GetNode<CardTableBox>("TableBoxes/CardTableBox10");
-
-
-        _box1.OnCardCollided += _dealer.DeliverCardToBox;
-        _box2.OnCardCollided += _dealer.DeliverCardToBox;
-        _box3.OnCardCollided += _dealer.DeliverCardToBox;
-        _box4.OnCardCollided += _dealer.DeliverCardToBox;
-        _box5.OnCardCollided += _dealer.DeliverCardToBox;
-        _box6.OnCardCollided += _dealer.DeliverCardToBox;
-        _box7.OnCardCollided += _dealer.DeliverCardToBox;
-		_box8.OnCardCollided += _dealer.DeliverCardToBox;
-		_box9.OnCardCollided += _dealer.DeliverCardToBox;
-        _box10.OnCardCollided += _dealer.DeliverCardToBox;
-
-        _tableBoxes = new List<CardTableBox>
-		{
-            _box1,
-            _box2,
-            _box3,
-            _box4,
-            _box5,
-            _box6,
-            _box7,
-            _box8,
-            _box9,
-            _box10
-        };
-	}
+	
 
     /// <summary>
     /// This is temporary as when dealing we need to place on the table
@@ -94,25 +65,34 @@ public partial class CardTable : Node2D
     /// <returns>Returns the position of the next fillable box.</returns>
     public void OnDealRequested()
 	{
-		var firstFillableBox = GetFirstBoxThatIsFillable();
-		var boxPosition = firstFillableBox.GlobalPosition;
-
-		if (boxPosition != _dealer.TargetDealPosition) 
+		var firstFillableBox = _tableBoxOrchestrator.GetFirstBoxThatIsFillable();
+		if (firstFillableBox != null) 
 		{
-			_dealer.TargetDealPosition = boxPosition;	
-		}		
+            var boxPosition = firstFillableBox.GlobalPosition;
+
+            if (boxPosition != _dealer.TableBoxToDealPosition)
+            {
+                _dealer.TableBoxToDealPosition = boxPosition;
+            }
+        }	
 	}
 
-	private CardTableBox GetFirstBoxThatIsFillable()
-	{
-		for (int i = 0; i < _tableBoxes.Count; i++)
-		{
-			if (!_tableBoxes[i].IsBoxFull)
-			{
-				return _tableBoxes[i];
-			}
-		}
+    private void OnPlayerCardCollision(PlayerScene player)
+    {
+		var card = _dealer.DrawCard();
+		player.TryAddCard(card);
+    }
 
-		return null;
+	private void SubscribeDealerToBoxes()
+	{
+        foreach (var box in _tableBoxOrchestrator.TableBoxes)
+        {
+			box.OnCardCollided += _dealer.DeliverCardToBox;
+        }
+    }
+
+	private void HandleFirstPlayerFound(PlayerScene player)
+	{
+		_playerOrchestrator.SetActivePlayer(player);
 	}
 }

@@ -1,37 +1,36 @@
-[gd_scene load_steps=8 format=3 uid="uid://bihfrey7tbna8"]
+[gd_scene load_steps=10 format=3 uid="uid://bihfrey7tbna8"]
 
 [ext_resource type="Script" path="res://Code/CardTable.cs" id="1_cr66u"]
-[ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_bk6p0"]
-[ext_resource type="Script" path="res://Code/Dealer.cs" id="2_ulk2x"]
-[ext_resource type="Script" path="res://Code/CardGenerator.cs" id="4_63y8u"]
+[ext_resource type="PackedScene" uid="uid://b6a4miv24v4aq" path="res://Scenes/PlayerScene.tscn" id="2_4qlsy"]
+[ext_resource type="Script" path="res://Code/GameOrchestrator.cs" id="2_n5lik"]
+[ext_resource type="Script" path="res://Scenes/PlayerOrchestrator.cs" id="3_3hyu6"]
+[ext_resource type="Script" path="res://Code/TableBoxOrchestrator.cs" id="4_kvw87"]
 [ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="5_28htt"]
 [ext_resource type="PackedScene" uid="uid://cm7emu4o0npsx" path="res://Scenes/CardTableBox.tscn" id="5_064hd"]
 [ext_resource type="Texture2D" uid="uid://daxq8j1nf14nf" path="res://Assets/Bar.png" id="6_qgrjx"]
+[ext_resource type="PackedScene" uid="uid://b813ceeapmc7u" path="res://Scenes/Dealer.tscn" id="7_ocbk2"]
 
 [node name="CardTable" type="Node2D"]
 script = ExtResource("1_cr66u")
 
-[node name="Dealer" type="Node2D" parent="."]
-scale = Vector2(0.75, 0.75)
-script = ExtResource("2_ulk2x")
+[node name="GameOrchestrator" type="Node2D" parent="."]
+script = ExtResource("2_n5lik")
 
-[node name="Deal" type="Button" parent="Dealer"]
-offset_left = 80.0
-offset_top = 271.0
-offset_right = 187.0
-offset_bottom = 334.0
-theme_override_font_sizes/font_size = 40
-text = "DEAL"
+[node name="PlayerOrchestrator" type="Node2D" parent="."]
+scale = Vector2(0.15, 0.15)
+script = ExtResource("3_3hyu6")
 
-[node name="DealerChip" type="Sprite2D" parent="Dealer"]
-position = Vector2(141, 102)
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("2_bk6p0")
+[node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+position = Vector2(853.333, 6526.67)
 
-[node name="TableDeckStack" type="Node2D" parent="Dealer"]
+[node name="PlayerSeat2" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+position = Vector2(3860, 6473.33)
 
-[node name="CardGenerator" type="Node2D" parent="Dealer"]
-script = ExtResource("4_63y8u")
+[node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+position = Vector2(7140, 6453.33)
+
+[node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+position = Vector2(10206.7, 6466.67)
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
 offset_left = 928.0
@@ -53,46 +52,47 @@ theme_override_font_sizes/font_size = 30
 text = "1"
 vertical_alignment = 1
 
-[node name="TableBoxes" type="Node2D" parent="."]
+[node name="TableBoxOrchestrator" type="Node2D" parent="."]
 scale = Vector2(0.75, 0.75)
+script = ExtResource("4_kvw87")
 
-[node name="CardTableBox1" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(615.333, 405.333)
+[node name="CardTableBox1" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(613.333, 404)
 
-[node name="CardTableBox2" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(616, 700.667)
+[node name="CardTableBox2" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1006, 404)
 
-[node name="CardTableBox3" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(614.667, 995.333)
+[node name="CardTableBox3" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1556, 405.333)
 
-[node name="CardTableBox4" parent="TableBoxes" instance=ExtResource("5_064hd")]
+[node name="CardTableBox4" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
 position = Vector2(1948, 405.333)
 
-[node name="CardTableBox5" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1946.67, 700)
+[node name="CardTableBox5" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(612, 994.667)
 
-[node name="CardTableBox6" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1948, 997.333)
+[node name="CardTableBox6" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1005.33, 994.667)
 
-[node name="CardTableBox7" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1006.67, 996)
+[node name="CardTableBox7" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1554.67, 992)
 
-[node name="CardTableBox8" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1557.33, 997.333)
+[node name="CardTableBox8" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1948, 990.667)
 
-[node name="CardTableBox9" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1004, 405.333)
+[node name="CardTableBox9" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(613.333, 698.667)
 
-[node name="CardTableBox10" parent="TableBoxes" instance=ExtResource("5_064hd")]
-position = Vector2(1556, 404)
+[node name="CardTableBox10" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
+position = Vector2(1946.67, 698.667)
 
 [node name="Coin4" type="Sprite2D" parent="."]
-position = Vector2(960, 540)
+position = Vector2(1082, 548)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_28htt")
 
 [node name="Bar" type="Sprite2D" parent="."]
-position = Vector2(730, 479)
+position = Vector2(714, 469)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("6_qgrjx")
 
@@ -152,4 +152,5 @@ theme_override_font_sizes/font_size = 69
 text = "0
 "
 
-[connection signal="pressed" from="Dealer/Deal" to="Dealer" method="OnDealPressed"]
+[node name="Dealer" parent="." instance=ExtResource("7_ocbk2")]
+position = Vector2(106, 99)

@@ -55,8 +55,10 @@ public partial class CardGenerator : Node2D
     private Card CreateCard(int cardValue)
     {
         var card = CreateDefaultCardScene();
-        card.ModeganCardValue = cardValue;
-        card.GlobalPosition = Vector2.Zero;
+        //card.ModeganCardValue = cardValue;
+        //card.GlobalPosition = Vector2.Zero;
+        card.SetDeferred("ModeganCardValue", cardValue);
+        card.SetDeferred("GlobalPosition", Vector2.Zero);
         //card.Visible = false;
 
         // Create child scene in tree for instatiation so Texture can be reset
