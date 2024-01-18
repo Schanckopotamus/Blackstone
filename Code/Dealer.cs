@@ -21,17 +21,18 @@ public partial class Dealer : Node2D
 	//[Signal]
 	//public delegate void OnDealPlayerCardRequestedEventHandler();
 
-	private int _dealSpeed = 1600;
+	public int DealSpeed = 2500;
 	private int _numCardsInfrontOfDealer = 0;
 	// The number of cards the dealer will draw in front of them before sending them to the center.
 	private int _dealerDrawCountMax = 7;
 
-	private DealerState _dealerState;
+	private DealerStateMachine _dealerStateMachine;
 
 	private CardDeck _deck;
 	private Card _backCard;
 	private CardGenerator _cardGenerator;
 	private Marker2D _drawMarker;
+	private List<PlayerScene> _players;
 
 	private Vector2 _originalDealerDrawPosition;
     public Vector2 TableBoxToDealPosition { get; set; }
@@ -45,8 +46,9 @@ public partial class Dealer : Node2D
 		_drawMarker = GetNode<Marker2D>("DrawMarker2D");
 		DrawDealPosition = _drawMarker.GlobalPosition;
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
-		_dealerState = DealerState.DetermineFirstPlayer;
-	}
+		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
+        _players = GetNode<Node2D>("/root/CardTable/PlayerOrchestrator").GetChildren().Select(p => (PlayerScene)p).ToList();
+    }
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -71,144 +73,132 @@ public partial class Dealer : Node2D
     {
         CheckDealerState();
 
-		switch (_dealerState)
+		var stateParams = new Dictionary<string, object>
 		{
-			case DealerState.DetermineFirstPlayer: // When dealer pulls from card deck
-				await DetermineFirstPlayer();
-				break;
-			case DealerState.DealPlayerTurn: // During the start of round for determining who is first and when Blackstones are drawn
-				break;
-			case DealerState.PrepNewDeck: // When dealer area is full or end of round where play continues..
-				break;
-			default:
-				break;
-		}
+			{ "Players", _players }
+		};
+		_dealerStateMachine.InitializeNewState(DealerState.FindFirstPlayer, stateParams);
 
+		//switch (_dealerState.CurrentState.State)
+		//{
+		//	case DealerState.FindFirstPlayer: // When dealer pulls from card deck
+		//		await DetermineFirstPlayer();
+		//		break;
+		//	case DealerState.DealPlayerTurn: // During the start of round for determining who is first and when Blackstones are drawn
+		//		break;
+		//	case DealerState.PrepNewDeck: // When dealer area is full or end of round where play continues..
+		//		break;
+		//	default:
+		//		break;
+		//}
+    }
 
-		//if (_dealerState == DealerState.DealToBox)
-  //      {
+	public void RequestDeal()
+	{
+        EmitSignal(SignalName.OnDealRequested);
+    }
+
+ //   #region DetermineFirstPlayer
+ //   private async Task DetermineFirstPlayer()
+	//{
+	//	PlayerScene firstPlayer = null;
+	//	// Probably not the best way long term to get the number of players
 		
-  //      }
-  //      else if (_dealerState == DealerState.DealToSelf)
-  //      {
-  //          var card = this.DrawCard();
-  //          card.Visible = true;
+	//	while (firstPlayer == null) 
+	//	{
+	//		foreach (var player in _players) 
+	//		{
+	//			DealToPlayer(player);
 
-  //          _drawMarker.AddChild(card);
+	//			GD.Print("Timer started.");
+	//			await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
+	//			GD.Print("Timer ended.");
+	//		}
 
-  //          CreateNewDealerMarkerPosition();
+	//		// Are the values the same?
+	//		var playerOrderedGroups = _players
+	//			.GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
+	//			.OrderBy(g => g.Key)
+	//			.ToList();
 
-  //          card.GlobalPosition = DrawDealPosition;
-  //      }
-  //      else if (_dealerState == DealerState.DealToPlayer)
-  //      {
-
-  //      }
-    }
-
-	private async Task DetermineFirstPlayer()
-	{
-		PlayerScene firstPlayer = null;
-		// Probably not the best way long term to get the number of players
-		var players = GetNode<Node2D>("/root/CardTable/PlayerOrchestrator").GetChildren().Select(p => (PlayerScene)p).ToList();
-
-		while (firstPlayer == null) 
-		{
-			foreach (var player in players) 
-			{
-				DealToPlayer(player);
-
-				GD.Print("Timer started.");
-				await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
-				GD.Print("Timer ended.");
-			}
-
-			// Are the values the same?
-			var playerOrderedGroups = players
-				.GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
-				.OrderBy(g => g.Key)
-				.ToList();
-
-			if (playerOrderedGroups.First().Count() == 1)
-			{
-				firstPlayer = playerOrderedGroups.First().ToList().First();
-				//firstPlayer.SetToActive();
-				EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
-                await DealPlayerCardsToBoxes(players);
-            }
-			else
-			{
-                await DealPlayerCardsToBoxes(players);
-                players = playerOrderedGroups.First().ToList();
-			}
-        }
+	//		if (playerOrderedGroups.First().Count() == 1)
+	//		{
+	//			firstPlayer = playerOrderedGroups.First().ToList().First();
+	//			//firstPlayer.SetToActive();
+	//			EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
+ //               await DealPlayerCardsToBoxes(_players);
+ //           }
+	//		else
+	//		{
+ //               await DealPlayerCardsToBoxes(_players);
+ //               _players = playerOrderedGroups.First().ToList();
+	//		}
+ //       }
 
 
-        // If tie
-        // Deal cards in players area to boxes
-        // Start method over
-        // else
-        // Mark first player
-    }
+ //       // If tie
+ //       // Deal cards in players area to boxes
+ //       // Start method over
+ //       // else
+ //       // Mark first player
+ //   }
 
-	private void DealToPlayer(Node2D playerNode)
-	{
-        var card = _cardGenerator.GetCard(0);
-        //_cardGenerator.AddChild(_backCard);
+	//private void DealToPlayer(Node2D playerNode)
+	//{
+ //       var card = _cardGenerator.GetCard(0);
+ //       //_cardGenerator.AddChild(_backCard);
 
-        //var card = this.DrawCard();
-		card.Visible = true;
-		this.AddChild(card);
+ //       //var card = this.DrawCard();
+	//	card.Visible = true;
+	//	this.AddChild(card);
 		
-		var direction = this.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();
-		card.Velocity = direction;
-		card.Speed = _dealSpeed;
-		card.isDealt = true;
+	//	var direction = this.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();
+	//	card.SetToDealt(direction, DealSpeed);
 
-		//card.GlobalPosition = playerNode.GlobalPosition + new Vector2(150,0);
-	}
+	//	//card.GlobalPosition = playerNode.GlobalPosition + new Vector2(150,0);
+	//}
 
 
-    private async Task DealPlayerCardsToBoxes(List<PlayerScene> players)
-	{
-		foreach (var player in players)
-		{
-			player.CallDeferred("DisableCollisionBox");
-		}
+ //   private async Task DealPlayerCardsToBoxes(List<PlayerScene> players)
+	//{
+	//	foreach (var player in players)
+	//	{
+	//		player.CallDeferred("DisableCollisionBox");
+	//	}
 
-		await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
+	//	await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
 
-		foreach (var player in players) 
-		{
-			var playerCards = player.GetCardsInHand();
+	//	foreach (var player in players) 
+	//	{
+	//		var playerCards = player.GetCardsInHand();
 
-			foreach (var card in playerCards) 
-			{
-				//card.GetParent().RemoveChild(card);
+	//		foreach (var card in playerCards) 
+	//		{
+	//			//card.GetParent().RemoveChild(card);
 
-				if (card.ModeganCardValue != 10)
-				{
-					await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
+	//			if (card.ModeganCardValue != 10)
+	//			{
+	//				await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
-					// Sets TableBoxToDealPosition from CardTable (Main)
-					EmitSignal(SignalName.OnDealRequested);
+	//				// Sets TableBoxToDealPosition from CardTable (Main)
+	//				EmitSignal(SignalName.OnDealRequested);
 
-					card.isDealt = true;
-					card.Velocity = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
-					card.Speed = _dealSpeed;
-				}
-			}
-        }
+	//				var direction = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
+	//				card.SetToDealt(direction, DealSpeed);
+	//			}
+	//		}
+ //       }
 
-        await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
+ //       await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
 
-        foreach (var player in players)
-        {
-            player.CallDeferred("EnableCollisionBox");
-        }
-    }
+ //       foreach (var player in players)
+ //       {
+ //           player.CallDeferred("EnableCollisionBox");
+ //       }
+ //   }
+ //   #endregion
 
-	public void DeliverCardToBox(CardTableBox box)
+    public void DeliverCardToBox(CardTableBox box)
 	{ 
 		var card = DrawCard();
 
@@ -221,6 +211,11 @@ public partial class Dealer : Node2D
 		var card = _cardGenerator.GetCard(mdCard.Value);
 
 		return card;
+	}
+
+	public Card GenerateSpecificCard(int modeganValue)
+	{
+		return _cardGenerator.GetCard(modeganValue);
 	}
 
 	// Manage drawing here.
@@ -236,7 +231,7 @@ public partial class Dealer : Node2D
 
 	public void RoundReset()
 	{
-		_dealerState = DealerState.DealToPlayer;
+		//_dealerState = DealerState.DealToPlayer;
 	}
 
 	private void CreateNewDealerMarkerPosition()
@@ -259,13 +254,13 @@ public partial class Dealer : Node2D
 
 	private void CheckDealerState()
 	{
-        if (_numCardsInfrontOfDealer >= _dealerDrawCountMax)
-        {
-            _dealerState = DealerState.DealToBox;
-        }
-        else if (_dealerState == DealerState.DealToPlayer && _drawMarker.GetChildren().Count <= 0)
-        {
-            _dealerState = DealerState.DealToSelf;
-        }
+        //if (_numCardsInfrontOfDealer >= _dealerDrawCountMax)
+        //{
+        //    _dealerState = DealerState.DealToBox;
+        //}
+        //else if (_dealerState == DealerState.DealToPlayer && _drawMarker.GetChildren().Count <= 0)
+        //{
+        //    _dealerState = DealerState.DealToSelf;
+        //}
     }
 }

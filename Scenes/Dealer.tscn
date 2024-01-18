@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=6 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_r567n"]
 [ext_resource type="Script" path="res://Code/CardGenerator.cs" id="3_f6rhm"]
+[ext_resource type="Script" path="res://Code/States/Dealer/FindFirstPlayer.cs" id="4_p3nmu"]
+[ext_resource type="Script" path="res://Code/States/Dealer/DealerStateMachine.cs" id="4_sseju"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -28,5 +30,11 @@ texture = ExtResource("2_r567n")
 
 [node name="CardGenerator" type="Node2D" parent="."]
 script = ExtResource("3_f6rhm")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4_sseju")
+
+[node name="FindFirstPlayer" type="Node" parent="StateMachine"]
+script = ExtResource("4_p3nmu")
 
 [connection signal="pressed" from="Deal" to="." method="OnDealPressed"]

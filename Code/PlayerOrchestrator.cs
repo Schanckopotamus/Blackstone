@@ -1,3 +1,4 @@
+using Blackstone.Code.Buses;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,8 @@ public partial class PlayerOrchestrator : Node2D
 {
     public List<PlayerScene> Players { get; private set; }
 
+    private SignalBus _signalBus;
+
     // This is the playerScene that represents the current players turn.
     //private PlayerScene _currentPlayer;
 
@@ -14,6 +17,8 @@ public partial class PlayerOrchestrator : Node2D
     public override void _Ready()
 	{
 		Players = this.GetChildren().Select(ch => (PlayerScene)ch).ToList();
+		_signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.PlayerFocusChanged += SetActivePlayer;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

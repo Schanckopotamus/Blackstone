@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Code/CardTable.cs" id="1_cr66u"]
 [ext_resource type="PackedScene" uid="uid://b6a4miv24v4aq" path="res://Scenes/PlayerScene.tscn" id="2_4qlsy"]
 [ext_resource type="Script" path="res://Code/GameOrchestrator.cs" id="2_n5lik"]
-[ext_resource type="Script" path="res://Scenes/PlayerOrchestrator.cs" id="3_3hyu6"]
+[ext_resource type="Script" path="res://Code/PlayerOrchestrator.cs" id="3_7kwn7"]
 [ext_resource type="Script" path="res://Code/TableBoxOrchestrator.cs" id="4_kvw87"]
 [ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="5_28htt"]
 [ext_resource type="PackedScene" uid="uid://cm7emu4o0npsx" path="res://Scenes/CardTableBox.tscn" id="5_064hd"]
@@ -18,7 +18,7 @@ script = ExtResource("2_n5lik")
 
 [node name="PlayerOrchestrator" type="Node2D" parent="."]
 scale = Vector2(0.15, 0.15)
-script = ExtResource("3_3hyu6")
+script = ExtResource("3_7kwn7")
 
 [node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
 position = Vector2(853.333, 6526.67)
