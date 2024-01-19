@@ -7,23 +7,26 @@ using System.Linq;
 
 public partial class PlayerScene : Node2D
 {
-    [Signal]
-    public delegate void OnCardCollidedEventHandler(PlayerScene box);
+	[Signal]
+	public delegate void OnCardCollidedEventHandler(PlayerScene box);
 
 	// The number of pixels between each card when visible on table.
 	private float _cardInHandSpaceing = 35;
 
-    private Sprite2D _defaultPlayerImage;
-    private Sprite2D _activePlayerImage;
+	private Sprite2D _defaultPlayerImage;
+	private Sprite2D _activePlayerImage;
 	// This is for when dealing Blackstones to player.
 	private Vector2 _defaultMarkerPosition;
 	private Marker2D _dealMarker;
 	private Node _cardsInHand;
 	private CollisionShape2D _collisionBox;
+	private TextureButton _anteButton;
 
 	private PlayerSeatState _seatState;
 
 	public bool IsActive => IsPlayerActive();
+
+	public bool IsAntedIn => IsPlayerAntedIn();
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -39,6 +42,7 @@ public partial class PlayerScene : Node2D
 		_defaultMarkerPosition = _dealMarker.GlobalPosition;
 		_cardsInHand = GetNode<Node>("Cards");
 		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionShape2D");
+		_anteButton = GetNode<TextureButton>("AnteButton");
 
 		// Makes Player outline sprite active.
 		this.SetToPassive();
@@ -48,11 +52,16 @@ public partial class PlayerScene : Node2D
 		// to see in window when runnig scene only for testing
 		//this.GlobalPosition = new Vector2(1000, 500);
 		//this.Scale = new Vector2(0.15f, 0.15f);
-    }
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+	}
+
+	private bool IsPlayerAntedIn()
+	{
+		return _anteButton.ButtonPressed;
 	}
 
 	public void HandleChildLeavingTree()

@@ -50,4 +50,9 @@ public partial class PlayerOrchestrator : Node2D
 	{
 		return Players.FirstOrDefault(p => p.IsActive);
 	}
+
+	public List<PlayerScene> GetAntedInPlayers()
+	{ 
+		return Players.Where(p => p.IsAntedIn).ToList();
+	}
 }

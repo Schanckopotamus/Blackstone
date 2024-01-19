@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://b813ceeapmc7u" path="res://Scenes/Dealer.tscn" id="7_ocbk2"]
 
 [node name="CardTable" type="Node2D"]
+position = Vector2(57, 26)
 script = ExtResource("1_cr66u")
 
 [node name="GameOrchestrator" type="Node2D" parent="."]
@@ -87,7 +88,7 @@ position = Vector2(613.333, 698.667)
 position = Vector2(1946.67, 698.667)
 
 [node name="Coin4" type="Sprite2D" parent="."]
-position = Vector2(1082, 548)
+position = Vector2(1087, 537)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_28htt")
 

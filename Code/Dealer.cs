@@ -32,6 +32,7 @@ public partial class Dealer : Node2D
 	private Card _backCard;
 	private CardGenerator _cardGenerator;
 	private Marker2D _drawMarker;
+	private PlayerOrchestrator _playerOrchestrator;
 	private List<PlayerScene> _players;
 
 	private Vector2 _originalDealerDrawPosition;
@@ -47,7 +48,8 @@ public partial class Dealer : Node2D
 		DrawDealPosition = _drawMarker.GlobalPosition;
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
 		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
-        _players = GetNode<Node2D>("/root/CardTable/PlayerOrchestrator").GetChildren().Select(p => (PlayerScene)p).ToList();
+		_playerOrchestrator = GetNode <PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
+		_players = _playerOrchestrator.Players;
     }
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -11,7 +11,7 @@ namespace Blackstone.Code.States.Dealer
     public partial class DealerStateBase : Node//, IDealState
     {
         [Signal]
-        public delegate void OnDealerStateTransitionEventHandler(DealerState stateToTransitionTo);
+        public delegate void DealerStateTransitionRequestedEventHandler(string dealerStateToTransitionTo);
 
         // May not be necesary, use Signals to call the StateMachine for things like Transitions
         DealerStateMachine _stateMachine = null;

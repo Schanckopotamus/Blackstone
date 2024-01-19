@@ -9,19 +9,6 @@ using System.Threading.Tasks;
 
 public partial class FindFirstPlayer : DealerStateBase
 {
-    // [] TODO: Needs to know all the Players or atleast the position of all the players
-    // [] TODO: Needs to know TableBoxes/Position
-    // [] TODO: Needs to know Dealer/Position
-
-    // [X] TODO: Needs to Signal when player is found and passing it as a parameter.
-    //[Signal]
-    //public delegate void FirstPlayerFoundEventHandler(PlayerScene player);
-
-    // [] TODO: Needs to Signal State Change when complete
-    //[Signal]
-    //public delegate void StateChangeTransitionEventHandler(DealerState.{Something});
-
-
     private DealerState _state = DealerState.FindFirstPlayer;
     private Dealer _dealer;
     private List<PlayerScene> _players;
@@ -78,8 +65,9 @@ public partial class FindFirstPlayer : DealerStateBase
     {
         bool isTieBreakerRound = false;
         PlayerScene firstPlayer = null;
-        // Probably not the best way long term to get the number of players
-        //var players = GetNode<Node2D>("/root/CardTable/PlayerOrchestrator").GetChildren().Select(p => (PlayerScene)p).ToList();
+
+        // AntePlayers state should make this unnecessary and can use the _players collection
+        var players = _players.Where(p => p.IsAntedIn).ToList();
 
         while (firstPlayer == null)
         {
@@ -88,7 +76,7 @@ public partial class FindFirstPlayer : DealerStateBase
                 _signalBus.EmitRequestCardBoxDisabledSignal();
             }
             
-            foreach (var player in _players)
+            foreach (var player in players)
             {
                 DealToPlayer(player);
 
@@ -98,7 +86,7 @@ public partial class FindFirstPlayer : DealerStateBase
             }
 
             // Are the values the same?
-            var playerOrderedGroups = _players
+            var playerOrderedGroups = players
                 .GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
                 .OrderBy(g => g.Key)
                 .ToList();
@@ -110,13 +98,15 @@ public partial class FindFirstPlayer : DealerStateBase
                 // TODO: Not triggering in CardTable.cs
                 //EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
                 _signalBus.EmitPlayerFocusChangedSignal(firstPlayer);
-                await DealPlayerCardsToBoxes(_players);
+                await DealPlayerCardsToBoxes(players);
+
+                EmitSignal(SignalName.DealerStateTransitionRequested, DealerState.DealPlayerTurn.ToString());
             }
             else
             {
                 isTieBreakerRound = true;
-                await DealPlayerCardsToBoxes(_players);
-                _players = playerOrderedGroups.First().ToList();
+                await DealPlayerCardsToBoxes(players);
+                players = playerOrderedGroups.First().ToList();
             }
         }
     }

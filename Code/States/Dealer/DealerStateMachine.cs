@@ -29,7 +29,7 @@ public partial class DealerStateMachine : DealerStateBase
 		CurrentState = GetNode<DealerStateBase>(InitialStatePath);
 		if (CurrentState != null) 
 		{
-			CurrentState.OnDealerStateTransition += this.ConnectToDealerStateSignal;
+			CurrentState.DealerStateTransitionRequested += this.ConnectToDealerStateSignal;
 			CurrentState.Enter();
 		}
 		
@@ -40,7 +40,7 @@ public partial class DealerStateMachine : DealerStateBase
 	private void InitialStateFindFirstPlayer()
 	{
         CurrentState = GetNode<DealerStateBase>(InitialStatePath);
-        CurrentState.OnDealerStateTransition += this.ConnectToDealerStateSignal;
+        CurrentState.DealerStateTransitionRequested += this.ConnectToDealerStateSignal;
 
 		var paramDict = new Dictionary<string, object>
 		{
@@ -85,16 +85,23 @@ public partial class DealerStateMachine : DealerStateBase
         }
     }
 
-    private void ConnectToDealerStateSignal(DealerState dealerState)
+    private void ConnectToDealerStateSignal(string dealerState)
 	{
-		var newState = _states.FirstOrDefault(s => s.State == dealerState);
-
-		if (newState != null) 
+		if (Enum.TryParse<DealerState>(dealerState, out var dState))
 		{
-			this.CurrentState.Exit();
-			CurrentState = newState;
-			CurrentState.Enter(new Dictionary<string, object> { { "DealerState", dealerState } });
-			EmitSignal(SignalName.OnStateTransitioned, CurrentState);
+			var newState = _states.FirstOrDefault(s => s.State == dState);
+
+			if (newState != null)
+			{
+				this.CurrentState.Exit();
+				CurrentState = newState;
+				CurrentState.Enter(new Dictionary<string, object> { { "DealerState", dState } });
+				EmitSignal(SignalName.OnStateTransitioned, CurrentState);
+			}
+		}
+		else
+		{ 
+			// SOMETHING WENT TERRIBLY WRONG
 		}
 	}
 }

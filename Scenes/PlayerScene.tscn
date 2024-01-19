@@ -1,14 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://b6a4miv24v4aq"]
+[gd_scene load_steps=8 format=3 uid="uid://b6a4miv24v4aq"]
 
 [ext_resource type="Texture2D" uid="uid://5gfdpapdfgej" path="res://Assets/PlayerMeeple.png" id="1_c0mok"]
 [ext_resource type="Script" path="res://Code/PlayerScene.cs" id="1_dn1sh"]
+[ext_resource type="Texture2D" uid="uid://qgyuinworryd" path="res://Assets/AnteMarker.png" id="2_5j06h"]
 [ext_resource type="Texture2D" uid="uid://cx5y0ja78yek6" path="res://Assets/ActivePlayerMeeple.png" id="2_jbh8v"]
+[ext_resource type="Texture2D" uid="uid://b40r6dah0dbvr" path="res://Assets/Coin4_Transparent.png" id="5_10pey"]
+[ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="6_axe47"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t3rlf"]
 size = Vector2(474, 235)
 
 [node name="PlayerSeat" type="Node2D"]
 script = ExtResource("1_dn1sh")
+
+[node name="AnteMarker" type="Marker2D" parent="."]
+position = Vector2(0, -500)
+
+[node name="AnteMarker2" type="Sprite2D" parent="AnteMarker"]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_5j06h")
 
 [node name="DefaultPlayerImage" type="Sprite2D" parent="."]
 position = Vector2(-258, -0.5)
@@ -45,5 +55,16 @@ scale = Vector2(1.1573, 1.22862)
 shape = SubResource("RectangleShape2D_t3rlf")
 
 [node name="Cards" type="Node" parent="."]
+
+[node name="AnteButton" type="TextureButton" parent="."]
+offset_left = -148.0
+offset_top = -649.0
+offset_right = 286.0
+offset_bottom = -215.0
+scale = Vector2(0.68333, 0.6782)
+toggle_mode = true
+texture_normal = ExtResource("5_10pey")
+texture_pressed = ExtResource("6_axe47")
+stretch_mode = 0
 
 [connection signal="area_entered" from="Box" to="." method="OnAreaEntered"]
