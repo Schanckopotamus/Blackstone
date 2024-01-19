@@ -66,8 +66,11 @@ public partial class FindFirstPlayer : DealerStateBase
         bool isTieBreakerRound = false;
         PlayerScene firstPlayer = null;
 
-        // AntePlayers state should make this unnecessary and can use the _players collection
-        var players = _players.Where(p => p.IsAntedIn).ToList();
+        if (_players != null || _players.Count() == 1)
+        {
+            // Don't have enough players to deal
+            // Maybe emit state change back to AntePlayerState?
+        }
 
         while (firstPlayer == null)
         {
@@ -76,7 +79,7 @@ public partial class FindFirstPlayer : DealerStateBase
                 _signalBus.EmitRequestCardBoxDisabledSignal();
             }
             
-            foreach (var player in players)
+            foreach (var player in _players)
             {
                 DealToPlayer(player);
 
@@ -86,7 +89,7 @@ public partial class FindFirstPlayer : DealerStateBase
             }
 
             // Are the values the same?
-            var playerOrderedGroups = players
+            var playerOrderedGroups = _players
                 .GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
                 .OrderBy(g => g.Key)
                 .ToList();
@@ -98,15 +101,15 @@ public partial class FindFirstPlayer : DealerStateBase
                 // TODO: Not triggering in CardTable.cs
                 //EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
                 _signalBus.EmitPlayerFocusChangedSignal(firstPlayer);
-                await DealPlayerCardsToBoxes(players);
+                await DealPlayerCardsToBoxes(_players);
 
                 EmitSignal(SignalName.DealerStateTransitionRequested, DealerState.DealPlayerTurn.ToString());
             }
             else
             {
                 isTieBreakerRound = true;
-                await DealPlayerCardsToBoxes(players);
-                players = playerOrderedGroups.First().ToList();
+                await DealPlayerCardsToBoxes(_players);
+                _players = playerOrderedGroups.First().ToList();
             }
         }
     }

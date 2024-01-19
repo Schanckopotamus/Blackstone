@@ -77,7 +77,7 @@ public partial class Dealer : Node2D
 
 		var stateParams = new Dictionary<string, object>
 		{
-			{ "Players", _players }
+			{ "Players", _players.Where(p => p.IsAntedIn).ToList() }
 		};
 		_dealerStateMachine.InitializeNewState(DealerState.FindFirstPlayer, stateParams);
 
