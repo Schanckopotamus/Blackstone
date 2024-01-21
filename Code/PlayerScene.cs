@@ -102,7 +102,9 @@ public partial class PlayerScene : Node2D
 
 		try
 		{
-			_cardsInHand.AddChild(card);
+			//_cardsInHand.AddChild(card);
+			_cardsInHand.CallDeferred(MethodName.AddChild, card);
+			
 			card.TreeExiting += HandleChildLeavingTree;
 			_dealMarker.GlobalPosition += new Vector2(_cardInHandSpaceing,0);
 		}

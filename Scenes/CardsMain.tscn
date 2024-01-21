@@ -22,16 +22,16 @@ scale = Vector2(0.15, 0.15)
 script = ExtResource("3_7kwn7")
 
 [node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(853.333, 6526.67)
+position = Vector2(540, 6526.67)
 
 [node name="PlayerSeat2" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(3860, 6473.33)
+position = Vector2(3626.67, 6473.33)
 
 [node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(7140, 6453.33)
+position = Vector2(6786.67, 6466.67)
 
 [node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(10206.7, 6466.67)
+position = Vector2(9720, 6440)
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
 offset_left = 928.0

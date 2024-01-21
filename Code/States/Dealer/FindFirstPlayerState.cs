@@ -95,9 +95,7 @@ public partial class FindFirstPlayerState : DealerStateBase
             {
                 DealToPlayer(player);
 
-                GD.Print("Timer started.");
                 await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
-                GD.Print("Timer ended.");
             }
 
             // Are the values the same?
