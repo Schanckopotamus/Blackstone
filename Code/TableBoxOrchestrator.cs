@@ -31,8 +31,8 @@ public partial class TableBoxOrchestrator : Node2D
         InitializeCardBoxes();
 
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
-        _signalBus.RequestCardBoxEnabled += this.HandleBoxesCollisionEnabledEvent;
-        _signalBus.RequestCardBoxDisabled += this.HandleBoxesCollisionDisabledEvent;
+        _signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
+        _signalBus.CardBoxDisabledRequested += this.HandleBoxesCollisionDisabledEvent;
     }
 
     private void HandleBoxesCollisionEnabledEvent()

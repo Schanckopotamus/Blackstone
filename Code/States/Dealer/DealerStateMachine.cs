@@ -1,3 +1,5 @@
+using Blackstone.Code.Buses;
+using Blackstone.Code.DTOs;
 using Blackstone.Code.Enums;
 using Blackstone.Code.States.Dealer;
 using Godot;
@@ -20,35 +22,31 @@ public partial class DealerStateMachine : DealerStateBase
 	/// Holds all possible dealer states
 	/// </summary>
 	private List<DealerStateBase> _states;
+    private SignalBus _signalBus;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		_states = this.GetChildren().Select(ch => (DealerStateBase)ch).ToList();
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        _states = this.GetChildren().Select(ch => (DealerStateBase)ch).ToList();
 
-		CurrentState = GetNode<DealerStateBase>(InitialStatePath);
+		//InitializeStates();
+
+		CurrentState = GetNode<DealerStateBase>("Idle");
 		if (CurrentState != null) 
 		{
-			CurrentState.DealerStateTransitionRequested += this.ConnectToDealerStateSignal;
+			_signalBus.PlayerStateChangeRequested += this.ConnectToDealerStateSignal;
 			CurrentState.Enter();
 		}
-		
-
-		//InitialStateFindFirstPlayer();
 	}
 
-	private void InitialStateFindFirstPlayer()
-	{
-        CurrentState = GetNode<DealerStateBase>(InitialStatePath);
-        CurrentState.DealerStateTransitionRequested += this.ConnectToDealerStateSignal;
-
-		var paramDict = new Dictionary<string, object>
-		{
-			{ "DealerState", DealerState.FindFirstPlayer },
-			{ "Players", new List<PlayerScene>() }
-		};
-
-        CurrentState.Enter(paramDict);
+	private void InitializeStates()
+	{ 
+		_states = new List<DealerStateBase>();
+		_states.Add(GetNode<DealerStateBase>("Idle"));
+        _states.Add(GetNode<DealerStateBase>("PlayerAnte"));
+        _states.Add(GetNode<DealerStateBase>("FindFirstPlayer"));
+		_states.Add(GetNode<DealerStateBase>("Round"));
     }
 
 	public void UnhandledInput(InputEvent inputEvent)
@@ -67,35 +65,50 @@ public partial class DealerStateMachine : DealerStateBase
         CurrentState?.PhysicsUpdate((float)delta);
     }
 
-	public void InitializeNewState(DealerState dealerState, Dictionary<string, object> parameters)
+	//public void InitializeNewState(DealerState dealerState, Godot.Collections.Array<ParameterElement> parameters)
+	//{
+	//	var paramDict = parameters.ToParamDictionary();
+
+	//       var newState = _states.FirstOrDefault(s => s.State == dealerState);
+
+	//	if (!paramDict.ContainsKey("DealerState"))
+	//	{
+	//           paramDict.Add("DealerState", dealerState.ToString());
+	//	}
+
+	//       if (newState != null)
+	//       {
+	//           this.CurrentState?.Exit();
+	//           CurrentState = newState;
+	//           CurrentState.Enter(paramDict);
+	//           EmitSignal(SignalName.OnStateTransitioned, CurrentState);
+	//       }
+	//   }
+
+	//public void TriggerExitState()
+	//{
+	//	CurrentState.HandleInput(null);
+	//}
+
+    private void ConnectToDealerStateSignal(string dealerState, Godot.Collections.Array<ParameterElement> parameters)
 	{
-        var newState = _states.FirstOrDefault(s => s.State == dealerState);
+        var paramDict = parameters.ToParamDictionary();
 
-		if (!parameters.ContainsKey("DealerState"))
-		{
-			parameters.Add("DealerState", dealerState);
-		}
-
-        if (newState != null)
-        {
-            this.CurrentState?.Exit();
-            CurrentState = newState;
-            CurrentState.Enter(parameters);
-            EmitSignal(SignalName.OnStateTransitioned, CurrentState);
-        }
-    }
-
-    private void ConnectToDealerStateSignal(string dealerState)
-	{
-		if (Enum.TryParse<DealerState>(dealerState, out var dState))
+        if (Enum.TryParse<DealerState>(dealerState, out var dState))
 		{
 			var newState = _states.FirstOrDefault(s => s.State == dState);
 
 			if (newState != null)
 			{
-				this.CurrentState.Exit();
+				CurrentState.Exit();
 				CurrentState = newState;
-				CurrentState.Enter(new Dictionary<string, object> { { "DealerState", dState } });
+
+				if (!paramDict.ContainsKey("DealerState"))
+				{
+                    paramDict.Add("DealerState", CurrentState);
+				}
+
+				CurrentState.Enter(paramDict);
 				EmitSignal(SignalName.OnStateTransitioned, CurrentState);
 			}
 		}

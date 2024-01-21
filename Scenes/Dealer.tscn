@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=9 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_r567n"]
 [ext_resource type="Script" path="res://Code/CardGenerator.cs" id="3_f6rhm"]
-[ext_resource type="Script" path="res://Code/States/Dealer/FindFirstPlayer.cs" id="4_p3nmu"]
 [ext_resource type="Script" path="res://Code/States/Dealer/DealerStateMachine.cs" id="4_sseju"]
+[ext_resource type="Script" path="res://Code/States/Dealer/FindFirstPlayerState.cs" id="5_5s0ce"]
+[ext_resource type="Script" path="res://Code/States/Dealer/AntePlayerState.cs" id="6_u6i5g"]
+[ext_resource type="Script" path="res://Code/States/Dealer/IdleDealerState.cs" id="7_58l1g"]
+[ext_resource type="Script" path="res://Code/States/Dealer/DealRoundState.cs" id="8_7h6fx"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -14,13 +17,29 @@ script = ExtResource("1_6i0c1")
 position = Vector2(357.042, 0.0416565)
 scale = Vector2(0.75, 0.75)
 
+[node name="Ante" type="Button" parent="."]
+offset_left = 101.333
+offset_top = -106.667
+offset_right = 211.333
+offset_bottom = -43.6667
+theme_override_font_sizes/font_size = 40
+text = "ANTE"
+
 [node name="Deal" type="Button" parent="."]
-offset_left = 96.0
-offset_top = -28.0
-offset_right = 203.0
-offset_bottom = 35.0
+offset_left = 102.667
+offset_top = -29.3333
+offset_right = 209.667
+offset_bottom = 33.6667
 theme_override_font_sizes/font_size = 40
 text = "DEAL"
+
+[node name="Round" type="Button" parent="."]
+offset_left = 84.0
+offset_top = 45.3333
+offset_right = 239.0
+offset_bottom = 108.333
+theme_override_font_sizes/font_size = 40
+text = "ROUND"
 
 [node name="DealerChip" type="Sprite2D" parent="."]
 scale = Vector2(0.75, 0.75)
@@ -35,6 +54,32 @@ script = ExtResource("3_f6rhm")
 script = ExtResource("4_sseju")
 
 [node name="FindFirstPlayer" type="Node" parent="StateMachine"]
-script = ExtResource("4_p3nmu")
+script = ExtResource("5_5s0ce")
 
+[node name="AntePlayers" type="Node" parent="StateMachine"]
+script = ExtResource("6_u6i5g")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("7_58l1g")
+
+[node name="Round" type="Node" parent="StateMachine"]
+script = ExtResource("8_7h6fx")
+
+[node name="CurrentStateContainer" type="VBoxContainer" parent="."]
+offset_left = -138.667
+offset_top = 165.333
+offset_right = 140.333
+offset_bottom = 273.333
+
+[node name="Title" type="Label" parent="CurrentStateContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Current State: "
+
+[node name="Value" type="Label" parent="CurrentStateContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "<Unknown>"
+
+[connection signal="pressed" from="Ante" to="." method="OnAntePressed"]
 [connection signal="pressed" from="Deal" to="." method="OnDealPressed"]

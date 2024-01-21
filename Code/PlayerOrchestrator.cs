@@ -19,6 +19,8 @@ public partial class PlayerOrchestrator : Node2D
 		Players = this.GetChildren().Select(ch => (PlayerScene)ch).ToList();
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
 		_signalBus.PlayerFocusChanged += SetActivePlayer;
+		_signalBus.PlayerAnteCompleted += HandleAnteCompletion;
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -55,4 +57,14 @@ public partial class PlayerOrchestrator : Node2D
 	{ 
 		return Players.Where(p => p.IsAntedIn).ToList();
 	}
+
+	private void HandleAnteCompletion()
+	{ 
+		var notAntedPlayers = Players.Where(p => !p.IsAntedIn).ToList();
+
+		foreach (var player in notAntedPlayers) 
+		{
+			player.SetAntePositionVisibility(shouldBeVisible: false);
+		}
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Blackstone.Code.Enums;
+﻿using Blackstone.Code.DTOs;
+using Blackstone.Code.Enums;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace Blackstone.Code.States.Dealer
     public partial class DealerStateBase : Node//, IDealState
     {
         [Signal]
-        public delegate void DealerStateTransitionRequestedEventHandler(string dealerStateToTransitionTo);
+        public delegate void DealerStateTransitionRequestedEventHandler(string dealerStateToTransitionTo, Godot.Collections.Array<ParameterElement> parameters);
 
         // May not be necesary, use Signals to call the StateMachine for things like Transitions
         DealerStateMachine _stateMachine = null;
 
-        public DealerState State { get; private set; }
+        public DealerState State { get; set; }
 
         public virtual void HandleInput(InputEvent inputEvent)
         { }
@@ -40,6 +41,34 @@ namespace Blackstone.Code.States.Dealer
         public virtual void Exit()
         { }
 
+        /// <summary>
+        /// As an example, extract Players from parameter list.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        protected List<T> ExtractCollectionFromParameters<T>(Dictionary<string, object> parameters, string key) where T : new()
+        {
+            var collection = new List<T>();
+
+            if (parameters == null 
+                || !parameters.Any() 
+                || !parameters.ContainsKey(key))
+            {
+                return collection;
+            }
+
+            try
+            {
+                collection = (List<T>)parameters[key];
+
+                return collection;
+            }
+            catch (Exception)
+            {
+                return collection;
+            }
+        }
 
         //public Vector2 Target { get; private set; }
         //public Vector2 Dealer { get; private set; }

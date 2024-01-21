@@ -1,4 +1,6 @@
 using Blackstone.Code;
+using Blackstone.Code.Buses;
+using Blackstone.Code.DTOs;
 using Blackstone.Code.Enums;
 using Godot;
 using System;
@@ -34,40 +36,95 @@ public partial class Dealer : Node2D
 	private Marker2D _drawMarker;
 	private PlayerOrchestrator _playerOrchestrator;
 	private List<PlayerScene> _players;
+	private Label _currentStatelabel;
+	private SignalBus _signalBus;
 
-	private Vector2 _originalDealerDrawPosition;
+	private Button _anteButton;
+	private Button _dealButton;
+	private Button _roundButton;
+
+    private Vector2 _originalDealerDrawPosition;
     public Vector2 TableBoxToDealPosition { get; set; }
     public Vector2 DrawDealPosition { get; set; }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
 		_deck = CardFactory.CreateDeck();
 		_cardGenerator = GetNode<CardGenerator>("CardGenerator");
 		_drawMarker = GetNode<Marker2D>("DrawMarker2D");
 		DrawDealPosition = _drawMarker.GlobalPosition;
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
 		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
-		_playerOrchestrator = GetNode <PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
+		_playerOrchestrator = GetNode<PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
 		_players = _playerOrchestrator.Players;
+        _currentStatelabel = GetNode<Label>("CurrentStateContainer/Value");
+
+        _anteButton = GetNode<Button>("Ante");
+		_dealButton = GetNode<Button>("Deal");
+		_roundButton = GetNode<Button>("Round");
     }
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		var currentState = _dealerStateMachine.CurrentState.State;
+		_currentStatelabel.Text = currentState.ToString();
+
+		if (currentState == DealerState.Idle)
+		{
+			_anteButton.Disabled = false;
+			_dealButton.Disabled = true;
+            _roundButton.Disabled = true;
+        }
+		else if (currentState == DealerState.PlayerAnte)
+		{
+			_anteButton.Disabled = true;
+			_dealButton.Disabled = false;
+            _roundButton.Disabled = true;
+        }
+		else if (currentState == DealerState.DealPlayerTurn)
+		{
+            _anteButton.Disabled = true;
+            _dealButton.Disabled = true;
+            _roundButton.Disabled = false;
+        }
+		else
+		{
+			_anteButton.Disabled = true;
+			_dealButton.Disabled = true;
+            _roundButton.Disabled = true;
+        }
 	}
+
+	public void SetStateLabel()
+	{ 
+		
+	}
+
+	public async void OnAntePressed()
+	{
+		//var parameterArray = new Godot.Collections.Array<ParameterElement>();
+
+		//parameterArray.Add(new ParameterElement("Players", _players));
+
+        _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
+    }
 
 	public async void OnDealPressed()
 	{
 		// Deal card back card
 		// Need to know what box to deal to
 		var signalResult = EmitSignal(SignalName.OnDealRequested);
+        
 
-		if (signalResult == Error.Ok)
+        //_dealerStateMachine
+
+        if (signalResult == Error.Ok)
 		{
-			await Deal();
-			_numCardsInfrontOfDealer = _drawMarker.GetChildren().Count;
-		}
+            _signalBus.EmitPlayerAnteCompletedSignal();
+        }
 	}
 
     // When dealing we want the back card;
@@ -75,130 +132,22 @@ public partial class Dealer : Node2D
     {
         CheckDealerState();
 
-		var stateParams = new Dictionary<string, object>
-		{
-			{ "Players", _players.Where(p => p.IsAntedIn).ToList() }
-		};
-		_dealerStateMachine.InitializeNewState(DealerState.FindFirstPlayer, stateParams);
-
-		//switch (_dealerState.CurrentState.State)
+		//var stateParams = new Dictionary<string, object>
 		//{
-		//	case DealerState.FindFirstPlayer: // When dealer pulls from card deck
-		//		await DetermineFirstPlayer();
-		//		break;
-		//	case DealerState.DealPlayerTurn: // During the start of round for determining who is first and when Blackstones are drawn
-		//		break;
-		//	case DealerState.PrepNewDeck: // When dealer area is full or end of round where play continues..
-		//		break;
-		//	default:
-		//		break;
-		//}
+		//	{ "Players", _players.Where(p => p.IsAntedIn).ToList() }
+		//};
+		//_dealerStateMachine.InitializeNewState(DealerState.FindFirstPlayer, stateParams);
+
+		if (_dealerStateMachine.CurrentState.State == DealerState.PlayerAnte) 
+		{
+			//_dealerStateMachine.Enter();
+		}
     }
 
 	public void RequestDeal()
 	{
         EmitSignal(SignalName.OnDealRequested);
     }
-
- //   #region DetermineFirstPlayer
- //   private async Task DetermineFirstPlayer()
-	//{
-	//	PlayerScene firstPlayer = null;
-	//	// Probably not the best way long term to get the number of players
-		
-	//	while (firstPlayer == null) 
-	//	{
-	//		foreach (var player in _players) 
-	//		{
-	//			DealToPlayer(player);
-
-	//			GD.Print("Timer started.");
-	//			await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
-	//			GD.Print("Timer ended.");
-	//		}
-
-	//		// Are the values the same?
-	//		var playerOrderedGroups = _players
-	//			.GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
-	//			.OrderBy(g => g.Key)
-	//			.ToList();
-
-	//		if (playerOrderedGroups.First().Count() == 1)
-	//		{
-	//			firstPlayer = playerOrderedGroups.First().ToList().First();
-	//			//firstPlayer.SetToActive();
-	//			EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
- //               await DealPlayerCardsToBoxes(_players);
- //           }
-	//		else
-	//		{
- //               await DealPlayerCardsToBoxes(_players);
- //               _players = playerOrderedGroups.First().ToList();
-	//		}
- //       }
-
-
- //       // If tie
- //       // Deal cards in players area to boxes
- //       // Start method over
- //       // else
- //       // Mark first player
- //   }
-
-	//private void DealToPlayer(Node2D playerNode)
-	//{
- //       var card = _cardGenerator.GetCard(0);
- //       //_cardGenerator.AddChild(_backCard);
-
- //       //var card = this.DrawCard();
-	//	card.Visible = true;
-	//	this.AddChild(card);
-		
-	//	var direction = this.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();
-	//	card.SetToDealt(direction, DealSpeed);
-
-	//	//card.GlobalPosition = playerNode.GlobalPosition + new Vector2(150,0);
-	//}
-
-
- //   private async Task DealPlayerCardsToBoxes(List<PlayerScene> players)
-	//{
-	//	foreach (var player in players)
-	//	{
-	//		player.CallDeferred("DisableCollisionBox");
-	//	}
-
-	//	await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
-
-	//	foreach (var player in players) 
-	//	{
-	//		var playerCards = player.GetCardsInHand();
-
-	//		foreach (var card in playerCards) 
-	//		{
-	//			//card.GetParent().RemoveChild(card);
-
-	//			if (card.ModeganCardValue != 10)
-	//			{
-	//				await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
-
-	//				// Sets TableBoxToDealPosition from CardTable (Main)
-	//				EmitSignal(SignalName.OnDealRequested);
-
-	//				var direction = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
-	//				card.SetToDealt(direction, DealSpeed);
-	//			}
-	//		}
- //       }
-
- //       await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
-
- //       foreach (var player in players)
- //       {
- //           player.CallDeferred("EnableCollisionBox");
- //       }
- //   }
- //   #endregion
 
     public void DeliverCardToBox(CardTableBox box)
 	{ 

@@ -9,6 +9,8 @@ namespace Blackstone.Code.Enums
     public enum DealerState
     {     
         // These have specific actions for only these states
+        Idle,
+        PlayerAnte,
         FindFirstPlayer, // Deal cards to ante'd players to determine first player
         DealPlayerTurn, // Dealing for players turn, drawing number of specified cards and managing drawn cards
         PrepNewDeck, // Game Ends, signal for clear table and get fresh shuffled deck

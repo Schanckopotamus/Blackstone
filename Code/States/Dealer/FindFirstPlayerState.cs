@@ -7,34 +7,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public partial class FindFirstPlayer : DealerStateBase
+public partial class FindFirstPlayerState : DealerStateBase
 {
-    private DealerState _state = DealerState.FindFirstPlayer;
     private Dealer _dealer;
     private List<PlayerScene> _players;
 
     private SignalBus _signalBus;
 
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        this.State = DealerState.FindFirstPlayer;
+        // This really goes against convention. Find a better way.
+        _dealer = GetNode<Dealer>("../../../Dealer");
+    }
+
     public override async void Enter(Dictionary<string, object> parameters = null)
     {
+        _players?.Clear();
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
 
         _signalBus.EmitRequestCardBoxDisabledSignal();
 
         await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
-        if (parameters.ContainsKey("Players"))
+        var players = base.ExtractCollectionFromParameters<PlayerScene>(parameters, "Players");
+
+        if (players.Any())
         {
             try
             {
-                _players = (List<PlayerScene>)parameters["Players"];
+                _players = players;
 
                 await DetermineFirstPlayer();
             }
             catch (Exception)
             {
                 GD.Print("*** FindFirstPlayer.Enter() -> Could not locate Players in 'parameters' dictionary ***");
-                throw;
+                this.Exit();
+                EmitSignal(SignalName.DealerStateTransitionRequested, DealerState.PlayerAnte.ToString());
+                return;
             }
         }
         else
@@ -45,15 +58,8 @@ public partial class FindFirstPlayer : DealerStateBase
 
     public override void Exit()
     {
+        //_players?.Clear();
         _signalBus.EmitRequestCardBoxEnabledSignal();
-    }
-
-
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        // This really goes against convention. Find a better way.
-        _dealer = GetNode<Dealer>("../../../Dealer");
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -72,6 +78,12 @@ public partial class FindFirstPlayer : DealerStateBase
             // Maybe emit state change back to AntePlayerState?
         }
 
+        var players = new List<PlayerScene>();
+        foreach (var p in _players) 
+        {
+            players.Add(p);
+        }
+
         while (firstPlayer == null)
         {
             if (isTieBreakerRound)
@@ -79,7 +91,7 @@ public partial class FindFirstPlayer : DealerStateBase
                 _signalBus.EmitRequestCardBoxDisabledSignal();
             }
             
-            foreach (var player in _players)
+            foreach (var player in players)
             {
                 DealToPlayer(player);
 
@@ -89,7 +101,7 @@ public partial class FindFirstPlayer : DealerStateBase
             }
 
             // Are the values the same?
-            var playerOrderedGroups = _players
+            var playerOrderedGroups = players
                 .GroupBy(p => p.GetCardsInHand().Last().ModeganCardValue)
                 .OrderBy(g => g.Key)
                 .ToList();
@@ -101,15 +113,21 @@ public partial class FindFirstPlayer : DealerStateBase
                 // TODO: Not triggering in CardTable.cs
                 //EmitSignal(SignalName.FirstPlayerFound, firstPlayer);
                 _signalBus.EmitPlayerFocusChangedSignal(firstPlayer);
-                await DealPlayerCardsToBoxes(_players);
+                await DealPlayerCardsToBoxes(players);
 
-                EmitSignal(SignalName.DealerStateTransitionRequested, DealerState.DealPlayerTurn.ToString());
+                //EmitSignal(SignalName.DealerStateTransitionRequested, DealerState.DealPlayerTurn.ToString());
+                var parameters = new Dictionary<string, object>
+                {
+                    { "Players", _players }
+                };
+
+                _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.DealPlayerTurn, parameters);
             }
             else
             {
                 isTieBreakerRound = true;
-                await DealPlayerCardsToBoxes(_players);
-                _players = playerOrderedGroups.First().ToList();
+                await DealPlayerCardsToBoxes(players);
+                players = playerOrderedGroups.First().ToList();
             }
         }
     }

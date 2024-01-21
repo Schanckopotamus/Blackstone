@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,21 @@ namespace Blackstone.Code.Extensions
                     list[num] = randItem; // Set the value at the current index to the random one we saved. Essentially, swapping;
                 }
             }
+        }
+
+        public static Godot.Collections.Array<T> ToGodotArray<[MustBeVariant]T>(this List<T> list) where T : new()
+        {
+            var godotArray = new Godot.Collections.Array<T>();
+
+            if (!list.Any())
+                return godotArray;
+
+            foreach (var item in list) 
+            {
+                godotArray.Add(item);
+            }
+
+            return godotArray;
         }
     }
 }
