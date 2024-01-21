@@ -2,6 +2,7 @@ using Blackstone.Code;
 using Godot;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class CardGenerator : Node2D
 {
@@ -10,15 +11,15 @@ public partial class CardGenerator : Node2D
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
-	{
+    {
         CardScene = ResourceLoader.Load<PackedScene>("res://Scenes/Card.tscn");
         //CreateReferenceCardsInTree();
     }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
+    {
+    }
 
     // 0 makes back of card result.
     public Card GetCard(int cardValue)
@@ -48,20 +49,20 @@ public partial class CardGenerator : Node2D
     {
         for (int i = 0; i <= 10; i++)
         {
-            CreateCard(i);            
+            CreateCard(i);
         }
     }
 
     private Card CreateCard(int cardValue)
     {
         var card = CreateDefaultCardScene();
-        //card.ModeganCardValue = cardValue;
-        //card.GlobalPosition = Vector2.Zero;
         card.SetDeferred("ModeganCardValue", cardValue);
         card.SetDeferred("GlobalPosition", Vector2.Zero);
-        //card.Visible = false;
 
         // Create child scene in tree for instatiation so Texture can be reset
+        // This will create a warning for needing to call, CallDeferred, but the
+        // texture will not be loaded in time with the deferred call.
+        // Might need to premake the cards in the editor for the generator.
         this.AddChild(card);
 
         if (cardValue <= 0 || cardValue > 10)
@@ -81,7 +82,7 @@ public partial class CardGenerator : Node2D
         card.ChangeTexture(texture);
 
         return card;
-    }   
+    }
 
     /// <summary>
     /// Create a Card scene from the Packed scene.

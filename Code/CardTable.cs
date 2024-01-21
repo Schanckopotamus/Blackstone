@@ -1,4 +1,5 @@
 using Blackstone.Code;
+using Blackstone.Code.Buses;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,11 @@ public partial class CardTable : Node2D
 
 		SubscribeDealerToBoxes();
     }
+
+	public void HandleCardBoxEnabled()
+	{ 
+		
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)

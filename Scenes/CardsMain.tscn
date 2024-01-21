@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Code/CardTable.cs" id="1_cr66u"]
 [ext_resource type="PackedScene" uid="uid://b6a4miv24v4aq" path="res://Scenes/PlayerScene.tscn" id="2_4qlsy"]
 [ext_resource type="Script" path="res://Code/GameOrchestrator.cs" id="2_n5lik"]
-[ext_resource type="Script" path="res://Scenes/PlayerOrchestrator.cs" id="3_3hyu6"]
+[ext_resource type="Script" path="res://Code/PlayerOrchestrator.cs" id="3_7kwn7"]
 [ext_resource type="Script" path="res://Code/TableBoxOrchestrator.cs" id="4_kvw87"]
 [ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="5_28htt"]
 [ext_resource type="PackedScene" uid="uid://cm7emu4o0npsx" path="res://Scenes/CardTableBox.tscn" id="5_064hd"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://b813ceeapmc7u" path="res://Scenes/Dealer.tscn" id="7_ocbk2"]
 
 [node name="CardTable" type="Node2D"]
+position = Vector2(57, 26)
 script = ExtResource("1_cr66u")
 
 [node name="GameOrchestrator" type="Node2D" parent="."]
@@ -18,19 +19,19 @@ script = ExtResource("2_n5lik")
 
 [node name="PlayerOrchestrator" type="Node2D" parent="."]
 scale = Vector2(0.15, 0.15)
-script = ExtResource("3_3hyu6")
+script = ExtResource("3_7kwn7")
 
 [node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(853.333, 6526.67)
+position = Vector2(540, 6526.67)
 
 [node name="PlayerSeat2" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(3860, 6473.33)
+position = Vector2(3626.67, 6473.33)
 
 [node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(7140, 6453.33)
+position = Vector2(6786.67, 6466.67)
 
 [node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(10206.7, 6466.67)
+position = Vector2(9720, 6440)
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
 offset_left = 928.0
@@ -87,7 +88,7 @@ position = Vector2(613.333, 698.667)
 position = Vector2(1946.67, 698.667)
 
 [node name="Coin4" type="Sprite2D" parent="."]
-position = Vector2(1082, 548)
+position = Vector2(1087, 537)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_28htt")
 

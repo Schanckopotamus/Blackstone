@@ -1,4 +1,5 @@
 using Blackstone.Code;
+using Blackstone.Code.Buses;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using System.Linq;
 
 public partial class TableBoxOrchestrator : Node2D
 {
+    private SignalBus _signalBus;
+
     private CardTableBox _box1;
     private CardTableBox _box2;
     private CardTableBox _box3;
@@ -19,11 +22,29 @@ public partial class TableBoxOrchestrator : Node2D
 
     private List<CardTableBoxPair> _tableBoxPairs;
     public List<CardTableBox> TableBoxes { get; private set; }
+    private bool _areBoxesDisabled;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
+        _areBoxesDisabled = false;
         InitializeCardBoxes();
+
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        _signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
+        _signalBus.CardBoxDisabledRequested += this.HandleBoxesCollisionDisabledEvent;
+    }
+
+    private void HandleBoxesCollisionEnabledEvent()
+    {
+        _areBoxesDisabled = false;
+        SetTableBoxDisabled();
+    }
+    
+    private void HandleBoxesCollisionDisabledEvent()
+    {
+        _areBoxesDisabled = true;
+        SetTableBoxDisabled();
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -77,6 +98,14 @@ public partial class TableBoxOrchestrator : Node2D
         _tableBoxPairs[2].SetBoxVisibility(false);
         _tableBoxPairs[3].SetBoxVisibility(false);
         _tableBoxPairs[4].SetBoxVisibility(false);
+    }
+
+    private void SetTableBoxDisabled()
+    {
+        foreach (var box in TableBoxes)
+        { 
+            box.SetCollisionDisabled(_areBoxesDisabled);
+        }
     }
 
     public CardTableBox GetFirstBoxThatIsFillable()

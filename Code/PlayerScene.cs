@@ -1,3 +1,4 @@
+using Blackstone.Code.Buses;
 using Blackstone.Code.Enums;
 using Blackstone.Code.States;
 using Godot;
@@ -7,28 +8,34 @@ using System.Linq;
 
 public partial class PlayerScene : Node2D
 {
-    [Signal]
-    public delegate void OnCardCollidedEventHandler(PlayerScene box);
+	[Signal]
+	public delegate void OnCardCollidedEventHandler(PlayerScene box);
 
 	// The number of pixels between each card when visible on table.
 	private float _cardInHandSpaceing = 35;
 
-    private Sprite2D _defaultPlayerImage;
-    private Sprite2D _activePlayerImage;
+	private Sprite2D _defaultPlayerImage;
+	private Sprite2D _activePlayerImage;
 	// This is for when dealing Blackstones to player.
 	private Vector2 _defaultMarkerPosition;
 	private Marker2D _dealMarker;
 	private Node _cardsInHand;
 	private CollisionShape2D _collisionBox;
+	private TextureButton _anteButton;
+	private SignalBus _signalBus;
 
 	private PlayerSeatState _seatState;
 
 	public bool IsActive => IsPlayerActive();
 
+	public bool IsAntedIn => IsPlayerAntedIn();
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-		_defaultPlayerImage = GetNode<Sprite2D>("DefaultPlayerImage");
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
+
+        _defaultPlayerImage = GetNode<Sprite2D>("DefaultPlayerImage");
 		//var halvedImageSize = (_defaultPlayerImage.Texture.GetSize() / 2);
 		//var shiftLeftDistance = -1 * halvedImageSize.X / 2;
 		//var shiftVector = new Vector2(shiftLeftDistance, 0);
@@ -39,6 +46,9 @@ public partial class PlayerScene : Node2D
 		_defaultMarkerPosition = _dealMarker.GlobalPosition;
 		_cardsInHand = GetNode<Node>("Cards");
 		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionShape2D");
+		_anteButton = GetNode<TextureButton>("AnteButton");
+
+		_anteButton.Pressed += HandlePlayeredAnted;
 
 		// Makes Player outline sprite active.
 		this.SetToPassive();
@@ -48,11 +58,21 @@ public partial class PlayerScene : Node2D
 		// to see in window when runnig scene only for testing
 		//this.GlobalPosition = new Vector2(1000, 500);
 		//this.Scale = new Vector2(0.15f, 0.15f);
-    }
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+	}
+
+	private void HandlePlayeredAnted()
+	{
+		_signalBus.EmitPlayerAntedSignal(this);
+	}
+
+	private bool IsPlayerAntedIn()
+	{
+		return _anteButton.ButtonPressed;
 	}
 
 	public void HandleChildLeavingTree()
@@ -82,7 +102,9 @@ public partial class PlayerScene : Node2D
 
 		try
 		{
-			_cardsInHand.AddChild(card);
+			//_cardsInHand.AddChild(card);
+			_cardsInHand.CallDeferred(MethodName.AddChild, card);
+			
 			card.TreeExiting += HandleChildLeavingTree;
 			_dealMarker.GlobalPosition += new Vector2(_cardInHandSpaceing,0);
 		}
@@ -136,6 +158,11 @@ public partial class PlayerScene : Node2D
 	{ 
 		_defaultPlayerImage.Visible = true;
 		_activePlayerImage.Visible = false;	
+	}
+
+	public void SetAntePositionVisibility(bool shouldBeVisible)
+	{ 
+		_anteButton.Visible = shouldBeVisible;
 	}
 
 	private bool IsPlayerActive()

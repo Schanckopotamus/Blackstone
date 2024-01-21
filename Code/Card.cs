@@ -67,6 +67,32 @@ public partial class Card : Area2D
 	}
 
 	/// <summary>
+	/// Set necessary fields for movement.
+	/// </summary>
+	/// <param name="velocity">Direction to be delt, should be normalized but will do so if not</param>
+	/// <param name="speed">Pixels per second we want the movement to be</param>
+	public void SetToDealt(Vector2 velocity, int speed)
+	{ 
+		if (velocity == null || velocity == Vector2.Zero) 
+		{
+			SetToLayFlat();
+		}
+		else
+		{
+			if (!velocity.IsNormalized())
+			{
+				velocity = velocity.Normalized();
+			}
+
+			this.isDealt = true;
+			this.Velocity = velocity;
+			this.Speed = speed;
+			this.Rotation = this.RotationPerSecond;
+			this.Visible = true;
+		}		 
+	}
+
+	/// <summary>
 	/// Makes sure the card scene doesn't rotate, is not being dealt, no speed & no velocity (direction)
 	/// </summary>
 	public void SetToLayFlat()

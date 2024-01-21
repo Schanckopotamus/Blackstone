@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blackstone.Code.States
+namespace Blackstone.Code.States.Dealer
 {
-    public class DealToSelf : IDealState
+    public class DealToSelf// : IDealState
     {
         public Vector2 Target { get; set; }
 

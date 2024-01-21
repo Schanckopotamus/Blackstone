@@ -102,7 +102,6 @@ public partial class CardTableBox : Node2D
 
 			if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
 			{
-				//_collisionBox.Disabled = true;
 				_collisionBox.SetDeferred("disabled", true);
 				IsBoxFull = true;
 				IsBoxActive = false;
@@ -111,6 +110,16 @@ public partial class CardTableBox : Node2D
 
 			return true;
 		}
+	}
+
+	public void SetCollisionDisabled(bool collisionDisabled) 
+	{		
+		_collisionBox.SetDeferred("disabled", collisionDisabled);
+	}
+
+	public bool GetCollisionBoxDisabled()
+	{
+		return _collisionBox.Disabled;
 	}
 
 	public int GetCardCount()
