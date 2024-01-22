@@ -8,11 +8,15 @@ public partial class Card : Area2D
 	//private float _rotationPerSecond;
 	private Rect2 _windowSize;
 
+	[Export]
 	public int ModeganCardValue { get; set; }
 	private Sprite2D _cardSprite;
 
     [Export]
 	public float RotationPerSecond { get; set; }
+
+	[Export]
+	public Texture2D CardTexture { get; set; }
 
 	// Movement per second
 	//[Export]
@@ -37,6 +41,10 @@ public partial class Card : Area2D
 		Speed = 0;
 
 		_cardSprite = GetNode<Sprite2D>("Sprite2D");
+		if (CardTexture != null) 
+		{
+			_cardSprite.Texture = CardTexture;
+		}
 
 		_positionLabel = GetNode<Label>("PositionLabel/PositionValue");
         _gPositionLabel = GetNode<Label>("GPositionLabel/GPositionValue");
