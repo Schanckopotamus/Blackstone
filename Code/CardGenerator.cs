@@ -1,6 +1,7 @@
 using Blackstone.Code;
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,11 +10,40 @@ public partial class CardGenerator : Node2D
     private PackedScene CardScene { get; set; }
     private string cardTexturePath = "res://Assets/Cards/md{x}.png";
 
+    // Dictionary that uses the Card value as the Key, 0 = back card
+    private Dictionary<int, Card> _preGenCardDict;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         CardScene = ResourceLoader.Load<PackedScene>("res://Scenes/Card.tscn");
-        //CreateReferenceCardsInTree();
+        LoadPreGenCardsIntoMemory();
+    }
+
+    private void LoadPreGenCardsIntoMemory()
+    {
+        _preGenCardDict = this.GetChildren()
+            .Select(c => (Card)c)
+            .ToDictionary(c =>
+            {
+                if (int.TryParse(c.Name.ToString(), out var cardId))
+                {
+                    return cardId;
+                }
+
+                // Some random number much higher than any single card value could be to see an issue at a glance
+                return GD.RandRange(100, 1000);
+            });
+
+        // Remove any Dictionary entry that clearly failed parsing when loading
+        foreach (var item in _preGenCardDict)
+        {
+            if (item.Key >= 100)
+            {
+                _preGenCardDict.Remove(item.Key);
+                continue;
+            }
+        }
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -24,64 +54,14 @@ public partial class CardGenerator : Node2D
     // 0 makes back of card result.
     public Card GetCard(int cardValue)
     {
-        if (cardValue <= 0 || cardValue > 10) return CreateDefaultCardScene();
-
-        var card = this.GetChildren()
-            .Where(c => c.IsInGroup("card"))
-            .Select(x => (Card)x)
-            .FirstOrDefault(y => y.ModeganCardValue == cardValue);
-
-        if (card == null)
+        if (cardValue <= 0
+            || cardValue > 10
+            || !_preGenCardDict.ContainsKey(cardValue))
         {
-            card = CreateCard(cardValue);
+            return CreateDefaultCardScene();
         }
 
-        // Disassociate from parent so it can be added to a different tree.
-        card.GetParent()?.RemoveChild(card);
-
-        return card;
-    }
-
-    /// <summary>
-	/// Build an instance of all types of face cards including back card
-	/// </summary>
-	private void CreateReferenceCardsInTree()
-    {
-        for (int i = 0; i <= 10; i++)
-        {
-            CreateCard(i);
-        }
-    }
-
-    private Card CreateCard(int cardValue)
-    {
-        var card = CreateDefaultCardScene();
-        card.SetDeferred("ModeganCardValue", cardValue);
-        card.SetDeferred("GlobalPosition", Vector2.Zero);
-
-        // Create child scene in tree for instatiation so Texture can be reset
-        // This will create a warning for needing to call, CallDeferred, but the
-        // texture will not be loaded in time with the deferred call.
-        // Might need to premake the cards in the editor for the generator.
-        this.AddChild(card);
-
-        if (cardValue <= 0 || cardValue > 10)
-        {
-            return card;
-        }        
-
-        var path = cardTexturePath.Replace("{x}", cardValue.ToString());
-
-        if (!FileAccess.FileExists(path))
-        {
-            GD.Print($"CardAssets.CreateCard; Card Asset Path Does NOT Exist\n=> Path: {path}");
-            return card;
-        }
-
-        var texture = GD.Load<Texture2D>(path);
-        card.ChangeTexture(texture);
-
-        return card;
+        return (Card)_preGenCardDict[cardValue].Duplicate((int)(DuplicateFlags.Groups | DuplicateFlags.Scripts));
     }
 
     /// <summary>

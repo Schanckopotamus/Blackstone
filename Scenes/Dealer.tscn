@@ -1,13 +1,24 @@
-[gd_scene load_steps=9 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=20 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_r567n"]
 [ext_resource type="Script" path="res://Code/CardGenerator.cs" id="3_f6rhm"]
+[ext_resource type="PackedScene" uid="uid://cfqk5py7ftiyd" path="res://Scenes/Card.tscn" id="4_8qs7x"]
 [ext_resource type="Script" path="res://Code/States/Dealer/DealerStateMachine.cs" id="4_sseju"]
 [ext_resource type="Script" path="res://Code/States/Dealer/FindFirstPlayerState.cs" id="5_5s0ce"]
+[ext_resource type="Texture2D" uid="uid://bas77fj5xq4wq" path="res://Assets/Cards/md1.png" id="5_lpmib"]
+[ext_resource type="Texture2D" uid="uid://6upv3tx4dk1x" path="res://Assets/Cards/md2.png" id="6_ti4bq"]
 [ext_resource type="Script" path="res://Code/States/Dealer/AntePlayerState.cs" id="6_u6i5g"]
 [ext_resource type="Script" path="res://Code/States/Dealer/IdleDealerState.cs" id="7_58l1g"]
+[ext_resource type="Texture2D" uid="uid://cpk4rbgi4dgyt" path="res://Assets/Cards/md3.png" id="7_bjax0"]
 [ext_resource type="Script" path="res://Code/States/Dealer/DealRoundState.cs" id="8_7h6fx"]
+[ext_resource type="Texture2D" uid="uid://y736qs74v0fh" path="res://Assets/Cards/md4.png" id="8_src1d"]
+[ext_resource type="Texture2D" uid="uid://b2sd0u6sylthi" path="res://Assets/Cards/md5.png" id="9_co2fd"]
+[ext_resource type="Texture2D" uid="uid://b7h1xcyoff3nf" path="res://Assets/Cards/md6.png" id="10_q57df"]
+[ext_resource type="Texture2D" uid="uid://bmb4txaxrisy0" path="res://Assets/Cards/md7.png" id="11_s33bw"]
+[ext_resource type="Texture2D" uid="uid://dcdxlk1btbjcr" path="res://Assets/Cards/md8.png" id="12_1uy5e"]
+[ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="13_jdk73"]
+[ext_resource type="Texture2D" uid="uid://b7iyr7yhdon6i" path="res://Assets/Cards/md10.png" id="14_oyuul"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -48,7 +59,50 @@ texture = ExtResource("2_r567n")
 [node name="TableDeckStack" type="Node2D" parent="."]
 
 [node name="CardGenerator" type="Node2D" parent="."]
+visible = false
 script = ExtResource("3_f6rhm")
+
+[node name="0" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+
+[node name="1" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 1
+CardTexture = ExtResource("5_lpmib")
+
+[node name="2" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 2
+CardTexture = ExtResource("6_ti4bq")
+
+[node name="3" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 3
+CardTexture = ExtResource("7_bjax0")
+
+[node name="4" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 4
+CardTexture = ExtResource("8_src1d")
+
+[node name="5" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 5
+CardTexture = ExtResource("9_co2fd")
+
+[node name="6" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 6
+CardTexture = ExtResource("10_q57df")
+
+[node name="7" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 7
+CardTexture = ExtResource("11_s33bw")
+
+[node name="8" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 8
+CardTexture = ExtResource("12_1uy5e")
+
+[node name="9" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 9
+CardTexture = ExtResource("13_jdk73")
+
+[node name="10" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+ModeganCardValue = 10
+CardTexture = ExtResource("14_oyuul")
 
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("4_sseju")
