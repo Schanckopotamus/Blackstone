@@ -25,7 +25,7 @@ scale = Vector2(0.75, 0.75)
 script = ExtResource("1_6i0c1")
 
 [node name="DrawMarker2D" type="Marker2D" parent="."]
-position = Vector2(357.042, 0.0416565)
+position = Vector2(357.333, 0)
 scale = Vector2(0.75, 0.75)
 
 [node name="Ante" type="Button" parent="."]
