@@ -14,7 +14,6 @@ public partial class FindFirstPlayerState : DealerStateBase
 
     private SignalBus _signalBus;
 
-
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -30,9 +29,19 @@ public partial class FindFirstPlayerState : DealerStateBase
 
         _signalBus.EmitRequestCardBoxDisabledSignal();
 
-        await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
+        // TODO: Having a List of PlayerScenes and ordering them might need to be centralized?
+        var players = 
+                base.ExtractCollectionFromParameters<PlayerScene>(parameters, "Players")
+                .OrderBy(p => p.SeatPositon)
+                .ToList();
 
-        var players = base.ExtractCollectionFromParameters<PlayerScene>(parameters, "Players");
+        // Ensure no player is marked as Active before determination is made.
+        foreach (var player in players) 
+        {
+            player.SetToPassive();
+        }
+
+        await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
         if (players.Any())
         {
@@ -162,10 +171,11 @@ public partial class FindFirstPlayerState : DealerStateBase
                     await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
                     // Sets TableBoxToDealPosition from CardTable (Main)
-                    _dealer.RequestDeal();
+                    //_dealer.RequestDeal();
 
-                    var direction = card.GlobalPosition.DirectionTo(_dealer.TableBoxToDealPosition).Normalized();
-                    card.SetToDealt(direction, _dealer.DealSpeed);
+                    //var direction = card.GlobalPosition.DirectionTo(_dealer.TableBoxToDealPosition).Normalized();
+                    //card.SetToDealt(direction, _dealer.DealSpeed);
+                    _dealer.DealToCardBox(card);
                 }
             }
         }

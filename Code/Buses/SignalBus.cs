@@ -35,6 +35,21 @@ namespace Blackstone.Code.Buses
         [Signal]
         public delegate void PlayerAnteCompletedEventHandler();
 
+        [Signal]
+        public delegate void PlayerPopUpRequestedEventHandler(string playerName, int numPlayers);
+
+        [Signal]
+        public delegate void PlayerFoldRequestEventHandler();
+
+        [Signal]
+        public delegate void PlayerFoldedEventHandler(PlayerScene foldPlayer);
+
+        [Signal]
+        public delegate void WhiteStoneAddedEventHandler(Card card);
+
+        [Signal]
+        public delegate void DealRequestEventHandler(int numCardsToDeal);
+
         public void EmitRequestCardBoxDisabledSignal()
         {
             EmitSignal(SignalName.CardBoxDisabledRequested);
@@ -73,6 +88,38 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerAnteCompletedSignal()
         {
             EmitSignal(SignalName.PlayerAnteCompleted);
+        }
+
+        public void EmitPlayerPopUpRequestedSignal(PlayerPopupDTO popupInfo)
+        {
+            if (popupInfo != null && popupInfo.IsValid())
+            {
+                EmitSignal(SignalName.PlayerPopUpRequested, popupInfo.PlayerName, popupInfo.NumPlayers);
+            }
+            else
+            {
+                GD.Print("=> EmitPayerPopUpRequestedSignal NOT FIRED, PopupInfo NULL/Invalid");
+            }            
+        }
+
+        public void EmitPlayerFoldRequestSignal()
+        {
+            EmitSignal(SignalName.PlayerFoldRequest);
+        }
+
+        public void EmitPlayerFoldedEventSignal(PlayerScene player)
+        {
+            EmitSignal(SignalName.PlayerFolded, player);
+        }
+
+        public void EmitWhiteStoneAddedSignal(Card card)
+        {
+            EmitSignal(SignalName.WhiteStoneAdded, card);
+        }
+
+        public void EmitDealRequest(int numCardsToDeal)
+        {
+            EmitSignal(SignalName.DealRequest, numCardsToDeal);
         }
     }
 }

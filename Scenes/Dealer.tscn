@@ -1,6 +1,7 @@
-[gd_scene load_steps=20 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=21 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
+[ext_resource type="Texture2D" uid="uid://diyy0norf6bs0" path="res://Assets/Target.png" id="2_7d7rf"]
 [ext_resource type="Texture2D" uid="uid://ddq7e1cjt0w6j" path="res://Assets/DealerChip.png" id="2_r567n"]
 [ext_resource type="Script" path="res://Code/CardGenerator.cs" id="3_f6rhm"]
 [ext_resource type="PackedScene" uid="uid://cfqk5py7ftiyd" path="res://Scenes/Card.tscn" id="4_8qs7x"]
@@ -24,31 +25,72 @@
 scale = Vector2(0.75, 0.75)
 script = ExtResource("1_6i0c1")
 
-[node name="DrawMarker2D" type="Marker2D" parent="."]
-position = Vector2(357.333, 0)
+[node name="DealMarker" type="Marker2D" parent="."]
+visible = false
+position = Vector2(-105.333, 468)
 scale = Vector2(0.75, 0.75)
 
+[node name="MarkerPosition" type="Node2D" parent="DealMarker"]
+position = Vector2(1.35899e-05, 1.77767)
+
+[node name="PositionLabel" type="Label" parent="DealMarker/MarkerPosition"]
+offset_left = -113.778
+offset_top = 92.4444
+offset_right = 2.22221
+offset_bottom = 134.444
+theme_override_font_sizes/font_size = 30
+text = "Position"
+
+[node name="PositionValueLabel" type="Label" parent="DealMarker/MarkerPosition"]
+offset_left = 12.4444
+offset_top = 90.6667
+offset_right = 158.444
+offset_bottom = 132.667
+theme_override_font_sizes/font_size = 30
+text = "(0.00,0.00)"
+
+[node name="GPositionLabel" type="Label" parent="DealMarker/MarkerPosition"]
+offset_left = -167.111
+offset_top = 149.333
+offset_right = 40.8889
+offset_bottom = 191.333
+theme_override_font_sizes/font_size = 30
+text = "GlobalPosition"
+
+[node name="GPositionValueLabel" type="Label" parent="DealMarker/MarkerPosition"]
+offset_left = 55.1111
+offset_top = 149.333
+offset_right = 201.111
+offset_bottom = 191.333
+theme_override_font_sizes/font_size = 30
+text = "(0.00,0.00)"
+
+[node name="Target" type="Sprite2D" parent="DealMarker"]
+position = Vector2(3.55557, 1.77777)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_7d7rf")
+
 [node name="Ante" type="Button" parent="."]
-offset_left = 101.333
-offset_top = -106.667
-offset_right = 211.333
-offset_bottom = -43.6667
+offset_left = 102.666
+offset_top = -109.333
+offset_right = 212.666
+offset_bottom = -46.333
 theme_override_font_sizes/font_size = 40
 text = "ANTE"
 
 [node name="Deal" type="Button" parent="."]
-offset_left = 102.667
-offset_top = -29.3333
-offset_right = 209.667
-offset_bottom = 33.6667
+offset_left = 104.0
+offset_top = -31.9996
+offset_right = 211.0
+offset_bottom = 31.0004
 theme_override_font_sizes/font_size = 40
 text = "DEAL"
 
 [node name="Round" type="Button" parent="."]
-offset_left = 84.0
-offset_top = 45.3333
-offset_right = 239.0
-offset_bottom = 108.333
+offset_left = 85.3333
+offset_top = 42.667
+offset_right = 240.333
+offset_bottom = 105.667
 theme_override_font_sizes/font_size = 40
 text = "ROUND"
 
@@ -135,5 +177,8 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 35
 text = "<Unknown>"
 
+[node name="CardsInHand" type="Node" parent="."]
+
+[connection signal="child_entered_tree" from="." to="." method="HandleChildEntered"]
 [connection signal="pressed" from="Ante" to="." method="OnAntePressed"]
 [connection signal="pressed" from="Deal" to="." method="OnDealPressed"]

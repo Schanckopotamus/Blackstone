@@ -11,6 +11,9 @@ public partial class PlayerScene : Node2D
 	[Signal]
 	public delegate void OnCardCollidedEventHandler(PlayerScene box);
 
+	[Export]
+	public int SeatPositon { get; set; }
+
 	// The number of pixels between each card when visible on table.
 	private float _cardInHandSpaceing = 35;
 

@@ -7,26 +7,41 @@ using System.Linq;
 
 public partial class CardTable : Node2D
 {
-	//private Card _card;
-	private Sprite2D _testCard;
+    private SignalBus _signalBus;
+
+    //private Card _card;
+    private Sprite2D _testCard;
 	private Label _positionLabel;
 	private Label _rotationLabel;
 	private Label _velocityLabel;
+	private Label _potLabel;
+	private Label _whitestoneCountLabel;
 
 	private Dealer _dealer;
 
 	private TableBoxOrchestrator _tableBoxOrchestrator;
 	private PlayerOrchestrator _playerOrchestrator;
 	
+	// Used when players are in the game round.
+	private PlayerDrawPopup _playerDrawPopup;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_dealer = GetNode<Dealer>("Dealer");
+		_signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.PlayerFolded += HandlePlayerFolded;
+		_signalBus.WhiteStoneAdded += HandleWhiteStoneAdded;
+
+        _dealer = GetNode<Dealer>("Dealer");
 		_tableBoxOrchestrator = GetNode<TableBoxOrchestrator>("TableBoxOrchestrator");
         _playerOrchestrator = GetNode<PlayerOrchestrator>("PlayerOrchestrator");
 
-		//TODO: Will need to be able to change the seating arrangment based on the number of players whenever a setup screen is created.
-		var players = _playerOrchestrator.GetChildren();
+		_playerDrawPopup = GetNode<PlayerDrawPopup>("PlayerDrawPopup");
+		_playerDrawPopup.Hide();
+        _signalBus.PlayerPopUpRequested += HandlePlayerPanelPopup;
+
+        //TODO: Will need to be able to change the seating arrangment based on the number of players whenever a setup screen is created.
+        var players = _playerOrchestrator.GetChildren();
 		foreach (PlayerScene p in players)
 		{
 			p.OnCardCollided += OnPlayerCardCollision;
@@ -35,7 +50,9 @@ public partial class CardTable : Node2D
 		_positionLabel = GetNode<Label>("PositionContainer/CardPositionValueLabel");
 		_rotationLabel = GetNode<Label>("RotationContainer/CardRotationValueLabel");
 		_velocityLabel = GetNode<Label>("VelocityContainer/CardVelocityValueLabel");
-		
+		_potLabel = GetNode<Label>("PotContainer/PotValueLabel");
+		_whitestoneCountLabel = GetNode<Label>("WhitestoneContainer/WhitestoneValueLabel");
+
 		_dealer.OnDealRequested += OnDealRequested;
 		_dealer.FirstPlayerFound += HandleFirstPlayerFound;
 
@@ -101,4 +118,32 @@ public partial class CardTable : Node2D
 	{
 		_playerOrchestrator.SetActivePlayer(player);
 	}
+
+	private void HandlePlayerPanelPopup(string name, int numPlayers)
+	{ 
+		_playerDrawPopup.Reset(name, numPlayers, 0);
+		_playerDrawPopup.Popup();
+	}
+
+	private void HandlePlayerFolded(PlayerScene player)
+	{
+		var wasWhitestoneParseSuccessful = int.TryParse(_whitestoneCountLabel.Text, out var whiteStoneCount);
+		var wasPotCountParseSuccessful = int.TryParse(_potLabel.Text, out var potCount);
+
+		var ante = 1;
+		var foldPenalty = wasWhitestoneParseSuccessful ? whiteStoneCount / 2 : 1;
+
+		_potLabel.Text = wasPotCountParseSuccessful 
+			? (potCount + ante + foldPenalty).ToString()
+			: (ante + foldPenalty).ToString();
+    }
+
+	private void HandleWhiteStoneAdded(Card card)
+	{
+		if (int.TryParse(_whitestoneCountLabel.Text, out var whiteStoneCount))
+		{
+			whiteStoneCount++;
+			_whitestoneCountLabel.Text = whiteStoneCount.ToString();
+		}
+    }
 }

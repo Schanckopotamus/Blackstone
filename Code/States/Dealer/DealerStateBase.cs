@@ -19,6 +19,9 @@ namespace Blackstone.Code.States.Dealer
 
         public DealerState State { get; set; }
 
+        public virtual void Deal(int cardsToDeal)
+        { }
+
         public virtual void HandleInput(InputEvent inputEvent)
         { }
 
@@ -68,6 +71,11 @@ namespace Blackstone.Code.States.Dealer
             {
                 return collection;
             }
+        }
+
+        protected void DealCard(Card card, Vector2 targetPosition)
+        { 
+            
         }
 
         //public Vector2 Target { get; private set; }

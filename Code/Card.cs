@@ -12,6 +12,21 @@ public partial class Card : Area2D
 	public int ModeganCardValue { get; set; }
 	private Sprite2D _cardSprite;
 
+    public bool IsBlackstone 
+	{
+		get
+		{
+			return ModeganCardValue == 10;
+		}
+	}
+	public bool IsWhitestone 
+	{
+		get
+		{
+			return !IsBlackstone && ModeganCardValue != 0;
+		}
+	}
+
     [Export]
 	public float RotationPerSecond { get; set; }
 
@@ -49,10 +64,20 @@ public partial class Card : Area2D
 		_positionLabel = GetNode<Label>("PositionLabel/PositionValue");
         _gPositionLabel = GetNode<Label>("GPositionLabel/GPositionValue");
 
+		// When you need to know when a Transform property changes
+		//this.SetNotifyTransform(true);
     }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+    public override void _Notification(int what)
+    {
+		if (what == NotificationTransformChanged) 
+		{
+			GD.Print("*** Card Transform Changed ***");
+		}
+    }
+
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
 	{
 		var floatDelta = (float)delta;
 
@@ -124,7 +149,6 @@ public partial class Card : Area2D
 		if (isGlobal)
 		{
 			this.GlobalPosition = position;
-			this.Position = Vector2.Zero;
 		}
 		else 
 		{

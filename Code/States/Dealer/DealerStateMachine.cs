@@ -28,9 +28,11 @@ public partial class DealerStateMachine : DealerStateBase
     public override void _Ready()
     {
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
-        _states = this.GetChildren().Select(ch => (DealerStateBase)ch).ToList();
 
-		//InitializeStates();
+		InitializeStates();
+        
+		CurrentState = _states.FirstOrDefault(st => st.State == DealerState.Idle);
+
 
 		CurrentState = GetNode<DealerStateBase>("Idle");
 		if (CurrentState != null) 
@@ -41,12 +43,13 @@ public partial class DealerStateMachine : DealerStateBase
 	}
 
 	private void InitializeStates()
-	{ 
-		_states = new List<DealerStateBase>();
-		_states.Add(GetNode<DealerStateBase>("Idle"));
-        _states.Add(GetNode<DealerStateBase>("PlayerAnte"));
-        _states.Add(GetNode<DealerStateBase>("FindFirstPlayer"));
-		_states.Add(GetNode<DealerStateBase>("Round"));
+	{
+        _states = this.GetChildren().Select(ch => (DealerStateBase)ch).ToList();
+
+        foreach (var state in _states) 
+		{
+            _signalBus.DealRequest += state.Deal;
+        }
     }
 
 	public void UnhandledInput(InputEvent inputEvent)
@@ -103,7 +106,7 @@ public partial class DealerStateMachine : DealerStateBase
 				CurrentState.Exit();
 				CurrentState = newState;
 
-				if (!paramDict.ContainsKey("DealerState"))
+                if (!paramDict.ContainsKey("DealerState"))
 				{
                     paramDict.Add("DealerState", CurrentState);
 				}
