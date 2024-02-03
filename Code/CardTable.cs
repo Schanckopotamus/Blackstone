@@ -25,12 +25,40 @@ public partial class CardTable : Node2D
 	// Used when players are in the game round.
 	private PlayerDrawPopup _playerDrawPopup;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+    public int PotTotal 
+	{
+		get
+		{
+			return int.TryParse(_potLabel.Text, out var potAmount)
+				? potAmount
+				: 0;
+		}
+		set
+		{
+			_potLabel.Text = value.ToString();
+		}
+	}
+
+	public int WhitestonesDealt {
+		get
+		{ 
+			return int.TryParse(_whitestoneCountLabel.Text, out var whitestonesDealt)
+				? whitestonesDealt
+				: 0;
+		}
+		set
+		{ 
+			_whitestoneCountLabel.Text = value.ToString();
+		}
+	}
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
 		_signalBus.PlayerFolded += HandlePlayerFolded;
 		_signalBus.WhiteStoneAdded += HandleWhiteStoneAdded;
+        _signalBus.PlayerLost += HandlePlayerLost;
 
         _dealer = GetNode<Dealer>("Dealer");
 		_tableBoxOrchestrator = GetNode<TableBoxOrchestrator>("TableBoxOrchestrator");
@@ -58,11 +86,6 @@ public partial class CardTable : Node2D
 
 		SubscribeDealerToBoxes();
     }
-
-	public void HandleCardBoxEnabled()
-	{ 
-		
-	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -119,7 +142,22 @@ public partial class CardTable : Node2D
 		_playerOrchestrator.SetActivePlayer(player);
 	}
 
-	private void HandlePlayerPanelPopup(string name, int numPlayers)
+	private void HandlePlayerLost(PlayerScene player)
+	{
+		// Player pays the amount of dealt Whitestones into Pot
+
+		if (player.CurrencyAmount >= WhitestonesDealt)
+		{ 
+			player.CurrencyAmount -= WhitestonesDealt;
+			PotTotal += WhitestonesDealt;
+
+			player.SetAntePositionVisibility(false);
+			player.CurrencyAmount -= 1;
+			PotTotal += 1;
+		}
+	}
+
+    private void HandlePlayerPanelPopup(string name, int numPlayers)
 	{ 
 		_playerDrawPopup.Reset(name, numPlayers, 0);
 		_playerDrawPopup.Popup();
@@ -127,15 +165,26 @@ public partial class CardTable : Node2D
 
 	private void HandlePlayerFolded(PlayerScene player)
 	{
-		var wasWhitestoneParseSuccessful = int.TryParse(_whitestoneCountLabel.Text, out var whiteStoneCount);
-		var wasPotCountParseSuccessful = int.TryParse(_potLabel.Text, out var potCount);
+		//var wasWhitestoneParseSuccessful = int.TryParse(_whitestoneCountLabel.Text, out var whiteStoneCount);
+		//var wasPotCountParseSuccessful = int.TryParse(_potLabel.Text, out var potCount);
 
 		var ante = 1;
-		var foldPenalty = wasWhitestoneParseSuccessful ? whiteStoneCount / 2 : 1;
+		var foldPenalty = WhitestonesDealt != 0 ? WhitestonesDealt / 2 : 1;
 
-		_potLabel.Text = wasPotCountParseSuccessful 
-			? (potCount + ante + foldPenalty).ToString()
-			: (ante + foldPenalty).ToString();
+		var payment = ante + foldPenalty;
+
+		if (player.CurrencyAmount >= payment)
+		{
+			player.CurrencyAmount -= payment;
+			PotTotal += payment;
+		}
+		else
+		{
+			PotTotal += player.CurrencyAmount;
+			player.CurrencyAmount = 0;
+		}
+
+		player.SetAntePositionVisibility(false);
     }
 
 	private void HandleWhiteStoneAdded(Card card)

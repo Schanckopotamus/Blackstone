@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=22 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://diyy0norf6bs0" path="res://Assets/Target.png" id="2_7d7rf"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://dcdxlk1btbjcr" path="res://Assets/Cards/md8.png" id="12_1uy5e"]
 [ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="13_jdk73"]
 [ext_resource type="Texture2D" uid="uid://b7iyr7yhdon6i" path="res://Assets/Cards/md10.png" id="14_oyuul"]
+[ext_resource type="Script" path="res://Code/States/Dealer/EndRoundState.cs" id="21_d7iiq"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -105,44 +106,55 @@ visible = false
 script = ExtResource("3_f6rhm")
 
 [node name="0" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 
 [node name="1" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 1
 CardTexture = ExtResource("5_lpmib")
 
 [node name="2" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 2
 CardTexture = ExtResource("6_ti4bq")
 
 [node name="3" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 3
 CardTexture = ExtResource("7_bjax0")
 
 [node name="4" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 4
 CardTexture = ExtResource("8_src1d")
 
 [node name="5" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 5
 CardTexture = ExtResource("9_co2fd")
 
 [node name="6" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 6
 CardTexture = ExtResource("10_q57df")
 
 [node name="7" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 7
 CardTexture = ExtResource("11_s33bw")
 
 [node name="8" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 8
 CardTexture = ExtResource("12_1uy5e")
 
 [node name="9" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 9
 CardTexture = ExtResource("13_jdk73")
 
 [node name="10" parent="CardGenerator" instance=ExtResource("4_8qs7x")]
+scale = Vector2(0.75, 0.75)
 ModeganCardValue = 10
 CardTexture = ExtResource("14_oyuul")
 
@@ -160,6 +172,9 @@ script = ExtResource("7_58l1g")
 
 [node name="Round" type="Node" parent="StateMachine"]
 script = ExtResource("8_7h6fx")
+
+[node name="EndRound" type="Node" parent="StateMachine"]
+script = ExtResource("21_d7iiq")
 
 [node name="CurrentStateContainer" type="VBoxContainer" parent="."]
 offset_left = -138.667

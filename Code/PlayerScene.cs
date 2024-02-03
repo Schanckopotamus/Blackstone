@@ -14,8 +14,22 @@ public partial class PlayerScene : Node2D
 	[Export]
 	public int SeatPositon { get; set; }
 
-	// The number of pixels between each card when visible on table.
-	private float _cardInHandSpaceing = 35;
+    public int CurrencyAmount 
+	{
+		get
+		{
+			return int.TryParse(_currencyValueLabel.Text, out var currencyValue)
+				? currencyValue
+				: 0;
+		}
+		set
+		{ 
+			_currencyValueLabel.Text = value.ToString();
+		}
+	}
+
+    // The number of pixels between each card when visible on table.
+    private float _cardInHandSpaceing = 35;
 
 	private Sprite2D _defaultPlayerImage;
 	private Sprite2D _activePlayerImage;
@@ -26,6 +40,7 @@ public partial class PlayerScene : Node2D
 	private CollisionShape2D _collisionBox;
 	private TextureButton _anteButton;
 	private SignalBus _signalBus;
+	private Label _currencyValueLabel;
 
 	private PlayerSeatState _seatState;
 
@@ -50,8 +65,12 @@ public partial class PlayerScene : Node2D
 		_cardsInHand = GetNode<Node>("Cards");
 		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionShape2D");
 		_anteButton = GetNode<TextureButton>("AnteButton");
+		_currencyValueLabel = GetNode<Label>("CurrencyContainer/CurrencyAmount");
 
 		_anteButton.Pressed += HandlePlayeredAnted;
+
+		CurrencyAmount = 100;
+
 
 		// Makes Player outline sprite active.
 		this.SetToPassive();
@@ -100,7 +119,7 @@ public partial class PlayerScene : Node2D
 			card.GetParent().RemoveChild(card);
 		}
 		card.SetToLayFlat();
-		card.ApplyScale(new Vector2(.70f, .70f));
+		//card.ApplyScale(new Vector2(.70f, .70f));
 		card.GlobalPosition = _dealMarker.GlobalPosition;
 
 		try
@@ -127,14 +146,18 @@ public partial class PlayerScene : Node2D
 
 			if (card.ModeganCardValue == 0) // If card is back card remove it
 			{
-				card.QueueFree();	
+				card.QueueFree();
+
+				var signalResult = EmitSignal(SignalName.OnCardCollided, this);
+
+				if (signalResult != Error.Ok)
+				{
+					GD.PrintErr(signalResult);
+				}
 			}
-
-			var signalResult = EmitSignal(SignalName.OnCardCollided, this);
-
-			if (signalResult != Error.Ok)
-			{
-				GD.PrintErr(signalResult);
+			else
+			{ 
+				this.TryAddCard(card);
 			}
         }
     }
@@ -168,7 +191,19 @@ public partial class PlayerScene : Node2D
 		_anteButton.Visible = shouldBeVisible;
 	}
 
-	private bool IsPlayerActive()
+    public override bool Equals(object obj)
+    {
+		if (obj == null || !(obj is PlayerScene))
+		{
+			return false;
+		}
+		else
+		{
+			return this.GetInstanceId() == ((PlayerScene)obj).GetInstanceId();
+		}
+    }
+
+    private bool IsPlayerActive()
 	{
 		if (_activePlayerImage == null)
 		{

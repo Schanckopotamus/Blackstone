@@ -50,6 +50,9 @@ namespace Blackstone.Code.Buses
         [Signal]
         public delegate void DealRequestEventHandler(int numCardsToDeal);
 
+        [Signal]
+        public delegate void PlayerLostEventHandler(PlayerScene lostPlayer);
+
         public void EmitRequestCardBoxDisabledSignal()
         {
             EmitSignal(SignalName.CardBoxDisabledRequested);
@@ -117,9 +120,14 @@ namespace Blackstone.Code.Buses
             EmitSignal(SignalName.WhiteStoneAdded, card);
         }
 
-        public void EmitDealRequest(int numCardsToDeal)
+        public void EmitDealRequestSignal(int numCardsToDeal)
         {
             EmitSignal(SignalName.DealRequest, numCardsToDeal);
+        }
+
+        public void EmitPlayerLostSignal(PlayerScene player)
+        { 
+            EmitSignal(SignalName.PlayerLost, player);
         }
     }
 }

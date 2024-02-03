@@ -14,7 +14,7 @@ public partial class DealRoundState : DealerStateBase
     private SignalBus _signalBus;
     private Dealer _dealer;
 
-    private bool _isTurnComplete = false;
+    private bool _didEndGameTrigger = false;
 
     private PlayerScene _activePlayer;
     private List<PlayerScene> _players;
@@ -31,10 +31,57 @@ public partial class DealRoundState : DealerStateBase
     }
 
     public override async void Deal(int numCardsToDeal)
-    {
+    {        
         await DealToDealer(numCardsToDeal);
 
         await DealRevealedDealerCardsToCardBoxes();
+
+        if (_didEndGameTrigger)
+        {
+            var parameters = new Dictionary<string, object>
+                {
+                    { "Players", _players }
+                };
+
+            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.EndRound, parameters);
+        }
+        else
+        { 
+            SetNextActivePlayer();
+                       
+            var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
+            _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
+        }    
+        
+        _dealer.Reset(); 
+    }
+
+    private void SetNextActivePlayer()
+    {
+        var index = GetIndexOfNextActivePlayer();
+        _activePlayer = _players[index];
+
+        // ActivePlayer UI indicator needs to be reset.
+        _signalBus.EmitPlayerFocusChangedSignal(_activePlayer);
+    }
+
+    private int GetIndexOfNextActivePlayer()
+    {
+        var activePlayerIndex = _players.IndexOf(_activePlayer);
+
+        if (activePlayerIndex == -1)
+        {
+            // TODO: trigger endgame or some other condition for when we don't know the next player
+            return activePlayerIndex;
+        }
+        else if (activePlayerIndex >= _players.Count() - 1) // Active player is in the last seat so get the first player in list
+        {
+            return 0;
+        }
+        else
+        {
+            return ++activePlayerIndex;
+        }
     }
 
     private async Task DealRevealedDealerCardsToCardBoxes()
@@ -51,8 +98,10 @@ public partial class DealRoundState : DealerStateBase
                 _dealer.DealToCardBox(card);
             }
             else
-            { 
+            {
+                _signalBus.EmitRequestCardBoxDisabledSignal();
                 await DealCardToActivePlayer(card);
+                _signalBus.EmitRequestCardBoxEnabledSignal();
             }
 
             await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
@@ -63,13 +112,15 @@ public partial class DealRoundState : DealerStateBase
 
     private async Task DealCardToActivePlayer(Card card)
     {
-        card.SetToDealt(_activePlayer.GlobalPosition, _dealer.DealSpeed);
+        var direction = card.GlobalPosition.DirectionTo(_activePlayer.GlobalPosition).Normalized();
+
+        card.SetToDealt(direction, _dealer.DealSpeed);
     }
 
     private async Task DealToDealer(int numCardsToDeal)
     {
         //await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
-        var didEndGameTrigger = false;
+        //var didEndGameTrigger = false;
 
         for (int i = 0; i < numCardsToDeal; i++)
         {
@@ -80,17 +131,19 @@ public partial class DealRoundState : DealerStateBase
 
             // Check to see if the card pulled is a 10 (blackstone)
             // If so, check to see if the player is holding a blackstone already.
-                // If so, End Game state (once someone gets 2 blackstone the round is over)
+            // If so, End Game state (once someone gets 2 blackstone the round is over)
+            // If 2 blackstones are revealed that is also an endgame state as all blackstones revealed by dealer are owned by active player.
             if (card.IsBlackstone
-                && _activePlayer.GetCardsInHand().Any(c => c.IsBlackstone))
+                && (_activePlayer.GetCardsInHand().Any(c => c.IsBlackstone)
+                || _dealer.GetCardsInHand().Count(c => c.IsBlackstone).Equals(2)))
             {
                 // Do not continue drawing cards, break loop.
-                didEndGameTrigger = true;
+                _didEndGameTrigger = true;
                 break;
             }
         }
 
-        if (didEndGameTrigger)
+        if (_didEndGameTrigger)
         {
             // End Game Signal or transition to an EndGameState
         }
@@ -146,7 +199,15 @@ public partial class DealRoundState : DealerStateBase
     { 
         if (_activePlayer != null) 
         {
-            _signalBus.EmitPlayerFoldedEventSignal(_activePlayer);
+            var playerFolded = _activePlayer;
+
+            _signalBus.EmitPlayerFoldedEventSignal(playerFolded);
+            SetNextActivePlayer();
+            
+            _players.Remove(playerFolded);
+
+            var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
+            _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
         }
     }
 }

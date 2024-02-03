@@ -114,11 +114,6 @@ public partial class Dealer : Node2D
         }
 	}
 
-	public void Reset()
-	{
-		DrawDealPosition = _originalDealerDrawPosition;
-	}
-
 	public void SetStateLabel()
 	{ 
 		
@@ -225,17 +220,17 @@ public partial class Dealer : Node2D
             card.GetParent().RemoveChild(card);
         }
         card.SetToLayFlatAt(DrawDealPosition, isGlobal: true);
-		card.ApplyScale(new Vector2(0.75f, 0.75f));
+		//card.ApplyScale(new Vector2(0.75f, 0.75f));
 
 		_cardsInHand.AddChild(card);
 
         this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
     }
 
-	public void RoundReset()
+	public void Reset()
 	{
-		//_dealerState = DealerState.DealToPlayer;
-	}
+        DrawDealPosition = _originalDealerDrawPosition;
+    }
 
 	private void CreateNewDealerMarkerPosition()
 	{

@@ -86,8 +86,8 @@ public partial class PlayerDrawPopup : Control
 
 	private void HandleFoldButtonPressed()
 	{
-		_signalBus.EmitPlayerFoldRequestSignal();
 		_popupPanel.Hide();
+		_signalBus.EmitPlayerFoldRequestSignal();
 	}
 
 	private void HandleDrawButtonPressed() 
@@ -101,7 +101,7 @@ public partial class PlayerDrawPopup : Control
 
 		NumberOfCardsToDeal += drawSliderValue;
 
-		_signalBus.EmitDealRequest(NumberOfCardsToDeal);
+		_signalBus.EmitDealRequestSignal(NumberOfCardsToDeal);
 
 		_popupPanel.Hide();
 	}
