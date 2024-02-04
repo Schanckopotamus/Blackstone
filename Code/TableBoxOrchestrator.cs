@@ -133,6 +133,18 @@ public partial class TableBoxOrchestrator : Node2D
         return null;
     }
 
+    public List<Card> GetAllCardsInBoxes()
+    {
+        var cards = new List<Card>();
+
+        foreach (var box in TableBoxes)
+        {
+            cards.AddRange(box.GetCardsInBox());
+        }
+
+        return cards;
+    }
+
     private void SubscribeBoxesToOnFullSignal()
     {
         foreach (var box in TableBoxes)

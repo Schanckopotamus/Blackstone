@@ -59,6 +59,8 @@ public partial class CardTable : Node2D
 		_signalBus.PlayerFolded += HandlePlayerFolded;
 		_signalBus.WhiteStoneAdded += HandleWhiteStoneAdded;
         _signalBus.PlayerLost += HandlePlayerLost;
+		_signalBus.WinningPlayersSelected += HandleWinningPlayers;
+		_signalBus.OnEndGame += HandleEndGameReset;
 
         _dealer = GetNode<Dealer>("Dealer");
 		_tableBoxOrchestrator = GetNode<TableBoxOrchestrator>("TableBoxOrchestrator");
@@ -165,9 +167,6 @@ public partial class CardTable : Node2D
 
 	private void HandlePlayerFolded(PlayerScene player)
 	{
-		//var wasWhitestoneParseSuccessful = int.TryParse(_whitestoneCountLabel.Text, out var whiteStoneCount);
-		//var wasPotCountParseSuccessful = int.TryParse(_potLabel.Text, out var potCount);
-
 		var ante = 1;
 		var foldPenalty = WhitestonesDealt != 0 ? WhitestonesDealt / 2 : 1;
 
@@ -195,4 +194,42 @@ public partial class CardTable : Node2D
 			_whitestoneCountLabel.Text = whiteStoneCount.ToString();
 		}
     }
+
+	private void HandleWinningPlayers(Godot.Collections.Array<PlayerScene> winningPlayers)
+	{
+		var playerCount = winningPlayers.ToList().Count();
+
+		var splitAmount = PotTotal / playerCount;		
+		PotTotal = PotTotal % playerCount;// Remainder after even split
+
+		foreach (var player in winningPlayers)
+		{
+			player.CurrencyAmount += splitAmount;
+		}
+	}
+
+	private async void HandleEndGameReset()
+	{
+		// Send all cards to dealer to be dequeued
+		_signalBus.EmitRequestCardBoxDisabledSignal();
+		_playerOrchestrator.SetCollisionBoxesOff();
+
+		var cardBoxCards = _tableBoxOrchestrator.GetAllCardsInBoxes();
+		var playerCards = _playerOrchestrator.GetAllPlayersCards();
+		var allCards = cardBoxCards.Union(playerCards);
+
+		foreach (var card in allCards) 
+		{
+			var direction = card.GlobalPosition.DirectionTo(Vector2.Zero);
+
+			card.SetToDealt(direction, 2000);
+		}
+
+        await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
+
+        _playerOrchestrator.SetCollisionBoxesOn();
+		_signalBus.EmitRequestCardBoxEnabledSignal();
+
+		_signalBus.EmitPlayerStateChangeRequestedSignal(Blackstone.Code.Enums.DealerState.Idle, null);
+	}
 }

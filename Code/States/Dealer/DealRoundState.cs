@@ -53,7 +53,7 @@ public partial class DealRoundState : DealerStateBase
             _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
         }    
         
-        _dealer.Reset(); 
+        _dealer.ResetDrawPosition(); 
     }
 
     private void SetNextActivePlayer()
@@ -95,13 +95,13 @@ public partial class DealRoundState : DealerStateBase
         {
             if (card.IsWhitestone)
             {
+                _signalBus.EmitRequestCardBoxEnabledSignal();
                 _dealer.DealToCardBox(card);
             }
             else
             {
                 _signalBus.EmitRequestCardBoxDisabledSignal();
                 await DealCardToActivePlayer(card);
-                _signalBus.EmitRequestCardBoxEnabledSignal();
             }
 
             await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
@@ -192,7 +192,7 @@ public partial class DealRoundState : DealerStateBase
 
     public override void Exit()
     {
-        _dealer.Reset();
+        _dealer.ResetDrawPosition();
     }
 
     private void HandlePlayerFoldSignal()

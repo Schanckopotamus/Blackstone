@@ -36,13 +36,16 @@ public partial class EndRoundState : DealerStateBase
             SetLostPlayerToPrivateProperty();
 
             _signalBus.EmitPlayerLostSignal(_lostPlayer);
+
+            var winningPlayers = _players.Except(new[] { _lostPlayer }).ToList();
+            _signalBus.EmitWinningPlayersSelectedSignal(winningPlayers);
         }
         else if (_players.Count() == 1) // Only one left standing, they get the pot.
         {
-
+            _signalBus.EmitWinningPlayersSelectedSignal(_players);
         }
 
-        // TODO: Figure out how to get remaining players winnings from the pot.
+        _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.EndGame, null);
     }
 
     private void SetLostPlayerToPrivateProperty()
@@ -63,15 +66,14 @@ public partial class EndRoundState : DealerStateBase
             else
             {
                 // Two losers, figure how to handle that.
+                //var firstLoser = playersHoldingMinimumTwoBlackstones.First();
             }
             
-    }
+        }
     }
 
     public override void Exit()
     {
-        //_dealer.Reset();
-        //_activePlayer?.Dispose();
-        //_players.Clear();
+
     }
 }

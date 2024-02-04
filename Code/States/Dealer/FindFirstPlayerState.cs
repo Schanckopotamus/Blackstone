@@ -142,7 +142,9 @@ public partial class FindFirstPlayerState : DealerStateBase
     private void DealToPlayer(Node2D playerNode)
     {
         var card = _dealer.GenerateSpecificCard(0);//_cardGenerator.GetCard(0);
-        
+
+        card.GlobalPosition = _dealer.GlobalPosition;
+
         this.AddChild(card);
 
         var direction = _dealer.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();

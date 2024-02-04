@@ -135,6 +135,11 @@ public partial class CardTableBox : Node2D
 		return _cardStack.GetChildren().Count;
 	}
 
+	public List<Card> GetCardsInBox()
+	{ 
+		return _cardStack.GetChildren().Select(c => (Card)c).ToList();
+	}
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{

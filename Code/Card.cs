@@ -188,4 +188,9 @@ public partial class Card : Area2D
 
 		GlobalRotation += radiansPerFrame;
 	}
+
+	private void HandleCardExitedScreen()
+	{
+		this.QueueFree();
+	}
 }

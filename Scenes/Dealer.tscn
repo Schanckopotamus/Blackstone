@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=23 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://diyy0norf6bs0" path="res://Assets/Target.png" id="2_7d7rf"]
@@ -21,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="13_jdk73"]
 [ext_resource type="Texture2D" uid="uid://b7iyr7yhdon6i" path="res://Assets/Cards/md10.png" id="14_oyuul"]
 [ext_resource type="Script" path="res://Code/States/Dealer/EndRoundState.cs" id="21_d7iiq"]
+[ext_resource type="Script" path="res://Code/States/Dealer/EndGameState.cs" id="22_pjbws"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -175,6 +176,9 @@ script = ExtResource("8_7h6fx")
 
 [node name="EndRound" type="Node" parent="StateMachine"]
 script = ExtResource("21_d7iiq")
+
+[node name="EndGame" type="Node" parent="StateMachine"]
+script = ExtResource("22_pjbws")
 
 [node name="CurrentStateContainer" type="VBoxContainer" parent="."]
 offset_left = -138.667

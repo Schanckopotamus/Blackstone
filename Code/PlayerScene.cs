@@ -46,7 +46,12 @@ public partial class PlayerScene : Node2D
 
 	public bool IsActive => IsPlayerActive();
 
-	public bool IsAntedIn => IsPlayerAntedIn();
+	private bool _isAntedIn;
+	public bool IsAntedIn
+	{
+		get => IsPlayerAntedIn();
+		set => SetIsAntedIn(value);
+	}
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -75,6 +80,8 @@ public partial class PlayerScene : Node2D
 		// Makes Player outline sprite active.
 		this.SetToPassive();
 
+		SetAntePositionVisibility(false);
+
 
 
 		// to see in window when runnig scene only for testing
@@ -94,7 +101,14 @@ public partial class PlayerScene : Node2D
 
 	private bool IsPlayerAntedIn()
 	{
-		return _anteButton.ButtonPressed;
+		_isAntedIn = _anteButton.ButtonPressed;
+		return _isAntedIn;
+	}
+
+	private void SetIsAntedIn(bool isAntedIn) 
+	{
+		_anteButton.ButtonPressed = isAntedIn;
+		_isAntedIn = isAntedIn;
 	}
 
 	public void HandleChildLeavingTree()

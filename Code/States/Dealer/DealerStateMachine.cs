@@ -95,7 +95,9 @@ public partial class DealerStateMachine : DealerStateBase
 
     private void ConnectToDealerStateSignal(string dealerState, Godot.Collections.Array<ParameterElement> parameters)
 	{
-        var paramDict = parameters.ToParamDictionary();
+		var paramDict = parameters != null
+			? parameters.ToParamDictionary()
+			: new Dictionary<string, object>();
 
         if (Enum.TryParse<DealerState>(dealerState, out var dState))
 		{

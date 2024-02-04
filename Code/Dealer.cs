@@ -38,7 +38,6 @@ public partial class Dealer : Node2D
 	private CardGenerator _cardGenerator;
 	private Marker2D _drawMarker;
 	private PlayerOrchestrator _playerOrchestrator;
-	private List<PlayerScene> _players;
 	private Label _currentStatelabel;
 	private SignalBus _signalBus;
 
@@ -59,6 +58,7 @@ public partial class Dealer : Node2D
     public override void _Ready()
 	{
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.OnEndGame += HandleEndGameReset;
 
 		_deck = CardFactory.CreateDeck();
 		_cardGenerator = GetNode<CardGenerator>("CardGenerator");
@@ -67,7 +67,6 @@ public partial class Dealer : Node2D
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
 		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
 		_playerOrchestrator = GetNode<PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
-		_players = _playerOrchestrator.Players;
         _currentStatelabel = GetNode<Label>("CurrentStateContainer/Value");
 
         _anteButton = GetNode<Button>("Ante");
@@ -194,6 +193,8 @@ public partial class Dealer : Node2D
 		var mdCard = _deck.DrawCard();
 		var card = _cardGenerator.GetCard(mdCard.Value);
 
+		card.GlobalPosition = this.GlobalPosition;
+
 		return card;
 	}
 
@@ -227,7 +228,7 @@ public partial class Dealer : Node2D
         this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
     }
 
-	public void Reset()
+	public void ResetDrawPosition()
 	{
         DrawDealPosition = _originalDealerDrawPosition;
     }
@@ -268,5 +269,18 @@ public partial class Dealer : Node2D
         //{
         //    _dealerState = DealerState.DealToSelf;
         //}
+    }
+
+	private void HandleEndGameReset()
+	{
+		ResetDrawPosition();
+
+        _deck = CardFactory.CreateDeck();
+
+        var cardsInHand = _cardsInHand.GetChildren();
+        foreach (var card in cardsInHand)
+        {
+            card.QueueFree();
+        }
     }
 }

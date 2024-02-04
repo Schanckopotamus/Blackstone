@@ -56,3 +56,7 @@ offset_right = 43.0
 offset_bottom = 71.0
 theme_override_font_sizes/font_size = 20
 text = "(0,0)"
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="HandleCardExitedScreen"]

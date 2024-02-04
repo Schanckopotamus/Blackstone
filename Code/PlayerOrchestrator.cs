@@ -20,8 +20,8 @@ public partial class PlayerOrchestrator : Node2D
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
 		_signalBus.PlayerFocusChanged += SetActivePlayer;
 		_signalBus.PlayerAnteCompleted += HandleAnteCompletion;
-		
-	}
+		_signalBus.OnEndGame += HandleEndGameReset;
+    }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -58,6 +58,34 @@ public partial class PlayerOrchestrator : Node2D
 		return Players.Where(p => p.IsAntedIn).ToList();
 	}
 
+	public List<Card> GetAllPlayersCards()
+	{ 
+		var cards = new List<Card>();
+
+		foreach (var p in Players) 
+		{
+			cards.AddRange(p.GetCardsInHand());
+		}
+
+		return cards;
+	}
+
+	public void SetCollisionBoxesOn()
+	{
+        foreach (var player in Players)
+        {
+            player.CallDeferred("DisableCollisionBox");
+        }
+    }
+
+	public void SetCollisionBoxesOff()
+	{
+        foreach (var player in Players)
+        {
+            player.CallDeferred("EnableCollisionBox");
+        }
+    }
+
 	private void HandleAnteCompletion()
 	{ 
 		var notAntedPlayers = Players.Where(p => !p.IsAntedIn).ToList();
@@ -67,4 +95,19 @@ public partial class PlayerOrchestrator : Node2D
 			player.SetAntePositionVisibility(shouldBeVisible: false);
 		}
     }
+
+	private void ResetAnte()
+	{
+		foreach (var player in Players)
+		{
+			player.IsAntedIn = false;
+			player.SetAntePositionVisibility(false);
+		}
+	}
+
+	private void HandleEndGameReset()
+	{
+		this.SetAllToPassive();
+		this.ResetAnte();
+	}
 }

@@ -53,6 +53,12 @@ namespace Blackstone.Code.Buses
         [Signal]
         public delegate void PlayerLostEventHandler(PlayerScene lostPlayer);
 
+        [Signal]
+        public delegate void WinningPlayersSelectedEventHandler(Godot.Collections.Array<PlayerScene> winningPlayers);
+
+        [Signal]
+        public delegate void OnEndGameEventHandler();
+
         public void EmitRequestCardBoxDisabledSignal()
         {
             EmitSignal(SignalName.CardBoxDisabledRequested);
@@ -128,6 +134,18 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerLostSignal(PlayerScene player)
         { 
             EmitSignal(SignalName.PlayerLost, player);
+        }
+
+        public void EmitWinningPlayersSelectedSignal(List<PlayerScene> winningPlayers)
+        {
+            var array = winningPlayers.ToGodotArray();
+
+            EmitSignal(SignalName.WinningPlayersSelected, array);
+        }
+
+        public void EmitEndGameSignal()
+        {
+            EmitSignal(SignalName.OnEndGame);
         }
     }
 }
