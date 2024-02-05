@@ -41,7 +41,6 @@ public partial class CardGenerator : Node2D
             if (item.Key >= 100)
             {
                 _preGenCardDict.Remove(item.Key);
-                continue;
             }
         }
     }

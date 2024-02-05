@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bihfrey7tbna8"]
+[gd_scene load_steps=11 format=3 uid="uid://bihfrey7tbna8"]
 
 [ext_resource type="Script" path="res://Code/CardTable.cs" id="1_cr66u"]
 [ext_resource type="PackedScene" uid="uid://b6a4miv24v4aq" path="res://Scenes/PlayerScene.tscn" id="2_4qlsy"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cm7emu4o0npsx" path="res://Scenes/CardTableBox.tscn" id="5_064hd"]
 [ext_resource type="Texture2D" uid="uid://daxq8j1nf14nf" path="res://Assets/Bar.png" id="6_qgrjx"]
 [ext_resource type="PackedScene" uid="uid://b813ceeapmc7u" path="res://Scenes/Dealer.tscn" id="7_ocbk2"]
+[ext_resource type="PackedScene" uid="uid://dwk4dmp0jlf7j" path="res://Scenes/PlayerDrawPopup.tscn" id="10_dh2hh"]
 
 [node name="CardTable" type="Node2D"]
 position = Vector2(57, 26)
@@ -23,21 +24,25 @@ script = ExtResource("3_7kwn7")
 
 [node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
 position = Vector2(540, 6526.67)
+SeatPositon = 1
 
 [node name="PlayerSeat2" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
 position = Vector2(3626.67, 6473.33)
+SeatPositon = 2
 
 [node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
 position = Vector2(6786.67, 6466.67)
+SeatPositon = 3
 
 [node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
 position = Vector2(9720, 6440)
+SeatPositon = 4
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
-offset_left = 928.0
-offset_top = 254.0
-offset_right = 1433.0
-offset_bottom = 395.0
+offset_left = 652.0
+offset_top = 425.0
+offset_right = 1157.0
+offset_bottom = 566.0
 metadata/_edit_group_ = true
 
 [node name="PotLabel" type="Label" parent="PotContainer"]
@@ -50,7 +55,29 @@ uppercase = true
 [node name="PotValueLabel" type="Label" parent="PotContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "1"
+text = "0
+"
+vertical_alignment = 1
+
+[node name="WhitestoneContainer" type="VBoxContainer" parent="."]
+offset_left = 652.0
+offset_top = 540.0
+offset_right = 1157.0
+offset_bottom = 628.0
+metadata/_edit_group_ = true
+
+[node name="WhitestoneTitleLabel" type="Label" parent="WhitestoneContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Whitestones"
+vertical_alignment = 1
+uppercase = true
+
+[node name="WhitestoneValueLabel" type="Label" parent="WhitestoneContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "0
+"
 vertical_alignment = 1
 
 [node name="TableBoxOrchestrator" type="Node2D" parent="."]
@@ -88,12 +115,12 @@ position = Vector2(613.333, 698.667)
 position = Vector2(1946.67, 698.667)
 
 [node name="Coin4" type="Sprite2D" parent="."]
-position = Vector2(1087, 537)
+position = Vector2(1102, 561)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_28htt")
 
 [node name="Bar" type="Sprite2D" parent="."]
-position = Vector2(714, 469)
+position = Vector2(1210, 473)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("6_qgrjx")
 
@@ -155,3 +182,9 @@ text = "0
 
 [node name="Dealer" parent="." instance=ExtResource("7_ocbk2")]
 position = Vector2(106, 99)
+
+[node name="PlayerDrawPopup" parent="." instance=ExtResource("10_dh2hh")]
+offset_left = 1073.0
+offset_top = 537.0
+offset_right = 1073.0
+offset_bottom = 537.0

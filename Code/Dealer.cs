@@ -6,6 +6,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,15 +28,16 @@ public partial class Dealer : Node2D
 	private int _numCardsInfrontOfDealer = 0;
 	// The number of cards the dealer will draw in front of them before sending them to the center.
 	private int _dealerDrawCountMax = 7;
+    // The number of pixels between each card when visible on table.
+    private float _cardInHandSpaceing = 35;
 
-	private DealerStateMachine _dealerStateMachine;
+    private DealerStateMachine _dealerStateMachine;
 
 	private CardDeck _deck;
 	private Card _backCard;
 	private CardGenerator _cardGenerator;
 	private Marker2D _drawMarker;
 	private PlayerOrchestrator _playerOrchestrator;
-	private List<PlayerScene> _players;
 	private Label _currentStatelabel;
 	private SignalBus _signalBus;
 
@@ -47,23 +49,36 @@ public partial class Dealer : Node2D
     public Vector2 TableBoxToDealPosition { get; set; }
     public Vector2 DrawDealPosition { get; set; }
 
+	private Label _markerPositionValue;
+	private Label _markerGlobalPositionValue;
+
+	private Node _cardsInHand;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.OnEndGame += HandleEndGameReset;
+
 		_deck = CardFactory.CreateDeck();
 		_cardGenerator = GetNode<CardGenerator>("CardGenerator");
-		_drawMarker = GetNode<Marker2D>("DrawMarker2D");
+		_drawMarker = GetNode<Marker2D>("DealMarker");
 		DrawDealPosition = _drawMarker.GlobalPosition;
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
 		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
 		_playerOrchestrator = GetNode<PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
-		_players = _playerOrchestrator.Players;
         _currentStatelabel = GetNode<Label>("CurrentStateContainer/Value");
 
         _anteButton = GetNode<Button>("Ante");
 		_dealButton = GetNode<Button>("Deal");
 		_roundButton = GetNode<Button>("Round");
+
+		_markerPositionValue = GetNode<Label>("DealMarker/MarkerPosition/PositionValueLabel");
+		_markerPositionValue.Text = $"({_drawMarker.Position.X.ToString("0.00")},{_drawMarker.Position.Y.ToString("0.00")})";
+		_markerGlobalPositionValue = GetNode<Label>("DealMarker/MarkerPosition/GPositionValueLabel");
+        _markerGlobalPositionValue.Text = $"({_drawMarker.GlobalPosition.X.ToString("0.00")},{_drawMarker.GlobalPosition.Y.ToString("0.00")})";
+
+		_cardsInHand = GetNode<Node>("CardsInHand");
     }
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -144,9 +159,26 @@ public partial class Dealer : Node2D
 		}
     }
 
+	public List<Card> GetCardsInHand()
+	{
+		var cards = _cardsInHand?.GetChildren();
+
+        return cards != null && cards.Any() 
+			? cards.Select(c => (Card)c).ToList()
+			: new List<Card>();
+	}
+
 	public void RequestDeal()
 	{
         EmitSignal(SignalName.OnDealRequested);
+    }
+
+	public void DealToCardBox(Card card)
+	{
+        RequestDeal();
+
+        var direction = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
+        card.SetToDealt(direction, DealSpeed);
     }
 
     public void DeliverCardToBox(CardTableBox box)
@@ -160,6 +192,8 @@ public partial class Dealer : Node2D
 	{
 		var mdCard = _deck.DrawCard();
 		var card = _cardGenerator.GetCard(mdCard.Value);
+
+		card.GlobalPosition = this.GlobalPosition;
 
 		return card;
 	}
@@ -180,10 +214,24 @@ public partial class Dealer : Node2D
 
 	}
 
-	public void RoundReset()
+	public void CardToDealer(Card card)
 	{
-		//_dealerState = DealerState.DealToPlayer;
-	}
+        if (card.GetParent() != null)
+        {
+            card.GetParent().RemoveChild(card);
+        }
+        card.SetToLayFlatAt(DrawDealPosition, isGlobal: true);
+		//card.ApplyScale(new Vector2(0.75f, 0.75f));
+
+		_cardsInHand.AddChild(card);
+
+        this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
+    }
+
+	public void ResetDrawPosition()
+	{
+        DrawDealPosition = _originalDealerDrawPosition;
+    }
 
 	private void CreateNewDealerMarkerPosition()
 	{
@@ -203,6 +251,14 @@ public partial class Dealer : Node2D
 		}        
     }
 
+	private void HandleChildEntered(Node node)
+	{
+		if (node.GetGroups().Any(x => x == "card"))
+		{ 
+			//this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
+        }
+    }
+
 	private void CheckDealerState()
 	{
         //if (_numCardsInfrontOfDealer >= _dealerDrawCountMax)
@@ -213,5 +269,18 @@ public partial class Dealer : Node2D
         //{
         //    _dealerState = DealerState.DealToSelf;
         //}
+    }
+
+	private void HandleEndGameReset()
+	{
+		ResetDrawPosition();
+
+        _deck = CardFactory.CreateDeck();
+
+        var cardsInHand = _cardsInHand.GetChildren();
+        foreach (var card in cardsInHand)
+        {
+            card.QueueFree();
+        }
     }
 }

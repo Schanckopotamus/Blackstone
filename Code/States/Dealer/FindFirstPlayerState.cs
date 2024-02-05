@@ -14,7 +14,6 @@ public partial class FindFirstPlayerState : DealerStateBase
 
     private SignalBus _signalBus;
 
-
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -29,10 +28,21 @@ public partial class FindFirstPlayerState : DealerStateBase
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
 
         _signalBus.EmitRequestCardBoxDisabledSignal();
+        //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: true);
+
+        // TODO: Having a List of PlayerScenes and ordering them might need to be centralized?
+        var players = 
+                base.ExtractCollectionFromParameters<PlayerScene>(parameters, "Players")
+                .OrderBy(p => p.SeatPositon)
+                .ToList();
+
+        // Ensure no player is marked as Active before determination is made.
+        foreach (var player in players) 
+        {
+            player.SetToPassive();
+        }
 
         await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
-
-        var players = base.ExtractCollectionFromParameters<PlayerScene>(parameters, "Players");
 
         if (players.Any())
         {
@@ -60,6 +70,7 @@ public partial class FindFirstPlayerState : DealerStateBase
     {
         //_players?.Clear();
         _signalBus.EmitRequestCardBoxEnabledSignal();
+        //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: false);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -133,7 +144,9 @@ public partial class FindFirstPlayerState : DealerStateBase
     private void DealToPlayer(Node2D playerNode)
     {
         var card = _dealer.GenerateSpecificCard(0);//_cardGenerator.GetCard(0);
-        
+
+        card.GlobalPosition = _dealer.GlobalPosition;
+
         this.AddChild(card);
 
         var direction = _dealer.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();
@@ -162,10 +175,11 @@ public partial class FindFirstPlayerState : DealerStateBase
                     await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
                     // Sets TableBoxToDealPosition from CardTable (Main)
-                    _dealer.RequestDeal();
+                    //_dealer.RequestDeal();
 
-                    var direction = card.GlobalPosition.DirectionTo(_dealer.TableBoxToDealPosition).Normalized();
-                    card.SetToDealt(direction, _dealer.DealSpeed);
+                    //var direction = card.GlobalPosition.DirectionTo(_dealer.TableBoxToDealPosition).Normalized();
+                    //card.SetToDealt(direction, _dealer.DealSpeed);
+                    _dealer.DealToCardBox(card);
                 }
             }
         }

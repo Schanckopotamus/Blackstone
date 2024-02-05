@@ -35,6 +35,36 @@ namespace Blackstone.Code.Buses
         [Signal]
         public delegate void PlayerAnteCompletedEventHandler();
 
+        [Signal]
+        public delegate void EmitAnteStartedEventHandler();
+
+        [Signal]
+        public delegate void PlayerPopUpRequestedEventHandler(string playerName, int numPlayers);
+
+        [Signal]
+        public delegate void PlayerFoldRequestEventHandler();
+
+        [Signal]
+        public delegate void PlayerFoldedEventHandler(PlayerScene foldPlayer);
+
+        [Signal]
+        public delegate void WhiteStoneAddedEventHandler(Card card);
+
+        [Signal]
+        public delegate void DealRequestEventHandler(int numCardsToDeal);
+
+        [Signal]
+        public delegate void PlayerLostEventHandler(PlayerScene lostPlayer);
+
+        [Signal]
+        public delegate void WinningPlayersSelectedEventHandler(Godot.Collections.Array<PlayerScene> winningPlayers);
+
+        [Signal]
+        public delegate void OnEndGameEventHandler();
+
+        [Signal]
+        public delegate void PlayerCollisionChangeRequestEventHandler(bool isCollisionEnabled);
+
         public void EmitRequestCardBoxDisabledSignal()
         {
             EmitSignal(SignalName.CardBoxDisabledRequested);
@@ -73,6 +103,65 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerAnteCompletedSignal()
         {
             EmitSignal(SignalName.PlayerAnteCompleted);
+        }
+
+        public void EmitAnteStartedSignal()
+        {
+            EmitSignal(SignalName.EmitAnteStarted);
+        }
+
+        public void EmitPlayerPopUpRequestedSignal(PlayerPopupDTO popupInfo)
+        {
+            if (popupInfo != null && popupInfo.IsValid())
+            {
+                EmitSignal(SignalName.PlayerPopUpRequested, popupInfo.PlayerName, popupInfo.NumPlayers);
+            }
+            else
+            {
+                GD.Print("=> EmitPayerPopUpRequestedSignal NOT FIRED, PopupInfo NULL/Invalid");
+            }            
+        }
+
+        public void EmitPlayerFoldRequestSignal()
+        {
+            EmitSignal(SignalName.PlayerFoldRequest);
+        }
+
+        public void EmitPlayerFoldedEventSignal(PlayerScene player)
+        {
+            EmitSignal(SignalName.PlayerFolded, player);
+        }
+
+        public void EmitWhiteStoneAddedSignal(Card card)
+        {
+            EmitSignal(SignalName.WhiteStoneAdded, card);
+        }
+
+        public void EmitDealRequestSignal(int numCardsToDeal)
+        {
+            EmitSignal(SignalName.DealRequest, numCardsToDeal);
+        }
+
+        public void EmitPlayerLostSignal(PlayerScene player)
+        { 
+            EmitSignal(SignalName.PlayerLost, player);
+        }
+
+        public void EmitWinningPlayersSelectedSignal(List<PlayerScene> winningPlayers)
+        {
+            var array = winningPlayers.ToGodotArray();
+
+            EmitSignal(SignalName.WinningPlayersSelected, array);
+        }
+
+        public void EmitEndGameSignal()
+        {
+            EmitSignal(SignalName.OnEndGame);
+        }
+
+        public void EmitPlayerCollisionChangeRequestSignal(bool isCollisionEnabled)
+        {
+            EmitSignal(SignalName.PlayerCollisionChangeRequest, isCollisionEnabled);
         }
     }
 }

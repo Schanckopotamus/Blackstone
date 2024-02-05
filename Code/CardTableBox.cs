@@ -1,3 +1,4 @@
+using Blackstone.Code.Buses;
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,9 @@ public partial class CardTableBox : Node2D
 	[Signal]
 	public delegate void OnCardBoxFullEventHandler(CardTableBox box);
 
-	private HBoxContainer _container;
+	private SignalBus _signalBus;
+
+    private HBoxContainer _container;
 	private Area2D _box;
 	private Rect2 _windowSize;
 
@@ -36,7 +39,9 @@ public partial class CardTableBox : Node2D
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
-	{
+    {
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        
 		_m1 = GetNode<Marker2D>("Box/Slot1");
 		_m2 = GetNode<Marker2D>("Box/Slot2");
 		_m3 = GetNode<Marker2D>("Box/Slot3");
@@ -108,6 +113,9 @@ public partial class CardTableBox : Node2D
 				EmitSignal(SignalName.OnCardBoxFull, this);
 			}
 
+			// After card is added Emit Signal
+			_signalBus.EmitWhiteStoneAddedSignal(card);
+
 			return true;
 		}
 	}
@@ -125,6 +133,11 @@ public partial class CardTableBox : Node2D
 	public int GetCardCount()
 	{ 
 		return _cardStack.GetChildren().Count;
+	}
+
+	public List<Card> GetCardsInBox()
+	{ 
+		return _cardStack.GetChildren().Select(c => (Card)c).ToList();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
