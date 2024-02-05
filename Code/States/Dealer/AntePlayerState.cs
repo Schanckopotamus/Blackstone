@@ -25,6 +25,8 @@ namespace Blackstone.Code.States.Dealer
 
         public override void Enter(Dictionary<string, object> parameters = null)
         {
+            _signalBus.EmitAnteStartedSignal();
+
             _players.Clear();
         }
 

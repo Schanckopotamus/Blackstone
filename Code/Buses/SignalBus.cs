@@ -36,6 +36,9 @@ namespace Blackstone.Code.Buses
         public delegate void PlayerAnteCompletedEventHandler();
 
         [Signal]
+        public delegate void EmitAnteStartedEventHandler();
+
+        [Signal]
         public delegate void PlayerPopUpRequestedEventHandler(string playerName, int numPlayers);
 
         [Signal]
@@ -58,6 +61,9 @@ namespace Blackstone.Code.Buses
 
         [Signal]
         public delegate void OnEndGameEventHandler();
+
+        [Signal]
+        public delegate void PlayerCollisionChangeRequestEventHandler(bool isCollisionEnabled);
 
         public void EmitRequestCardBoxDisabledSignal()
         {
@@ -97,6 +103,11 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerAnteCompletedSignal()
         {
             EmitSignal(SignalName.PlayerAnteCompleted);
+        }
+
+        public void EmitAnteStartedSignal()
+        {
+            EmitSignal(SignalName.EmitAnteStarted);
         }
 
         public void EmitPlayerPopUpRequestedSignal(PlayerPopupDTO popupInfo)
@@ -146,6 +157,11 @@ namespace Blackstone.Code.Buses
         public void EmitEndGameSignal()
         {
             EmitSignal(SignalName.OnEndGame);
+        }
+
+        public void EmitPlayerCollisionChangeRequestSignal(bool isCollisionEnabled)
+        {
+            EmitSignal(SignalName.PlayerCollisionChangeRequest, isCollisionEnabled);
         }
     }
 }

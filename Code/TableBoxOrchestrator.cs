@@ -33,6 +33,7 @@ public partial class TableBoxOrchestrator : Node2D
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
         _signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
         _signalBus.CardBoxDisabledRequested += this.HandleBoxesCollisionDisabledEvent;
+        _signalBus.OnEndGame += HandleEndGameReset;
     }
 
     private void HandleBoxesCollisionEnabledEvent()
@@ -172,5 +173,10 @@ public partial class TableBoxOrchestrator : Node2D
                 nextActivePair.SetPairAsActive();
             }
         }
+    }
+
+    private void HandleEndGameReset()
+    {
+        InitializeCardBoxes();
     }
 }

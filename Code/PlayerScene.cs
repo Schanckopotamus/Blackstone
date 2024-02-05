@@ -80,7 +80,7 @@ public partial class PlayerScene : Node2D
 		// Makes Player outline sprite active.
 		this.SetToPassive();
 
-		SetAntePositionVisibility(false);
+		SetAnteButtonVisibility(false);
 
 
 
@@ -200,7 +200,7 @@ public partial class PlayerScene : Node2D
 		_activePlayerImage.Visible = false;	
 	}
 
-	public void SetAntePositionVisibility(bool shouldBeVisible)
+	public void SetAnteButtonVisibility(bool shouldBeVisible)
 	{ 
 		_anteButton.Visible = shouldBeVisible;
 	}

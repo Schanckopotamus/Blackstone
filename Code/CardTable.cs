@@ -153,7 +153,7 @@ public partial class CardTable : Node2D
 			player.CurrencyAmount -= WhitestonesDealt;
 			PotTotal += WhitestonesDealt;
 
-			player.SetAntePositionVisibility(false);
+			player.SetAnteButtonVisibility(false);
 			player.CurrencyAmount -= 1;
 			PotTotal += 1;
 		}
@@ -183,7 +183,7 @@ public partial class CardTable : Node2D
 			player.CurrencyAmount = 0;
 		}
 
-		player.SetAntePositionVisibility(false);
+		player.SetAnteButtonVisibility(false);
     }
 
 	private void HandleWhiteStoneAdded(Card card)
@@ -223,6 +223,7 @@ public partial class CardTable : Node2D
 			var direction = card.GlobalPosition.DirectionTo(Vector2.Zero);
 
 			card.SetToDealt(direction, 2000);
+			card.QueueFree();
 		}
 
         await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);

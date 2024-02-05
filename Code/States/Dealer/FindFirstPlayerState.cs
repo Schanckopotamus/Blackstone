@@ -28,6 +28,7 @@ public partial class FindFirstPlayerState : DealerStateBase
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
 
         _signalBus.EmitRequestCardBoxDisabledSignal();
+        //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: true);
 
         // TODO: Having a List of PlayerScenes and ordering them might need to be centralized?
         var players = 
@@ -69,6 +70,7 @@ public partial class FindFirstPlayerState : DealerStateBase
     {
         //_players?.Clear();
         _signalBus.EmitRequestCardBoxEnabledSignal();
+        //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: false);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

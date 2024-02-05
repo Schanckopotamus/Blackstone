@@ -21,6 +21,8 @@ public partial class PlayerOrchestrator : Node2D
 		_signalBus.PlayerFocusChanged += SetActivePlayer;
 		_signalBus.PlayerAnteCompleted += HandleAnteCompletion;
 		_signalBus.OnEndGame += HandleEndGameReset;
+		_signalBus.EmitAnteStarted += HandleAnteStarted;
+		_signalBus.PlayerCollisionChangeRequest += HandleCollisionRequestChanged;
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,6 +42,10 @@ public partial class PlayerOrchestrator : Node2D
 		}		
 	}
 
+	/// <summary>
+	/// Makes sure that we set to passive and not active. Player(s) set to 
+	/// active are indicated as such in the UI.
+	/// </summary>
 	public void SetAllToPassive()
 	{ 
 		foreach (var plr in Players) 
@@ -74,7 +80,7 @@ public partial class PlayerOrchestrator : Node2D
 	{
         foreach (var player in Players)
         {
-            player.CallDeferred("DisableCollisionBox");
+            player.CallDeferred("EnableCollisionBox");
         }
     }
 
@@ -82,7 +88,7 @@ public partial class PlayerOrchestrator : Node2D
 	{
         foreach (var player in Players)
         {
-            player.CallDeferred("EnableCollisionBox");
+            player.CallDeferred("DisableCollisionBox");
         }
     }
 
@@ -92,7 +98,7 @@ public partial class PlayerOrchestrator : Node2D
 
 		foreach (var player in notAntedPlayers) 
 		{
-			player.SetAntePositionVisibility(shouldBeVisible: false);
+			player.SetAnteButtonVisibility(shouldBeVisible: false);
 		}
     }
 
@@ -101,7 +107,7 @@ public partial class PlayerOrchestrator : Node2D
 		foreach (var player in Players)
 		{
 			player.IsAntedIn = false;
-			player.SetAntePositionVisibility(false);
+			player.SetAnteButtonVisibility(false);
 		}
 	}
 
@@ -109,5 +115,28 @@ public partial class PlayerOrchestrator : Node2D
 	{
 		this.SetAllToPassive();
 		this.ResetAnte();
+	}
+
+	private void HandleAnteStarted()
+	{
+		this.SetAllToPassive();
+
+        foreach (var player in Players)
+        {
+            player.IsAntedIn = false;
+            player.SetAnteButtonVisibility(true);
+        }
+    }
+
+	private void HandleCollisionRequestChanged(bool isCollisionEnabled)
+	{
+		if (isCollisionEnabled)
+		{
+			this.SetCollisionBoxesOn();
+		}
+		else
+		{
+			this.SetCollisionBoxesOff();
+		}
 	}
 }
