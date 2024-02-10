@@ -1,4 +1,6 @@
 using Blackstone.Code;
+using Blackstone.Code.Buses;
+using Blackstone.Code.Enums;
 using Godot;
 using System;
 
@@ -44,12 +46,15 @@ public partial class Card : Area2D
     private Label _positionLabel;
 	private Label _gPositionLabel;
 
+	private CollisionOrchestrator _collisionOrchestrator;
+
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
-	{
-		//_rotationPerSecond = 0.25f;
-		_windowSize = GetViewport().GetVisibleRect(); 
+    {
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
+        //_rotationPerSecond = 0.25f;
+        _windowSize = GetViewport().GetVisibleRect(); 
 		//this.Position = new Vector2(_windowSize.Size.X / 2, _windowSize.Size.Y / 2);
 		// Start by moving to the right
 		Velocity = Vector2.Zero;//= new Vector2(1, 0);
@@ -104,14 +109,16 @@ public partial class Card : Area2D
 	/// </summary>
 	/// <param name="velocity">Direction to be delt, should be normalized but will do so if not</param>
 	/// <param name="speed">Pixels per second we want the movement to be</param>
-	public void SetToDealt(Vector2 velocity, int speed)
+	public void SetToDealt(Vector2 velocity, int speed, DealTarget dealTarget)
 	{ 
-		if (velocity == null || velocity == Vector2.Zero) 
+		if (velocity == Vector2.Zero) 
 		{
 			SetToLayFlat();
 		}
 		else
 		{
+			_collisionOrchestrator.ChangeDealingTarget(dealTarget);
+
 			if (!velocity.IsNormalized())
 			{
 				velocity = velocity.Normalized();

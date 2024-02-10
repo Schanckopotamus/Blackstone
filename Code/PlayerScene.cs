@@ -140,8 +140,11 @@ public partial class PlayerScene : Node2D
 		{
 			//_cardsInHand.AddChild(card);
 			_cardsInHand.CallDeferred(MethodName.AddChild, card);
-			
-			card.TreeExiting += HandleChildLeavingTree;
+            // Set the card in the boxes collision layer so it won't interact with the tablebox when resting inside it.
+            card.SetCollisionLayerValue(4, false); // remove from card layer (Layer 4)
+            card.SetCollisionLayerValue(2, true); // Add to Player Layer (Layer 2)
+
+            card.TreeExiting += HandleChildLeavingTree;
 			_dealMarker.GlobalPosition += new Vector2(_cardInHandSpaceing,0);
 		}
 		catch (Exception)

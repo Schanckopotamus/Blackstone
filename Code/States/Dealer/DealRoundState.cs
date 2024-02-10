@@ -86,7 +86,7 @@ public partial class DealRoundState : DealerStateBase
 
     private async Task DealRevealedDealerCardsToCardBoxes()
     {
-        _signalBus.EmitRequestCardBoxEnabledSignal();
+        //_signalBus.EmitRequestCardBoxEnabledSignal();
 
         var cards = _dealer.GetCardsInHand();
         cards.Reverse(); // We want to deal out in reverse order in which they were revealed
@@ -95,26 +95,26 @@ public partial class DealRoundState : DealerStateBase
         {
             if (card.IsWhitestone)
             {
-                _signalBus.EmitRequestCardBoxEnabledSignal();
+                //_signalBus.EmitRequestCardBoxEnabledSignal();
                 _dealer.DealToCardBox(card);
             }
             else
             {
-                _signalBus.EmitRequestCardBoxDisabledSignal();
+                //_signalBus.EmitRequestCardBoxDisabledSignal();
                 await DealCardToActivePlayer(card);
             }
 
             await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
         }
 
-        _signalBus.EmitRequestCardBoxDisabledSignal();
+        //_signalBus.EmitRequestCardBoxDisabledSignal();
     }
 
     private async Task DealCardToActivePlayer(Card card)
     {
         var direction = card.GlobalPosition.DirectionTo(_activePlayer.GlobalPosition).Normalized();
 
-        card.SetToDealt(direction, _dealer.DealSpeed);
+        card.SetToDealt(direction, _dealer.DealSpeed, DealTarget.Player);
     }
 
     private async Task DealToDealer(int numCardsToDeal)

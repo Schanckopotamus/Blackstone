@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b813ceeapmc7u"]
+[gd_scene load_steps=24 format=3 uid="uid://b813ceeapmc7u"]
 
 [ext_resource type="Script" path="res://Code/Dealer.cs" id="1_6i0c1"]
 [ext_resource type="Texture2D" uid="uid://diyy0norf6bs0" path="res://Assets/Target.png" id="2_7d7rf"]
@@ -22,6 +22,8 @@
 [ext_resource type="Texture2D" uid="uid://b7iyr7yhdon6i" path="res://Assets/Cards/md10.png" id="14_oyuul"]
 [ext_resource type="Script" path="res://Code/States/Dealer/EndRoundState.cs" id="21_d7iiq"]
 [ext_resource type="Script" path="res://Code/States/Dealer/EndGameState.cs" id="22_pjbws"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3cknv"]
 
 [node name="Dealer" type="Node2D"]
 scale = Vector2(0.75, 0.75)
@@ -72,6 +74,17 @@ position = Vector2(3.55557, 1.77777)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_7d7rf")
 
+[node name="DealerChip" type="Sprite2D" parent="."]
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("2_r567n")
+
+[node name="CollisionBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionBox"]
+rotation = 3.14159
+scale = Vector2(4.22883, -4.34847)
+shape = SubResource("CircleShape2D_3cknv")
+
 [node name="Ante" type="Button" parent="."]
 offset_left = 102.666
 offset_top = -109.333
@@ -95,10 +108,6 @@ offset_right = 240.333
 offset_bottom = 105.667
 theme_override_font_sizes/font_size = 40
 text = "ROUND"
-
-[node name="DealerChip" type="Sprite2D" parent="."]
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("2_r567n")
 
 [node name="TableDeckStack" type="Node2D" parent="."]
 
@@ -199,5 +208,6 @@ text = "<Unknown>"
 [node name="CardsInHand" type="Node" parent="."]
 
 [connection signal="child_entered_tree" from="." to="." method="HandleChildEntered"]
+[connection signal="body_entered" from="CollisionBox" to="." method="HandleBodyEntered"]
 [connection signal="pressed" from="Ante" to="." method="OnAntePressed"]
 [connection signal="pressed" from="Deal" to="." method="OnDealPressed"]

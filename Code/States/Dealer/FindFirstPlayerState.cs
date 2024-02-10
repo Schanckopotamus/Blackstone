@@ -27,7 +27,7 @@ public partial class FindFirstPlayerState : DealerStateBase
         _players?.Clear();
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
 
-        _signalBus.EmitRequestCardBoxDisabledSignal();
+        //_signalBus.EmitRequestCardBoxDisabledSignal();
         //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: true);
 
         // TODO: Having a List of PlayerScenes and ordering them might need to be centralized?
@@ -69,7 +69,7 @@ public partial class FindFirstPlayerState : DealerStateBase
     public override void Exit()
     {
         //_players?.Clear();
-        _signalBus.EmitRequestCardBoxEnabledSignal();
+        //_signalBus.EmitRequestCardBoxEnabledSignal();
         //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: false);
     }
 
@@ -99,7 +99,7 @@ public partial class FindFirstPlayerState : DealerStateBase
         {
             if (isTieBreakerRound)
             {            
-                _signalBus.EmitRequestCardBoxDisabledSignal();
+                //_signalBus.EmitRequestCardBoxDisabledSignal();
             }
             
             foreach (var player in players)
@@ -150,17 +150,17 @@ public partial class FindFirstPlayerState : DealerStateBase
         this.AddChild(card);
 
         var direction = _dealer.GlobalPosition.DirectionTo(playerNode.GlobalPosition).Normalized();
-        card.SetToDealt(direction, _dealer.DealSpeed);
+        card.SetToDealt(direction, _dealer.DealSpeed, DealTarget.Player);
     }
 
     private async Task DealPlayerCardsToBoxes(List<PlayerScene> players)
     {
-        _signalBus.EmitRequestCardBoxEnabledSignal();
+        //_signalBus.EmitRequestCardBoxEnabledSignal();
 
-        foreach (var player in players)
-        {
-            player.CallDeferred("DisableCollisionBox");
-        }
+        //foreach (var player in players)
+        //{
+        //    player.CallDeferred("DisableCollisionBox");
+        //}
 
         await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
 
@@ -188,7 +188,7 @@ public partial class FindFirstPlayerState : DealerStateBase
 
         foreach (var player in players)
         {
-            player.CallDeferred("EnableCollisionBox");
+            //player.CallDeferred("EnableCollisionBox");
         }
     }
 }

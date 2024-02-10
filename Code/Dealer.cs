@@ -178,7 +178,7 @@ public partial class Dealer : Node2D
         RequestDeal();
 
         var direction = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
-        card.SetToDealt(direction, DealSpeed);
+        card.SetToDealt(direction, DealSpeed, DealTarget.TableBox);
     }
 
     public void DeliverCardToBox(CardTableBox box)
@@ -251,13 +251,10 @@ public partial class Dealer : Node2D
 		}        
     }
 
-	private void HandleChildEntered(Node node)
+	private void HandleBodyEntered(Node2D node)
 	{
-		if (node.GetGroups().Any(x => x == "card"))
-		{ 
-			//this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
-        }
-    }
+		node.QueueFree();
+	}
 
 	private void CheckDealerState()
 	{

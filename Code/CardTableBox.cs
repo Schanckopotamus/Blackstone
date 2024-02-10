@@ -17,12 +17,6 @@ public partial class CardTableBox : Node2D
 	private Area2D _box;
 	private Rect2 _windowSize;
 
-	private Sprite2D _md9;
-	private Sprite2D _md8;
-	private Sprite2D _md5;
-	private Sprite2D _md4;
-	private Sprite2D _md1;
-
 	private Marker2D _m1;
 	private Marker2D _m2;
 	private Marker2D _m3;
@@ -57,23 +51,6 @@ public partial class CardTableBox : Node2D
         _windowSize = GetViewport().GetVisibleRect();
 		_markers.AddRange(new Marker2D[] {_m1, _m2, _m3, _m4, _m5});
 		_numSlots = _markers.Count;
-
-        #region Default Filled Cards
-		//_md9 = GetNode<Sprite2D>("Cards/Md9");
-		//_md9.GlobalPosition = _m1.GlobalPosition;
-
-		//_md8 = GetNode<Sprite2D>("Cards/Md8");
-		//_md8.GlobalPosition = _m2.GlobalPosition;
-
-		//_md5 = GetNode<Sprite2D>("Cards/Md5");
-		//_md5.GlobalPosition = _m3.GlobalPosition;
-
-		//_md4 = GetNode<Sprite2D>("Cards/Md4");
-		//_md4.GlobalPosition = _m4.GlobalPosition;
-
-		//_md1 = GetNode<Sprite2D>("Cards/Md1");
-		//_md1.GlobalPosition = _m5.GlobalPosition;
-        #endregion
     }
 
 	public bool TryAdd(Card card)
@@ -105,7 +82,7 @@ public partial class CardTableBox : Node2D
 			card.GlobalScale = new Vector2(1, 1);
 			card.SetToLayFlatAt(marker.Position, isGlobal: false);
 
-			if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
+            if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
 			{
 				_collisionBox.SetDeferred("disabled", true);
 				IsBoxFull = true;
@@ -123,11 +100,6 @@ public partial class CardTableBox : Node2D
 	public void SetCollisionDisabled(bool collisionDisabled) 
 	{		
 		_collisionBox.SetDeferred("disabled", collisionDisabled);
-	}
-
-	public bool GetCollisionBoxDisabled()
-	{
-		return _collisionBox.Disabled;
 	}
 
 	public int GetCardCount()

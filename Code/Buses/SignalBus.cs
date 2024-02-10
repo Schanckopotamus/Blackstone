@@ -18,12 +18,6 @@ namespace Blackstone.Code.Buses
     public partial class SignalBus : Node
     {
         [Signal]
-        public delegate void CardBoxDisabledRequestedEventHandler();
-
-        [Signal]
-        public delegate void CardBoxEnabledRequestedEventHandler();
-
-        [Signal]
         public delegate void PlayerFocusChangedEventHandler(PlayerScene newActivePlayer);
 
         [Signal]
@@ -64,16 +58,6 @@ namespace Blackstone.Code.Buses
 
         [Signal]
         public delegate void PlayerCollisionChangeRequestEventHandler(bool isCollisionEnabled);
-
-        public void EmitRequestCardBoxDisabledSignal()
-        {
-            EmitSignal(SignalName.CardBoxDisabledRequested);
-        }
-
-        public void EmitRequestCardBoxEnabledSignal() 
-        {
-            EmitSignal(SignalName.CardBoxEnabledRequested);
-        }
 
         public void EmitPlayerFocusChangedSignal(PlayerScene newActivePlayer)
         {
