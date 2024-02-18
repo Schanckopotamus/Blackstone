@@ -23,7 +23,7 @@ namespace Blackstone.Code.States.Dealer
 
         private void HandleStateChange(string dealerState, Godot.Collections.Array<ParameterElement> parameters)
         {
-            EmitSignal(SignalName.DealerStateTransitionRequested, dealerState);
+            //EmitSignal(SignalName.DealerStateTransitionRequested, dealerState);
         }
     }
 }

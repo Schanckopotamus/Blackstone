@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://b6a4miv24v4aq"]
+[gd_scene load_steps=10 format=3 uid="uid://b6a4miv24v4aq"]
 
 [ext_resource type="Texture2D" uid="uid://5gfdpapdfgej" path="res://Assets/PlayerMeeple.png" id="1_c0mok"]
 [ext_resource type="Script" path="res://Code/PlayerScene.cs" id="1_dn1sh"]
 [ext_resource type="Texture2D" uid="uid://qgyuinworryd" path="res://Assets/AnteMarker.png" id="2_5j06h"]
 [ext_resource type="Texture2D" uid="uid://cx5y0ja78yek6" path="res://Assets/ActivePlayerMeeple.png" id="2_jbh8v"]
 [ext_resource type="Texture2D" uid="uid://b40r6dah0dbvr" path="res://Assets/Coin4_Transparent.png" id="5_10pey"]
+[ext_resource type="Texture2D" uid="uid://omlklbncouh4" path="res://Assets/Indicators/RedLight.png" id="5_xohsn"]
 [ext_resource type="Texture2D" uid="uid://c1h1n07k5qryc" path="res://Assets/Coin4.png" id="6_axe47"]
+[ext_resource type="PackedScene" uid="uid://dbtx0ysr82b1t" path="res://Scenes/IndicatorLight.tscn" id="7_3bm2d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t3rlf"]
 size = Vector2(474, 235)
@@ -48,6 +50,10 @@ horizontal_alignment = 1
 [node name="CardDealMarker" type="Marker2D" parent="."]
 position = Vector2(1000, 0)
 
+[node name="RedLight" type="Sprite2D" parent="CardDealMarker"]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("5_xohsn")
+
 [node name="Box" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Box"]
@@ -66,5 +72,43 @@ toggle_mode = true
 texture_normal = ExtResource("5_10pey")
 texture_pressed = ExtResource("6_axe47")
 stretch_mode = 0
+
+[node name="CollisionLight" parent="." instance=ExtResource("7_3bm2d")]
+visible = false
+position = Vector2(-250, 337)
+scale = Vector2(1, 1)
+IndicatorText = "Collision"
+
+[node name="MarkerPositionContainer" type="VBoxContainer" parent="."]
+offset_left = 194.0
+offset_top = -444.0
+offset_right = 657.0
+offset_bottom = -281.0
+
+[node name="Title" type="Label" parent="MarkerPositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Marker Position"
+
+[node name="Value" type="Label" parent="MarkerPositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 55
+text = "<Unknown>"
+
+[node name="DefaultMarkerPositionContainer" type="VBoxContainer" parent="."]
+offset_left = -872.0
+offset_top = -435.0
+offset_right = -178.0
+offset_bottom = -272.0
+
+[node name="Title" type="Label" parent="DefaultMarkerPositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Default Marker Position"
+
+[node name="Value" type="Label" parent="DefaultMarkerPositionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 55
+text = "<Unknown>"
 
 [connection signal="area_entered" from="Box" to="." method="OnAreaEntered"]

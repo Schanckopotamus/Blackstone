@@ -25,7 +25,8 @@ public partial class TableBoxOrchestrator : Node2D
     public List<CardTableBox> TableBoxes { get; private set; }
     private bool _areBoxesDisabled;
 
-    public bool IsCollisionEnabled { 
+    public bool IsCollisionEnabled 
+    { 
         get
         {
             return !_areBoxesDisabled;
@@ -41,7 +42,6 @@ public partial class TableBoxOrchestrator : Node2D
         _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
         _collisionOrchestrator.OnCardBoxCollisionStateRequested
             += HandleTableBoxCollisionChange;
-
 
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
         //_signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
@@ -93,14 +93,25 @@ public partial class TableBoxOrchestrator : Node2D
             new CardTableBoxPair(_box9, _box10)
         };
 
+        PrepBoxStates();
+    }
+
+    private void PrepBoxStates()
+    {
+        // Initially set all other pairs but the first to not be visible. Limits the feel of a cluttered table
+        //_tableBoxPairs[1].SetBoxVisibility(false);
+        //_tableBoxPairs[2].SetBoxVisibility(false);
+        //_tableBoxPairs[3].SetBoxVisibility(false);
+        //_tableBoxPairs[4].SetBoxVisibility(false);
+
+        // Ensure starting states
+        foreach (var pair in _tableBoxPairs)
+        {
+            pair.Reset();
+        }
+
         // Set the first pair active for dealing
         _tableBoxPairs[0].IsActivePair = true;
-
-        // Initially set all other pairs but the first to not be visible. Limits the feel of a cluttered table
-        _tableBoxPairs[1].SetBoxVisibility(false);
-        _tableBoxPairs[2].SetBoxVisibility(false);
-        _tableBoxPairs[3].SetBoxVisibility(false);
-        _tableBoxPairs[4].SetBoxVisibility(false);
     }
 
     private void SetTableBoxDisabled()
@@ -168,6 +179,6 @@ public partial class TableBoxOrchestrator : Node2D
 
     private void HandleEndGameReset()
     {
-        InitializeCardBoxes();
+        PrepBoxStates();
     }
 }

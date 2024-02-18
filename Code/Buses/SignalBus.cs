@@ -27,6 +27,9 @@ namespace Blackstone.Code.Buses
         public delegate void PlayerAntedEventHandler(PlayerScene antedPlayer);
 
         [Signal]
+        public delegate void PlayerAnteRemovedEventHandler(PlayerScene antedPlayer);
+
+        [Signal]
         public delegate void PlayerAnteCompletedEventHandler();
 
         [Signal]
@@ -82,6 +85,11 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerAntedSignal(PlayerScene antedPlayer) 
         {
             EmitSignal(SignalName.PlayerAnted, antedPlayer);
+        }
+
+        public void EmitPlayerAnteRemovedSignal(PlayerScene anteRemovedPlayer)
+        { 
+            EmitSignal(SignalName.PlayerAnteRemoved, anteRemovedPlayer);
         }
 
         public void EmitPlayerAnteCompletedSignal()

@@ -38,6 +38,7 @@ public partial class PlayerDrawPopup : Control
     public override void _Ready()
     {
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.OnEndGame += HandleEndGame;
 
         _viewportWidth = ProjectSettings.GetSetting("display/window/size/viewport_width").AsInt32();
         _viewportHeight = ProjectSettings.GetSetting("display/window/size/viewport_height").AsInt32();
@@ -110,4 +111,9 @@ public partial class PlayerDrawPopup : Control
 	{
         _defaultDrawCount.Text = newValue.ToString();
     }
+
+	private void HandleEndGame()
+	{
+		NumberOfCardsToDeal = 1;
+	}
 }

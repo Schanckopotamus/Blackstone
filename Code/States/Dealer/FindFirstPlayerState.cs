@@ -11,6 +11,7 @@ public partial class FindFirstPlayerState : DealerStateBase
 {
     private Dealer _dealer;
     private List<PlayerScene> _players;
+    private CollisionOrchestrator _collisionOrchestrator;
 
     private SignalBus _signalBus;
 
@@ -20,15 +21,14 @@ public partial class FindFirstPlayerState : DealerStateBase
         this.State = DealerState.FindFirstPlayer;
         // This really goes against convention. Find a better way.
         _dealer = GetNode<Dealer>("../../../Dealer");
+        _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
     }
 
     public override async void Enter(Dictionary<string, object> parameters = null)
     {
         _players?.Clear();
-        _signalBus = GetNode<SignalBus>("/root/SignalBus");
-
-        //_signalBus.EmitRequestCardBoxDisabledSignal();
-        //_signalBus.EmitPlayerCollisionChangeRequestSignal(isCollisionEnabled: true);
+        _collisionOrchestrator.ChangeDealingTarget(DealTarget.Player);
 
         // TODO: Having a List of PlayerScenes and ordering them might need to be centralized?
         var players = 
@@ -143,7 +143,7 @@ public partial class FindFirstPlayerState : DealerStateBase
 
     private void DealToPlayer(Node2D playerNode)
     {
-        var card = _dealer.GenerateSpecificCard(0);//_cardGenerator.GetCard(0);
+        var card = _dealer.GenerateSpecificCard(0);
 
         card.GlobalPosition = _dealer.GlobalPosition;
 
@@ -155,13 +155,6 @@ public partial class FindFirstPlayerState : DealerStateBase
 
     private async Task DealPlayerCardsToBoxes(List<PlayerScene> players)
     {
-        //_signalBus.EmitRequestCardBoxEnabledSignal();
-
-        //foreach (var player in players)
-        //{
-        //    player.CallDeferred("DisableCollisionBox");
-        //}
-
         await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
 
         foreach (var player in players)
@@ -174,21 +167,11 @@ public partial class FindFirstPlayerState : DealerStateBase
                 {
                     await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
 
-                    // Sets TableBoxToDealPosition from CardTable (Main)
-                    //_dealer.RequestDeal();
-
-                    //var direction = card.GlobalPosition.DirectionTo(_dealer.TableBoxToDealPosition).Normalized();
-                    //card.SetToDealt(direction, _dealer.DealSpeed);
                     _dealer.DealToCardBox(card);
                 }
             }
         }
 
         await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
-
-        foreach (var player in players)
-        {
-            //player.CallDeferred("EnableCollisionBox");
-        }
     }
 }

@@ -5,6 +5,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class CardTable : Node2D
 {
@@ -55,6 +56,7 @@ public partial class CardTable : Node2D
 
 	private IndicatorLight _playerCollisionIndicator;
 	private IndicatorLight _cardBoxCollisionIndicator;
+	private IndicatorLight _dealerCollisionIndicator;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -94,6 +96,7 @@ public partial class CardTable : Node2D
 
 		_playerCollisionIndicator = GetNode<IndicatorLight>("PlayerLight");
 		_cardBoxCollisionIndicator = GetNode<IndicatorLight>("CardBoxLight");
+		_dealerCollisionIndicator = GetNode<IndicatorLight>("DealerLight");
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -112,6 +115,7 @@ public partial class CardTable : Node2D
 
 		_playerCollisionIndicator.SetIndicator(_playerOrchestrator.IsCollisionEnabled);
 		_cardBoxCollisionIndicator.SetIndicator(_tableBoxOrchestrator.IsCollisionEnabled);
+		_dealerCollisionIndicator.SetIndicator(_dealer.IsCollisionEnabled);
 	}
 
 	
@@ -230,18 +234,12 @@ public partial class CardTable : Node2D
 		var playerCards = _playerOrchestrator.GetAllPlayersCards();
 		var allCards = cardBoxCards.Union(playerCards);
 
-		foreach (var card in allCards) 
-		{
-			var direction = card.GlobalPosition.DirectionTo(Vector2.Zero);
-
-			card.SetToDealt(direction, 2000, DealTarget.Dealer);
+		foreach (var card in allCards)
+		{ 
 			card.QueueFree();
 		}
 
         await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
-
-        //_playerOrchestrator.SetCollisionBoxesOn();
-		//_signalBus.EmitRequestCardBoxEnabledSignal();
 
 		_signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.Idle, null);
 	}

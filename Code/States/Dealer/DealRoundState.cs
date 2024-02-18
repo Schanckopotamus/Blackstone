@@ -165,7 +165,6 @@ public partial class DealRoundState : DealerStateBase
             return;
         }
 
-            
         _activePlayer = _players.Where(p => p.IsActive).FirstOrDefault();
 
         if (_activePlayer != null) 
@@ -178,21 +177,12 @@ public partial class DealRoundState : DealerStateBase
                 
             _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
         }
-
-                
-
-            
-
-        //_signalBus.EmitRequestCardBoxDisabledSignal();
-
-        //await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
-
-            
     }
 
     public override void Exit()
     {
         _dealer.ResetDrawPosition();
+        _didEndGameTrigger = false;
     }
 
     private void HandlePlayerFoldSignal()
@@ -201,13 +191,21 @@ public partial class DealRoundState : DealerStateBase
         {
             var playerFolded = _activePlayer;
 
-            _signalBus.EmitPlayerFoldedEventSignal(playerFolded);
-            SetNextActivePlayer();
-            
-            _players.Remove(playerFolded);
+            if (_players.Count == 2) // One player left, other player is winner
+            {
+                
+            }
+            else
+            { 
+                _signalBus.EmitPlayerFoldedEventSignal(playerFolded);
+                SetNextActivePlayer();
 
-            var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
-            _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
+                _players.Remove(playerFolded);
+
+                var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
+                _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
+            }
+            
         }
     }
 }

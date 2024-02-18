@@ -79,6 +79,7 @@ scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_r567n")
 
 [node name="CollisionBox" type="Area2D" parent="."]
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionBox"]
 rotation = 3.14159
@@ -208,6 +209,5 @@ text = "<Unknown>"
 [node name="CardsInHand" type="Node" parent="."]
 
 [connection signal="child_entered_tree" from="." to="." method="HandleChildEntered"]
-[connection signal="body_entered" from="CollisionBox" to="." method="HandleBodyEntered"]
 [connection signal="pressed" from="Ante" to="." method="OnAntePressed"]
 [connection signal="pressed" from="Deal" to="." method="OnDealPressed"]

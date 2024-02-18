@@ -9,6 +9,7 @@ using System.Linq;
 public partial class EndRoundState : DealerStateBase
 {
     private SignalBus _signalBus;
+    private CollisionOrchestrator _collisionOrchestrator;
 
     private PlayerScene _lostPlayer;
     private List<PlayerScene> _players;
@@ -18,6 +19,7 @@ public partial class EndRoundState : DealerStateBase
     {
         this.State = DealerState.EndRound;
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -74,6 +76,7 @@ public partial class EndRoundState : DealerStateBase
 
     public override void Exit()
     {
-
+        _lostPlayer = null;
+        _collisionOrchestrator.ChangeDealingTarget(DealTarget.None);
     }
 }

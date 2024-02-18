@@ -94,19 +94,19 @@ public partial class PlayerOrchestrator : Node2D
 		}
     }
 
-	private void ResetAnte()
+	private void ResetPlayers()
 	{
 		foreach (var player in Players)
 		{
-			player.IsAntedIn = false;
-			player.SetAnteButtonVisibility(false);
+			
+			player.Reset();
 		}
 	}
 
 	private void HandleEndGameReset()
 	{
 		this.SetAllToPassive();
-		this.ResetAnte();
+		this.ResetPlayers();
 	}
 
 	private void HandleAnteStarted()
