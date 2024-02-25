@@ -64,11 +64,13 @@ texture = ExtResource("2_w35vb")
 [node name="CardStack" type="Node2D" parent="."]
 
 [node name="IsActiveLight" parent="." instance=ExtResource("8_e68gy")]
+visible = false
 position = Vector2(187, -73)
 scale = Vector2(0.2, 0.2)
 IndicatorText = "IsActive"
 
 [node name="IsCollisionActiveLight" parent="." instance=ExtResource("8_e68gy")]
+visible = false
 position = Vector2(185, 70)
 scale = Vector2(0.2, 0.2)
 IndicatorText = "IsCollisionActive"

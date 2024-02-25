@@ -62,7 +62,7 @@ namespace Blackstone.Code.States.Dealer
             {
                 { "Players", _players }
             };
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
         }
     }
 }

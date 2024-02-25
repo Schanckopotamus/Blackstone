@@ -36,6 +36,12 @@ public partial class FindFirstPlayerState : DealerStateBase
                 .OrderBy(p => p.SeatPositon)
                 .ToList();
 
+        if (players.Count < 2) 
+        {
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
+            return;
+        }
+
         // Ensure no player is marked as Active before determination is made.
         foreach (var player in players) 
         {
@@ -130,7 +136,7 @@ public partial class FindFirstPlayerState : DealerStateBase
                     { "Players", _players }
                 };
 
-                _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.DealPlayerTurn, parameters);
+                _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.DealPlayerTurn, parameters);
             }
             else
             {

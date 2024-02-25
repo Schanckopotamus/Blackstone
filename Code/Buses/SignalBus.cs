@@ -67,7 +67,7 @@ namespace Blackstone.Code.Buses
             EmitSignal(SignalName.PlayerFocusChanged, newActivePlayer);
         }
 
-        public void EmitPlayerStateChangeRequestedSignal(DealerState newState, Dictionary<string,object> parameters)
+        public void EmitDealerStateChangeRequestedSignal(DealerState newState, Dictionary<string,object> parameters)
         {
             var godotParams = new Godot.Collections.Array<ParameterElement>();
 

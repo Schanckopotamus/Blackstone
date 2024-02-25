@@ -47,7 +47,7 @@ public partial class EndRoundState : DealerStateBase
             _signalBus.EmitWinningPlayersSelectedSignal(_players);
         }
 
-        _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.EndGame, null);
+        _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.EndGame, null);
     }
 
     private void SetLostPlayerToPrivateProperty()

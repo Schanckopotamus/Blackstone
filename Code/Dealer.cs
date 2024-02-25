@@ -143,7 +143,7 @@ public partial class Dealer : Node2D
 
 		//parameterArray.Add(new ParameterElement("Players", _players));
 
-        _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
+        _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
     }
 
 	public async void OnDealPressed()

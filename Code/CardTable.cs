@@ -241,6 +241,6 @@ public partial class CardTable : Node2D
 
         await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
 
-		_signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.Idle, null);
+		_signalBus.EmitDealerStateChangeRequestedSignal(DealerState.Idle, null);
 	}
 }

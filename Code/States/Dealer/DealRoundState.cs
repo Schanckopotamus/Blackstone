@@ -43,7 +43,7 @@ public partial class DealRoundState : DealerStateBase
                     { "Players", _players }
                 };
 
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.EndRound, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.EndRound, parameters);
         }
         else
         { 
@@ -161,7 +161,7 @@ public partial class DealRoundState : DealerStateBase
         {
             // Log error
             // Transition to previous state
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
             return;
         }
 
