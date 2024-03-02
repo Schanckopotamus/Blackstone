@@ -37,7 +37,7 @@ public partial class DealerStateMachine : DealerStateBase
 		CurrentState = GetNode<DealerStateBase>("Idle");
 		if (CurrentState != null) 
 		{
-			_signalBus.PlayerStateChangeRequested += this.ConnectToDealerStateSignal;
+			_signalBus.PlayerStateChangeRequested += this.ConnectToDealerStateChangeSignal;
 			CurrentState.Enter();
 		}
 	}
@@ -93,7 +93,7 @@ public partial class DealerStateMachine : DealerStateBase
 	//	CurrentState.HandleInput(null);
 	//}
 
-    private void ConnectToDealerStateSignal(string dealerState, Godot.Collections.Array<ParameterElement> parameters)
+    private void ConnectToDealerStateChangeSignal(string dealerState, Godot.Collections.Array<ParameterElement> parameters)
 	{
 		var paramDict = parameters != null
 			? parameters.ToParamDictionary()

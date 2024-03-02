@@ -28,21 +28,27 @@ public partial class PlayerScene : Node2D
 		}
 	}
 
+    public Vector2 DealPosition { get; set; }
+
     // The number of pixels between each card when visible on table.
     private float _cardInHandSpaceing = 35;
 
 	private Sprite2D _defaultPlayerImage;
 	private Sprite2D _activePlayerImage;
 	// This is for when dealing Blackstones to player.
-	private Vector2 _defaultMarkerPosition;
+	private Vector2 _originalGlobalMarkerPosition;
 	private Marker2D _dealMarker;
 	private Node _cardsInHand;
 	private CollisionShape2D _collisionBox;
 	private TextureButton _anteButton;
 	private SignalBus _signalBus;
 	private Label _currencyValueLabel;
+	private IndicatorLight _collisionLight;
 
 	private PlayerSeatState _seatState;
+
+	private Label _markerPositionLabel;
+	private Label _defaultMarkerPositionLabel;
 
 	public bool IsActive => IsPlayerActive();
 
@@ -66,13 +72,19 @@ public partial class PlayerScene : Node2D
 		_activePlayerImage = GetNode<Sprite2D>("ActivePlayerImage");
 
 		_dealMarker = GetNode<Marker2D>("CardDealMarker");
-		_defaultMarkerPosition = _dealMarker.GlobalPosition;
+		DealPosition = _dealMarker.GlobalPosition;
+        _originalGlobalMarkerPosition = _dealMarker.GlobalPosition;
+
 		_cardsInHand = GetNode<Node>("Cards");
 		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionShape2D");
 		_anteButton = GetNode<TextureButton>("AnteButton");
 		_currencyValueLabel = GetNode<Label>("CurrencyContainer/CurrencyAmount");
+		_collisionLight = GetNode<IndicatorLight>("CollisionLight");
 
-		_anteButton.Pressed += HandlePlayeredAnted;
+		_markerPositionLabel = GetNode<Label>("MarkerPositionContainer/Value");
+        _defaultMarkerPositionLabel = GetNode<Label>("DefaultMarkerPositionContainer/Value");
+
+        _anteButton.Pressed += HandlePlayeredAnted;
 
 		CurrencyAmount = 100;
 
@@ -92,11 +104,28 @@ public partial class PlayerScene : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		_collisionLight.SetIndicator(!_collisionBox.Disabled);
+
+		var loweredName = this.Name.ToString().ToLower();
+		if (loweredName == "playerseat1")
+		{
+			GD.PrintRich("PlayerSeat1");
+		}
+		_markerPositionLabel.Text = DealPosition.ToString("0.00");
+		_defaultMarkerPositionLabel.Text = _originalGlobalMarkerPosition.ToString("0.00");
 	}
 
 	private void HandlePlayeredAnted()
 	{
-		_signalBus.EmitPlayerAntedSignal(this);
+		if (_anteButton.ButtonPressed)
+		{
+			_signalBus.EmitPlayerAntedSignal(this);
+		}
+		else
+		{ 
+			_signalBus.EmitPlayerAnteRemovedSignal(this);
+		}
+		
 	}
 
 	private bool IsPlayerAntedIn()
@@ -111,20 +140,26 @@ public partial class PlayerScene : Node2D
 		_isAntedIn = isAntedIn;
 	}
 
+	// TODO: Figure out a way to either unsubscribe the card to this after being delt away from player or a different way to indicate reshifting.
+	// maybe using the collisiton box over the card area and not over the player icon. That way we can potentially tap into AreaExited potetntially
+	// or a custom signal.
 	public void HandleChildLeavingTree()
 	{
-		_dealMarker.GlobalPosition += new Vector2(_cardInHandSpaceing, 0) * -1;
+		//var xCoord = Math.Clamp(DealPosition.X + (_cardInHandSpaceing * -1), 1000, 1200);
+		//DealPosition = new Vector2(xCoord, DealPosition.Y);
+
+		//DealPosition += new Vector2(_cardInHandSpaceing, 0) * -1;
 	}
 
 	public void DisableCollisionBox()
-	{		
+	{
 		_collisionBox.SetDeferred("disabled", true);
 	}
 
 	public void EnableCollisionBox()
 	{
-        _collisionBox.SetDeferred("disabled", false);
-    }
+		_collisionBox.SetDeferred("disabled", false);
+	}
 
 	public bool TryAddCard(Card card)
 	{
@@ -134,15 +169,14 @@ public partial class PlayerScene : Node2D
 		}
 		card.SetToLayFlat();
 		//card.ApplyScale(new Vector2(.70f, .70f));
-		card.GlobalPosition = _dealMarker.GlobalPosition;
+		card.GlobalPosition = DealPosition;
 
 		try
 		{
-			//_cardsInHand.AddChild(card);
 			_cardsInHand.CallDeferred(MethodName.AddChild, card);
-			
-			card.TreeExiting += HandleChildLeavingTree;
-			_dealMarker.GlobalPosition += new Vector2(_cardInHandSpaceing,0);
+            
+            card.TreeExiting += HandleChildLeavingTree;
+			DealPosition += new Vector2(_cardInHandSpaceing,0);
 		}
 		catch (Exception)
 		{
@@ -216,6 +250,14 @@ public partial class PlayerScene : Node2D
 			return this.GetInstanceId() == ((PlayerScene)obj).GetInstanceId();
 		}
     }
+
+	public void Reset()
+	{
+        IsAntedIn = false;
+        SetAnteButtonVisibility(false);
+		DealPosition = _originalGlobalMarkerPosition;//new Vector2(1000, 0);
+        //_dealMarker.GlobalPosition = _defaultGlobalMarkerPosition;
+	}
 
     private bool IsPlayerActive()
 	{

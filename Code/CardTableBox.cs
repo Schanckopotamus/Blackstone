@@ -17,12 +17,6 @@ public partial class CardTableBox : Node2D
 	private Area2D _box;
 	private Rect2 _windowSize;
 
-	private Sprite2D _md9;
-	private Sprite2D _md8;
-	private Sprite2D _md5;
-	private Sprite2D _md4;
-	private Sprite2D _md1;
-
 	private Marker2D _m1;
 	private Marker2D _m2;
 	private Marker2D _m3;
@@ -36,6 +30,8 @@ public partial class CardTableBox : Node2D
 	private Stack<Node2D> _slots = new Stack<Node2D>();
 	private Node2D _cardStack;
 	private CollisionShape2D _collisionBox;
+	private IndicatorLight _indicatorLight;
+    private IndicatorLight _collisionLight;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -51,32 +47,24 @@ public partial class CardTableBox : Node2D
 		_box = GetNode<Area2D>("Box");
 		_cardStack = GetNode<Node2D>("CardStack");
 		_collisionBox = GetNode<CollisionShape2D>("Box/CollisionBox");
+		_indicatorLight = GetNode<IndicatorLight>("IsActiveLight");
+		_collisionLight = GetNode<IndicatorLight>("IsCollisionActiveLight");
 
         IsBoxFull = false;
 		IsBoxActive = false;
         _windowSize = GetViewport().GetVisibleRect();
 		_markers.AddRange(new Marker2D[] {_m1, _m2, _m3, _m4, _m5});
 		_numSlots = _markers.Count;
-
-        #region Default Filled Cards
-		//_md9 = GetNode<Sprite2D>("Cards/Md9");
-		//_md9.GlobalPosition = _m1.GlobalPosition;
-
-		//_md8 = GetNode<Sprite2D>("Cards/Md8");
-		//_md8.GlobalPosition = _m2.GlobalPosition;
-
-		//_md5 = GetNode<Sprite2D>("Cards/Md5");
-		//_md5.GlobalPosition = _m3.GlobalPosition;
-
-		//_md4 = GetNode<Sprite2D>("Cards/Md4");
-		//_md4.GlobalPosition = _m4.GlobalPosition;
-
-		//_md1 = GetNode<Sprite2D>("Cards/Md1");
-		//_md1.GlobalPosition = _m5.GlobalPosition;
-        #endregion
     }
 
-	public bool TryAdd(Card card)
+    public override void _Process(double delta)
+    {
+		// Indicator Light 
+		_indicatorLight.SetIndicator(IsBoxActive);
+		_collisionLight.SetIndicator(!_collisionBox.Disabled);
+    }
+
+    public bool TryAdd(Card card)
 	{
 		if (IsBoxFull || _slots.Count >= _numSlots)
 		{
@@ -95,17 +83,15 @@ public partial class CardTableBox : Node2D
 			card.SetCollisionLayerValue(2, true);
 
 			_cardStack.CallDeferred(Node2D.MethodName.AddChild, card);
-			//_cardStack.AddChild(card);
 
 			// Set newly added card to the corresponding marker
             var stackCount = _cardStack.GetChildren().Count;
             var markerIndex = stackCount;
 			var marker = _markers[markerIndex];
-			//card.ApplyScale(new Vector2(1.45f, 1.45f));
 			card.GlobalScale = new Vector2(1, 1);
 			card.SetToLayFlatAt(marker.Position, isGlobal: false);
 
-			if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
+            if (stackCount >= 4) // Because the child isn't added (because it is deferred) until after the call we check for 4 instead of 5 
 			{
 				_collisionBox.SetDeferred("disabled", true);
 				IsBoxFull = true;
@@ -122,12 +108,8 @@ public partial class CardTableBox : Node2D
 
 	public void SetCollisionDisabled(bool collisionDisabled) 
 	{		
-		_collisionBox.SetDeferred("disabled", collisionDisabled);
-	}
-
-	public bool GetCollisionBoxDisabled()
-	{
-		return _collisionBox.Disabled;
+		//_collisionBox.SetDeferred("disabled", collisionDisabled);
+		_collisionBox.SetDeferred(CollisionShape2D.PropertyName.Disabled, collisionDisabled);
 	}
 
 	public int GetCardCount()
@@ -138,11 +120,6 @@ public partial class CardTableBox : Node2D
 	public List<Card> GetCardsInBox()
 	{ 
 		return _cardStack.GetChildren().Select(c => (Card)c).ToList();
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
 	}
 
 	public void HandleOnAreaEntered(Area2D area)
@@ -164,4 +141,11 @@ public partial class CardTableBox : Node2D
 			}
         }
     }
+
+	public void Reset()
+	{ 
+		IsBoxFull = false;
+		IsBoxActive = false;
+		SetCollisionDisabled(false);
+	}
 }

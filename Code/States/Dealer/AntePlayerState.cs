@@ -20,6 +20,7 @@ namespace Blackstone.Code.States.Dealer
             _signalBus = GetNode<SignalBus>("/root/SignalBus");
             _signalBus.PlayerAnted += HandlePlayerAnted;
             _signalBus.PlayerAnteCompleted += HandlePlayerAntedCompleted;
+            _signalBus.PlayerAnteRemoved += HandlePlayerRemovedAnte;
             _players = new List<PlayerScene>();
         }
 
@@ -27,7 +28,10 @@ namespace Blackstone.Code.States.Dealer
         {
             _signalBus.EmitAnteStartedSignal();
 
-            _players.Clear();
+            if (_players.Any())
+            {
+                _players.Clear();
+            }            
         }
 
         public override void Exit()
@@ -41,7 +45,15 @@ namespace Blackstone.Code.States.Dealer
 
         private void HandlePlayerAnted(PlayerScene player) 
         {
-            _players.Add(player);
+            if (!_players.Contains(player))
+            {
+                _players.Add(player);
+            }
+        }
+
+        private void HandlePlayerRemovedAnte(PlayerScene player) 
+        {
+            _players.Remove(player);
         }
 
         private void HandlePlayerAntedCompleted()
@@ -50,7 +62,7 @@ namespace Blackstone.Code.States.Dealer
             {
                 { "Players", _players }
             };
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
         }
     }
 }

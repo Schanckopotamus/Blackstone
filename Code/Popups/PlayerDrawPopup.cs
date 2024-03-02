@@ -13,31 +13,55 @@ public partial class PlayerDrawPopup : Control
 	private Label _defaultDrawCount;
 
 	private Button _foldButton;
-	private Button _drawButton;
+	private Button _dealButton;
 
-	private Label _cardDrawCount;
+	private Label _dealMoreCount;
+
+	private Label _totalCardsToDeal;
 
     private int _viewportWidth;
     private int _viewportHeight;
+
+    public int BaseDealCount 
+	{
+		get
+		{
+			return int.TryParse(_defaultDrawCount.Text, out int baseDealCount)
+					? baseDealCount
+					: 1;
+		}
+		set
+		{
+            _defaultDrawCount.Text = value.ToString();
+        } 
+	}
+    public int DealMoreCount
+    {
+        get
+        {
+            return int.TryParse(_dealMoreCount.Text, out int dealMoreCount)
+                    ? dealMoreCount
+                    : 1;
+        }
+        set
+        {
+            _dealMoreCount.Text = value.ToString();
+        }
+    }
 
     public int NumberOfCardsToDeal 
 	{
 		get
 		{
-			return int.TryParse(_cardDrawCount.Text, out var cardCount)
-				? cardCount
-				: 1;
+			return this.BaseDealCount + DealMoreCount;
         }
-		private set
-		{
-			_cardDrawCount.Text = value.ToString();
-		}
 	}
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+		_signalBus.OnEndGame += HandleEndGame;
 
         _viewportWidth = ProjectSettings.GetSetting("display/window/size/viewport_width").AsInt32();
         _viewportHeight = ProjectSettings.GetSetting("display/window/size/viewport_height").AsInt32();
@@ -53,16 +77,19 @@ public partial class PlayerDrawPopup : Control
 
 		_playerNameLabel = GetNode<Label>("PopupPanel/VBoxContainer/PlayerNameLabel");
 		_playerNameLabel.Text = "Player 1";
-		_drawSlider = GetNode<HSlider>("PopupPanel/VBoxContainer/DrawSlider");
-		_defaultDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/ValueLabel");
-		_cardDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/CardsToDrawContainer/CardDrawCount");
-
-		//_drawSlider.MaxValue = 5;
-		//_drawSlider.TickCount = 5;
-		//_drawCountLabel.Text = _drawSlider.MinValue.ToString();
 
 		_foldButton = GetNode<Button>("PopupPanel/VBoxContainer/HBoxContainer/FoldButton");
-        _drawButton = GetNode<Button>("PopupPanel/VBoxContainer/HBoxContainer/DrawButton");
+        _dealButton = GetNode<Button>("PopupPanel/VBoxContainer/HBoxContainer/DealButton");
+
+		_defaultDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/CardsToDrawContainer/CardDrawCount");
+		BaseDealCount = 1;
+
+		_dealMoreCount = GetNode<Label>("PopupPanel/VBoxContainer/DealMoreContainer/DealMoreCount");
+		_drawSlider = GetNode<HSlider>("PopupPanel/VBoxContainer/DrawSlider");
+
+		_totalCardsToDeal = GetNode<Label>("PopupPanel/VBoxContainer/TotalCardsToDealContainer/CardsToDealCount");
+
+		//_cardDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/CardsToDrawContainer/CardDrawCount");
     }
 
 	public void Reset(string name, int numPlayers, int drawCount)
@@ -71,7 +98,7 @@ public partial class PlayerDrawPopup : Control
 		_drawSlider.MaxValue = numPlayers;
 		_drawSlider.TickCount = numPlayers+1;
 		_drawSlider.Value = 0;
-		_defaultDrawCount.Text = drawCount.ToString();
+		//_defaultDrawCount.Text = drawCount.ToString();
 	}
 
 	public void Popup()
@@ -90,24 +117,27 @@ public partial class PlayerDrawPopup : Control
 		_signalBus.EmitPlayerFoldRequestSignal();
 	}
 
-	private void HandleDrawButtonPressed() 
+	private void HandleDealButtonPressed() 
 	{
-		// We need to be able to tell he Dealer to draw. Which innevitably should call into 
-		// the deal method.
-			// Maybe we have a property that stores the value and Deal() just uses that value
-			// to do the dealing.
-
-		var drawSliderValue = (int)_drawSlider.Value;
-
-		NumberOfCardsToDeal += drawSliderValue;
-
 		_signalBus.EmitDealRequestSignal(NumberOfCardsToDeal);
 
 		_popupPanel.Hide();
+
+		BaseDealCount += DealMoreCount;
 	}
 
 	private void HandleSliderValueChanged(float newValue) 
 	{
-        _defaultDrawCount.Text = newValue.ToString();
+        //_defaultDrawCount.Text = newValue.ToString();
+		_dealMoreCount.Text = newValue.ToString();
+		_totalCardsToDeal.Text = NumberOfCardsToDeal.ToString();
+    }
+
+	private void HandleEndGame()
+	{
+		//NumberOfCardsToDeal = 1;
+		BaseDealCount = 1;
+		DealMoreCount = 0;
+        _totalCardsToDeal.Text = BaseDealCount.ToString();
     }
 }

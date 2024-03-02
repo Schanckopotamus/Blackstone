@@ -18,12 +18,6 @@ namespace Blackstone.Code.Buses
     public partial class SignalBus : Node
     {
         [Signal]
-        public delegate void CardBoxDisabledRequestedEventHandler();
-
-        [Signal]
-        public delegate void CardBoxEnabledRequestedEventHandler();
-
-        [Signal]
         public delegate void PlayerFocusChangedEventHandler(PlayerScene newActivePlayer);
 
         [Signal]
@@ -31,6 +25,9 @@ namespace Blackstone.Code.Buses
 
         [Signal]
         public delegate void PlayerAntedEventHandler(PlayerScene antedPlayer);
+
+        [Signal]
+        public delegate void PlayerAnteRemovedEventHandler(PlayerScene antedPlayer);
 
         [Signal]
         public delegate void PlayerAnteCompletedEventHandler();
@@ -65,22 +62,12 @@ namespace Blackstone.Code.Buses
         [Signal]
         public delegate void PlayerCollisionChangeRequestEventHandler(bool isCollisionEnabled);
 
-        public void EmitRequestCardBoxDisabledSignal()
-        {
-            EmitSignal(SignalName.CardBoxDisabledRequested);
-        }
-
-        public void EmitRequestCardBoxEnabledSignal() 
-        {
-            EmitSignal(SignalName.CardBoxEnabledRequested);
-        }
-
         public void EmitPlayerFocusChangedSignal(PlayerScene newActivePlayer)
         {
             EmitSignal(SignalName.PlayerFocusChanged, newActivePlayer);
         }
 
-        public void EmitPlayerStateChangeRequestedSignal(DealerState newState, Dictionary<string,object> parameters)
+        public void EmitDealerStateChangeRequestedSignal(DealerState newState, Dictionary<string,object> parameters)
         {
             var godotParams = new Godot.Collections.Array<ParameterElement>();
 
@@ -98,6 +85,11 @@ namespace Blackstone.Code.Buses
         public void EmitPlayerAntedSignal(PlayerScene antedPlayer) 
         {
             EmitSignal(SignalName.PlayerAnted, antedPlayer);
+        }
+
+        public void EmitPlayerAnteRemovedSignal(PlayerScene anteRemovedPlayer)
+        { 
+            EmitSignal(SignalName.PlayerAnteRemoved, anteRemovedPlayer);
         }
 
         public void EmitPlayerAnteCompletedSignal()

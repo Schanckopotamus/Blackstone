@@ -7,8 +7,10 @@ using System.Linq;
 public partial class PlayerOrchestrator : Node2D
 {
     public List<PlayerScene> Players { get; private set; }
+    public bool IsCollisionEnabled { get; set; }
 
     private SignalBus _signalBus;
+    private CollisionOrchestrator _collisionOrchestrator;
 
     // This is the playerScene that represents the current players turn.
     //private PlayerScene _currentPlayer;
@@ -16,13 +18,19 @@ public partial class PlayerOrchestrator : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
+		IsCollisionEnabled = true;
+
 		Players = this.GetChildren().Select(ch => (PlayerScene)ch).ToList();
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
-		_signalBus.PlayerFocusChanged += SetActivePlayer;
+        _signalBus.PlayerFocusChanged += SetActivePlayer;
 		_signalBus.PlayerAnteCompleted += HandleAnteCompletion;
 		_signalBus.OnEndGame += HandleEndGameReset;
 		_signalBus.EmitAnteStarted += HandleAnteStarted;
-		_signalBus.PlayerCollisionChangeRequest += HandleCollisionRequestChanged;
+        //_signalBus.PlayerCollisionChangeRequest += HandleCollisionRequestChanged;
+
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
+		_collisionOrchestrator.OnPlayerCollisionStateRequested
+			+= HandleCollisionRequestChanged;
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -76,22 +84,6 @@ public partial class PlayerOrchestrator : Node2D
 		return cards;
 	}
 
-	public void SetCollisionBoxesOn()
-	{
-        foreach (var player in Players)
-        {
-            player.CallDeferred("EnableCollisionBox");
-        }
-    }
-
-	public void SetCollisionBoxesOff()
-	{
-        foreach (var player in Players)
-        {
-            player.CallDeferred("DisableCollisionBox");
-        }
-    }
-
 	private void HandleAnteCompletion()
 	{ 
 		var notAntedPlayers = Players.Where(p => !p.IsAntedIn).ToList();
@@ -102,19 +94,19 @@ public partial class PlayerOrchestrator : Node2D
 		}
     }
 
-	private void ResetAnte()
+	private void ResetPlayers()
 	{
 		foreach (var player in Players)
 		{
-			player.IsAntedIn = false;
-			player.SetAnteButtonVisibility(false);
+			
+			player.Reset();
 		}
 	}
 
 	private void HandleEndGameReset()
 	{
 		this.SetAllToPassive();
-		this.ResetAnte();
+		this.ResetPlayers();
 	}
 
 	private void HandleAnteStarted()
@@ -130,6 +122,8 @@ public partial class PlayerOrchestrator : Node2D
 
 	private void HandleCollisionRequestChanged(bool isCollisionEnabled)
 	{
+		IsCollisionEnabled = isCollisionEnabled;
+
 		if (isCollisionEnabled)
 		{
 			this.SetCollisionBoxesOn();
@@ -137,6 +131,22 @@ public partial class PlayerOrchestrator : Node2D
 		else
 		{
 			this.SetCollisionBoxesOff();
+		}
+	}
+
+	public void SetCollisionBoxesOn()
+	{
+		foreach (var player in Players)
+		{
+			player.CallDeferred("EnableCollisionBox");
+		}
+	}
+
+	public void SetCollisionBoxesOff()
+	{
+		foreach (var player in Players)
+		{
+			player.CallDeferred("DisableCollisionBox");
 		}
 	}
 }

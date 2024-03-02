@@ -103,6 +103,12 @@ namespace Blackstone.Code
             return null;
         }
 
+        public void Reset()
+        {
+            Box1.Reset();
+            Box2.Reset();
+        }
+
         private void SetBoxesActiveFlag(bool value)
         { 
             Box1.IsBoxActive = value;

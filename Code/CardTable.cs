@@ -1,9 +1,11 @@
 using Blackstone.Code;
 using Blackstone.Code.Buses;
+using Blackstone.Code.Enums;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class CardTable : Node2D
 {
@@ -52,6 +54,10 @@ public partial class CardTable : Node2D
 		}
 	}
 
+	private IndicatorLight _playerCollisionIndicator;
+	private IndicatorLight _cardBoxCollisionIndicator;
+	private IndicatorLight _dealerCollisionIndicator;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
@@ -87,6 +93,10 @@ public partial class CardTable : Node2D
 		_dealer.FirstPlayerFound += HandleFirstPlayerFound;
 
 		SubscribeDealerToBoxes();
+
+		_playerCollisionIndicator = GetNode<IndicatorLight>("PlayerLight");
+		_cardBoxCollisionIndicator = GetNode<IndicatorLight>("CardBoxLight");
+		_dealerCollisionIndicator = GetNode<IndicatorLight>("DealerLight");
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -102,6 +112,10 @@ public partial class CardTable : Node2D
 		//{
 
 		//}
+
+		_playerCollisionIndicator.SetIndicator(_playerOrchestrator.IsCollisionEnabled);
+		_cardBoxCollisionIndicator.SetIndicator(_tableBoxOrchestrator.IsCollisionEnabled);
+		_dealerCollisionIndicator.SetIndicator(_dealer.IsCollisionEnabled);
 	}
 
 	
@@ -211,26 +225,22 @@ public partial class CardTable : Node2D
 	private async void HandleEndGameReset()
 	{
 		// Send all cards to dealer to be dequeued
-		_signalBus.EmitRequestCardBoxDisabledSignal();
-		_playerOrchestrator.SetCollisionBoxesOff();
+		//_signalBus.EmitRequestCardBoxDisabledSignal();
+		//_playerOrchestrator.SetCollisionBoxesOff();
 
-		var cardBoxCards = _tableBoxOrchestrator.GetAllCardsInBoxes();
+		WhitestonesDealt = 0;
+
+        var cardBoxCards = _tableBoxOrchestrator.GetAllCardsInBoxes();
 		var playerCards = _playerOrchestrator.GetAllPlayersCards();
 		var allCards = cardBoxCards.Union(playerCards);
 
-		foreach (var card in allCards) 
-		{
-			var direction = card.GlobalPosition.DirectionTo(Vector2.Zero);
-
-			card.SetToDealt(direction, 2000);
+		foreach (var card in allCards)
+		{ 
 			card.QueueFree();
 		}
 
         await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
 
-        _playerOrchestrator.SetCollisionBoxesOn();
-		_signalBus.EmitRequestCardBoxEnabledSignal();
-
-		_signalBus.EmitPlayerStateChangeRequestedSignal(Blackstone.Code.Enums.DealerState.Idle, null);
+		_signalBus.EmitDealerStateChangeRequestedSignal(DealerState.Idle, null);
 	}
 }

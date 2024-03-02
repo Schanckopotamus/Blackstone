@@ -14,13 +14,13 @@ grow_vertical = 2
 script = ExtResource("1_rdy4e")
 
 [node name="PopupPanel" type="PopupPanel" parent="."]
-size = Vector2i(430, 608)
+size = Vector2i(498, 608)
 visible = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel"]
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 426.0
+offset_right = 494.0
 offset_bottom = 604.0
 
 [node name="PlayerNameLabel" type="Label" parent="PopupPanel/VBoxContainer"]
@@ -44,10 +44,10 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 35
 text = "FOLD"
 
-[node name="DrawButton" type="Button" parent="PopupPanel/VBoxContainer/HBoxContainer"]
+[node name="DealButton" type="Button" parent="PopupPanel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "DRAW"
+theme_override_font_sizes/font_size = 35
+text = "DEAL"
 
 [node name="HSeparator" type="HSeparator" parent="PopupPanel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
@@ -62,7 +62,7 @@ alignment = 1
 [node name="CardDrawLabel" type="Label" parent="PopupPanel/VBoxContainer/CardsToDrawContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-text = "Draw Count: "
+text = "Draw: "
 
 [node name="CardDrawCount" type="Label" parent="PopupPanel/VBoxContainer/CardsToDrawContainer"]
 layout_mode = 2
@@ -74,11 +74,20 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
 
-[node name="CardsToDrawLabel" type="Label" parent="PopupPanel/VBoxContainer"]
+[node name="DealMoreContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "More To Draw"
-horizontal_alignment = 1
+size_flags_vertical = 3
+alignment = 1
+
+[node name="DealMoreLabel" type="Label" parent="PopupPanel/VBoxContainer/DealMoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "Deal More: "
+
+[node name="DealMoreCount" type="Label" parent="PopupPanel/VBoxContainer/DealMoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "0"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="PopupPanel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
@@ -97,10 +106,29 @@ layout_mode = 2
 
 [node name="ValueLabel" type="Label" parent="PopupPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "0"
+theme_override_font_sizes/font_size = 10
 horizontal_alignment = 1
 
+[node name="HSeparator4" type="HSeparator" parent="PopupPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+
+[node name="TotalCardsToDealContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="CardsToDealLabel" type="Label" parent="PopupPanel/VBoxContainer/TotalCardsToDealContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "Total Draw Count: "
+
+[node name="CardsToDealCount" type="Label" parent="PopupPanel/VBoxContainer/TotalCardsToDealContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "1"
+
 [connection signal="pressed" from="PopupPanel/VBoxContainer/HBoxContainer/FoldButton" to="." method="HandleFoldButtonPressed"]
-[connection signal="pressed" from="PopupPanel/VBoxContainer/HBoxContainer/DrawButton" to="." method="HandleDrawButtonPressed"]
+[connection signal="pressed" from="PopupPanel/VBoxContainer/HBoxContainer/DealButton" to="." method="HandleDealButtonPressed"]
 [connection signal="value_changed" from="PopupPanel/VBoxContainer/DrawSlider" to="." method="HandleSliderValueChanged"]

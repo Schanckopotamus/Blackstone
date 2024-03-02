@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cm7emu4o0npsx"]
+[gd_scene load_steps=10 format=3 uid="uid://cm7emu4o0npsx"]
 
 [ext_resource type="Texture2D" uid="uid://x0kae0ye32lw" path="res://Assets/CardGroupingTableBox.png" id="1_re76y"]
 [ext_resource type="Script" path="res://Code/CardTableBox.cs" id="1_txsa2"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="4_5rbua"]
 [ext_resource type="Texture2D" uid="uid://b2sd0u6sylthi" path="res://Assets/Cards/md5.png" id="6_0kgug"]
 [ext_resource type="Texture2D" uid="uid://y736qs74v0fh" path="res://Assets/Cards/md4.png" id="6_43oc2"]
+[ext_resource type="PackedScene" uid="uid://dbtx0ysr82b1t" path="res://Scenes/IndicatorLight.tscn" id="8_e68gy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fy3no"]
 size = Vector2(211, 146)
@@ -61,5 +62,17 @@ position = Vector2(986, -6)
 texture = ExtResource("2_w35vb")
 
 [node name="CardStack" type="Node2D" parent="."]
+
+[node name="IsActiveLight" parent="." instance=ExtResource("8_e68gy")]
+visible = false
+position = Vector2(187, -73)
+scale = Vector2(0.2, 0.2)
+IndicatorText = "IsActive"
+
+[node name="IsCollisionActiveLight" parent="." instance=ExtResource("8_e68gy")]
+visible = false
+position = Vector2(185, 70)
+scale = Vector2(0.2, 0.2)
+IndicatorText = "IsCollisionActive"
 
 [connection signal="area_entered" from="Box" to="." method="HandleOnAreaEntered"]

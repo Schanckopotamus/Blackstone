@@ -8,6 +8,7 @@ using System.Linq;
 public partial class TableBoxOrchestrator : Node2D
 {
     private SignalBus _signalBus;
+    private CollisionOrchestrator _collisionOrchestrator;
 
     private CardTableBox _box1;
     private CardTableBox _box2;
@@ -24,34 +25,35 @@ public partial class TableBoxOrchestrator : Node2D
     public List<CardTableBox> TableBoxes { get; private set; }
     private bool _areBoxesDisabled;
 
+    public bool IsCollisionEnabled 
+    { 
+        get
+        {
+            return !_areBoxesDisabled;
+        }
+    }
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
         _areBoxesDisabled = false;
         InitializeCardBoxes();
 
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
+        _collisionOrchestrator.OnCardBoxCollisionStateRequested
+            += HandleTableBoxCollisionChange;
+
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
-        _signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
-        _signalBus.CardBoxDisabledRequested += this.HandleBoxesCollisionDisabledEvent;
+        //_signalBus.CardBoxEnabledRequested += this.HandleBoxesCollisionEnabledEvent;
+        //_signalBus.CardBoxDisabledRequested += this.HandleBoxesCollisionDisabledEvent;
         _signalBus.OnEndGame += HandleEndGameReset;
     }
 
-    private void HandleBoxesCollisionEnabledEvent()
-    {
-        _areBoxesDisabled = false;
+    private void HandleTableBoxCollisionChange(bool isEnabled)
+    { 
+        _areBoxesDisabled = !isEnabled;
         SetTableBoxDisabled();
     }
-    
-    private void HandleBoxesCollisionDisabledEvent()
-    {
-        _areBoxesDisabled = true;
-        SetTableBoxDisabled();
-    }
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
 
     private void InitializeCardBoxes()
     {
@@ -91,37 +93,37 @@ public partial class TableBoxOrchestrator : Node2D
             new CardTableBoxPair(_box9, _box10)
         };
 
+        PrepBoxStates();
+    }
+
+    private void PrepBoxStates()
+    {
+        // Initially set all other pairs but the first to not be visible. Limits the feel of a cluttered table
+        //_tableBoxPairs[1].SetBoxVisibility(false);
+        //_tableBoxPairs[2].SetBoxVisibility(false);
+        //_tableBoxPairs[3].SetBoxVisibility(false);
+        //_tableBoxPairs[4].SetBoxVisibility(false);
+
+        // Ensure starting states
+        foreach (var pair in _tableBoxPairs)
+        {
+            pair.Reset();
+        }
+
         // Set the first pair active for dealing
         _tableBoxPairs[0].IsActivePair = true;
-
-        // Initially set all other pairs but the first to not be visible. Limits the feel of a cluttered table
-        _tableBoxPairs[1].SetBoxVisibility(false);
-        _tableBoxPairs[2].SetBoxVisibility(false);
-        _tableBoxPairs[3].SetBoxVisibility(false);
-        _tableBoxPairs[4].SetBoxVisibility(false);
     }
 
     private void SetTableBoxDisabled()
     {
         foreach (var box in TableBoxes)
-        { 
+        {
             box.SetCollisionDisabled(_areBoxesDisabled);
         }
     }
 
     public CardTableBox GetFirstBoxThatIsFillable()
     {
-        //for (int i = 0; i < _tableBoxes.Count; i++)
-        //{
-        //	if (!_tableBoxes[i].IsBoxFull)
-        //	{
-        //		return _tableBoxes[i];
-        //	}
-        //}
-
-        // Find the active pair
-        // Then return the box with the fewest cards
-
         var activePairs = _tableBoxPairs.Where(p => p.IsActivePair);
 
         if (activePairs.Any())
@@ -177,6 +179,6 @@ public partial class TableBoxOrchestrator : Node2D
 
     private void HandleEndGameReset()
     {
-        InitializeCardBoxes();
+        PrepBoxStates();
     }
 }

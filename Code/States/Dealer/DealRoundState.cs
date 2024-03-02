@@ -43,7 +43,7 @@ public partial class DealRoundState : DealerStateBase
                     { "Players", _players }
                 };
 
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.EndRound, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.EndRound, parameters);
         }
         else
         { 
@@ -86,8 +86,6 @@ public partial class DealRoundState : DealerStateBase
 
     private async Task DealRevealedDealerCardsToCardBoxes()
     {
-        _signalBus.EmitRequestCardBoxEnabledSignal();
-
         var cards = _dealer.GetCardsInHand();
         cards.Reverse(); // We want to deal out in reverse order in which they were revealed
 
@@ -95,26 +93,22 @@ public partial class DealRoundState : DealerStateBase
         {
             if (card.IsWhitestone)
             {
-                _signalBus.EmitRequestCardBoxEnabledSignal();
                 _dealer.DealToCardBox(card);
             }
             else
             {
-                _signalBus.EmitRequestCardBoxDisabledSignal();
                 await DealCardToActivePlayer(card);
             }
 
             await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
         }
-
-        _signalBus.EmitRequestCardBoxDisabledSignal();
     }
 
     private async Task DealCardToActivePlayer(Card card)
     {
         var direction = card.GlobalPosition.DirectionTo(_activePlayer.GlobalPosition).Normalized();
 
-        card.SetToDealt(direction, _dealer.DealSpeed);
+        card.SetToDealt(direction, _dealer.DealSpeed, DealTarget.Player);
     }
 
     private async Task DealToDealer(int numCardsToDeal)
@@ -161,11 +155,10 @@ public partial class DealRoundState : DealerStateBase
         {
             // Log error
             // Transition to previous state
-            _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
+            _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.FindFirstPlayer, parameters);
             return;
         }
 
-            
         _activePlayer = _players.Where(p => p.IsActive).FirstOrDefault();
 
         if (_activePlayer != null) 
@@ -178,21 +171,12 @@ public partial class DealRoundState : DealerStateBase
                 
             _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
         }
-
-                
-
-            
-
-        //_signalBus.EmitRequestCardBoxDisabledSignal();
-
-        //await ToSignal(GetTree().CreateTimer(1.0f), SceneTreeTimer.SignalName.Timeout);
-
-            
     }
 
     public override void Exit()
     {
         _dealer.ResetDrawPosition();
+        _didEndGameTrigger = false;
     }
 
     private void HandlePlayerFoldSignal()
@@ -201,13 +185,29 @@ public partial class DealRoundState : DealerStateBase
         {
             var playerFolded = _activePlayer;
 
-            _signalBus.EmitPlayerFoldedEventSignal(playerFolded);
-            SetNextActivePlayer();
-            
-            _players.Remove(playerFolded);
+            if (_players.Count == 2) // One player left, other player is winner
+            {
+                _players.Remove(playerFolded);
 
-            var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
-            _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
+                _signalBus.EmitPlayerLostSignal(playerFolded);
+
+                _signalBus.EmitDealerStateChangeRequestedSignal(
+                    DealerState.EndRound,
+                    new Dictionary<string, object>
+                    { 
+                        { "Players", _players} 
+                    });
+            }
+            else
+            { 
+                _signalBus.EmitPlayerFoldedEventSignal(playerFolded);
+                SetNextActivePlayer();
+
+                _players.Remove(playerFolded);
+
+                var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
+                _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
+            }
         }
     }
 }

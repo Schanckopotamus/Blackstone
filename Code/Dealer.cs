@@ -21,10 +21,13 @@ public partial class Dealer : Node2D
 	[Signal]
 	public delegate void FirstPlayerFoundEventHandler(PlayerScene player);
 
-	//[Signal]
-	//public delegate void OnDealPlayerCardRequestedEventHandler();
+    //[Signal]
+    //public delegate void OnDealPlayerCardRequestedEventHandler();
 
-	public int DealSpeed = 2500;
+    private SignalBus _signalBus;
+    private CollisionOrchestrator _collisionOrchestrator;
+
+    public int DealSpeed = 2500;
 	private int _numCardsInfrontOfDealer = 0;
 	// The number of cards the dealer will draw in front of them before sending them to the center.
 	private int _dealerDrawCountMax = 7;
@@ -39,7 +42,6 @@ public partial class Dealer : Node2D
 	private Marker2D _drawMarker;
 	private PlayerOrchestrator _playerOrchestrator;
 	private Label _currentStatelabel;
-	private SignalBus _signalBus;
 
 	private Button _anteButton;
 	private Button _dealButton;
@@ -53,6 +55,15 @@ public partial class Dealer : Node2D
 	private Label _markerGlobalPositionValue;
 
 	private Node _cardsInHand;
+	private CollisionShape2D _collisionBox;
+
+    public bool IsCollisionEnabled
+    {
+        get
+        {
+            return !_collisionBox.Disabled;
+        }
+    }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -60,11 +71,17 @@ public partial class Dealer : Node2D
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
 		_signalBus.OnEndGame += HandleEndGameReset;
 
-		_deck = CardFactory.CreateDeck();
+        _collisionOrchestrator = GetNode<CollisionOrchestrator>("/root/CollisionOrchestrator");
+        _collisionOrchestrator.OnDealerCollisionStateRequested
+            += HandleDealerCollisionChange;
+
+        _deck = CardFactory.CreateDeck();
 		_cardGenerator = GetNode<CardGenerator>("CardGenerator");
+
 		_drawMarker = GetNode<Marker2D>("DealMarker");
 		DrawDealPosition = _drawMarker.GlobalPosition;
 		_originalDealerDrawPosition = _drawMarker.GlobalPosition;
+
 		_dealerStateMachine = GetNode<DealerStateMachine>("StateMachine"); // DealerState.FindFirstPlayer;
 		_playerOrchestrator = GetNode<PlayerOrchestrator>("/root/CardTable/PlayerOrchestrator");
         _currentStatelabel = GetNode<Label>("CurrentStateContainer/Value");
@@ -77,8 +94,10 @@ public partial class Dealer : Node2D
 		_markerPositionValue.Text = $"({_drawMarker.Position.X.ToString("0.00")},{_drawMarker.Position.Y.ToString("0.00")})";
 		_markerGlobalPositionValue = GetNode<Label>("DealMarker/MarkerPosition/GPositionValueLabel");
         _markerGlobalPositionValue.Text = $"({_drawMarker.GlobalPosition.X.ToString("0.00")},{_drawMarker.GlobalPosition.Y.ToString("0.00")})";
+		
+		_collisionBox = GetNode<CollisionShape2D>("CollisionBox/CollisionShape2D");
 
-		_cardsInHand = GetNode<Node>("CardsInHand");
+        _cardsInHand = GetNode<Node>("CardsInHand");
     }
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -124,7 +143,7 @@ public partial class Dealer : Node2D
 
 		//parameterArray.Add(new ParameterElement("Players", _players));
 
-        _signalBus.EmitPlayerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
+        _signalBus.EmitDealerStateChangeRequestedSignal(DealerState.PlayerAnte, null);
     }
 
 	public async void OnDealPressed()
@@ -141,23 +160,6 @@ public partial class Dealer : Node2D
             _signalBus.EmitPlayerAnteCompletedSignal();
         }
 	}
-
-    // When dealing we want the back card;
-    public async Task Deal()
-    {
-        CheckDealerState();
-
-		//var stateParams = new Dictionary<string, object>
-		//{
-		//	{ "Players", _players.Where(p => p.IsAntedIn).ToList() }
-		//};
-		//_dealerStateMachine.InitializeNewState(DealerState.FindFirstPlayer, stateParams);
-
-		if (_dealerStateMachine.CurrentState.State == DealerState.PlayerAnte) 
-		{
-			//_dealerStateMachine.Enter();
-		}
-    }
 
 	public List<Card> GetCardsInHand()
 	{
@@ -178,7 +180,7 @@ public partial class Dealer : Node2D
         RequestDeal();
 
         var direction = card.GlobalPosition.DirectionTo(TableBoxToDealPosition).Normalized();
-        card.SetToDealt(direction, DealSpeed);
+        card.SetToDealt(direction, DealSpeed, DealTarget.TableBox);
     }
 
     public void DeliverCardToBox(CardTableBox box)
@@ -251,25 +253,15 @@ public partial class Dealer : Node2D
 		}        
     }
 
-	private void HandleChildEntered(Node node)
+	private void HandleBodyEntered(Node2D node)
 	{
-		if (node.GetGroups().Any(x => x == "card"))
-		{ 
-			//this.DrawDealPosition += new Vector2(_cardInHandSpaceing, 0);
-        }
-    }
+		node.QueueFree();
+	}
 
-	private void CheckDealerState()
+	private void HandleAreaEntered(Area2D area)
 	{
-        //if (_numCardsInfrontOfDealer >= _dealerDrawCountMax)
-        //{
-        //    _dealerState = DealerState.DealToBox;
-        //}
-        //else if (_dealerState == DealerState.DealToPlayer && _drawMarker.GetChildren().Count <= 0)
-        //{
-        //    _dealerState = DealerState.DealToSelf;
-        //}
-    }
+		area.QueueFree();
+	}
 
 	private void HandleEndGameReset()
 	{
@@ -283,4 +275,9 @@ public partial class Dealer : Node2D
             card.QueueFree();
         }
     }
+
+	private void HandleDealerCollisionChange(bool isEnabled)
+	{
+		_collisionBox.SetDeferred("disabled", !isEnabled);
+	}
 }
