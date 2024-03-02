@@ -86,8 +86,6 @@ public partial class DealRoundState : DealerStateBase
 
     private async Task DealRevealedDealerCardsToCardBoxes()
     {
-        //_signalBus.EmitRequestCardBoxEnabledSignal();
-
         var cards = _dealer.GetCardsInHand();
         cards.Reverse(); // We want to deal out in reverse order in which they were revealed
 
@@ -95,19 +93,15 @@ public partial class DealRoundState : DealerStateBase
         {
             if (card.IsWhitestone)
             {
-                //_signalBus.EmitRequestCardBoxEnabledSignal();
                 _dealer.DealToCardBox(card);
             }
             else
             {
-                //_signalBus.EmitRequestCardBoxDisabledSignal();
                 await DealCardToActivePlayer(card);
             }
 
             await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
         }
-
-        //_signalBus.EmitRequestCardBoxDisabledSignal();
     }
 
     private async Task DealCardToActivePlayer(Card card)
@@ -193,7 +187,16 @@ public partial class DealRoundState : DealerStateBase
 
             if (_players.Count == 2) // One player left, other player is winner
             {
-                
+                _players.Remove(playerFolded);
+
+                _signalBus.EmitPlayerLostSignal(playerFolded);
+
+                _signalBus.EmitDealerStateChangeRequestedSignal(
+                    DealerState.EndRound,
+                    new Dictionary<string, object>
+                    { 
+                        { "Players", _players} 
+                    });
             }
             else
             { 
@@ -205,7 +208,6 @@ public partial class DealRoundState : DealerStateBase
                 var popupDto = new PlayerPopupDTO(_activePlayer.Name.ToString(), _players.Count());
                 _signalBus.EmitPlayerPopUpRequestedSignal(popupDto);
             }
-            
         }
     }
 }

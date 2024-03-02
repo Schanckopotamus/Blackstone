@@ -138,5 +138,6 @@ public partial class PlayerDrawPopup : Control
 		//NumberOfCardsToDeal = 1;
 		BaseDealCount = 1;
 		DealMoreCount = 0;
-	}
+        _totalCardsToDeal.Text = BaseDealCount.ToString();
+    }
 }

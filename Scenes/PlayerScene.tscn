@@ -80,6 +80,7 @@ scale = Vector2(1, 1)
 IndicatorText = "Collision"
 
 [node name="MarkerPositionContainer" type="VBoxContainer" parent="."]
+visible = false
 offset_left = 194.0
 offset_top = -444.0
 offset_right = 657.0
@@ -96,6 +97,7 @@ theme_override_font_sizes/font_size = 55
 text = "<Unknown>"
 
 [node name="DefaultMarkerPositionContainer" type="VBoxContainer" parent="."]
+visible = false
 offset_left = -872.0
 offset_top = -435.0
 offset_right = -178.0

@@ -70,7 +70,6 @@ public partial class EndRoundState : DealerStateBase
                 // Two losers, figure how to handle that.
                 //var firstLoser = playersHoldingMinimumTwoBlackstones.First();
             }
-            
         }
     }
 
