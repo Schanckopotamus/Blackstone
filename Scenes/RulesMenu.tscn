@@ -1,0 +1,133 @@
+[gd_scene load_steps=2 format=3 uid="uid://8q26rlqvk4eu"]
+
+[ext_resource type="Script" path="res://Code/Menus/RulesMenu.cs" id="1_s8yj7"]
+
+[node name="RulesMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s8yj7")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+custom_minimum_size = Vector2(1000, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_right = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="What is Blackstone?" type="ScrollContainer" parent="TabContainer"]
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="TabContainer/What is Blackstone?"]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 22
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 22
+theme_override_font_sizes/mono_font_size = 20
+text = "Blackstone is a press-your-luck gambling game played with a specialized deck of cards. The type of deck is a pyramidal deck. This means it contains cards labeled 1 through 10, with one 1’s card, two 2’s, three 3’s and so on ending with ten 10’s cards. Thus, creates a total deck size of 55 cards.
+
+The 10’s cards are Blackstones and all other cards (1-9) are Whitestones. Players are trying not to draw/collect a pair of Blackstones throughout a round. Once a player does collect a pair of Blackstones the round immediately stops and the game ends.
+"
+fit_content = true
+
+[node name="Setup" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="TabContainer/Setup"]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 22
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 22
+theme_override_font_sizes/mono_font_size = 20
+text = "Each player makes an ante, usually between 1-5 coins depending on the game setup, this signifies you are in for the round, leaving it out in front of the player but not in the pot. If you are knocked out, your ante goes into the pot.
+"
+fit_content = true
+
+[node name="Beginning The Round" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="TabContainer/Beginning The Round"]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 22
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 22
+theme_override_font_sizes/mono_font_size = 20
+text = "The deck is shuffled and a card is dealt to each player to determine who starts the round. The player with the lowest card goes first. If there is a tie for the lowest card deal another card to each tied player until the tie is broken.
+
+If anyone catches more than one 10 in this process (which is rare), you must return the extra 10’s to the deck and reshuffle after you determine who is going first. Since other pairs don’t matter, all other pairs you deal are simply ignored.
+
+After determining who goes first, bring all white stones (all cards that are not 10’s) into the center of the table, arranging them so that they can be easily counted. If a player is dealt a Blackstone during this process it remains face up in front of them.
+
+Players always keep their Blackstones. Collecting two Blackstones will knock the player out and end the game.
+"
+fit_content = true
+
+[node name="Player Turn" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="TabContainer/Player Turn"]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 22
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 22
+theme_override_font_sizes/mono_font_size = 20
+text = "On your turn, you may either draw cards from the deck or fold.
+
+Drawing a card: If you draw a card, you MUST take at least as many cards as the previous player (the first player must take at least one card but may take more). You can draw more cards than the previous player up to the number of people still in play. As an example, if there are 4 players in the game, the previous player took 2 cards. If you draw, you must take 2 with the option to draw up to 4 more for a total of 6.
+
+When drawing, if you collect two 10’s, you lose and the game is over. You must then pay your ante PLUS the amount equal to the number of revealed Whitestones on the table into the pot. The surviving players then split the pot evenly with any remainder left in the pot for the next round.
+
+Folding: If you fold, you drop out of the game. Pay an amount equal to half the white stones in play, rounding up, into the pot. Your ante also goes into the pot. For example, if you fold when there are 15 white stones in the center, your penalty is your ante, plus another 8 coins (which is half of 15, rounding up).
+
+Folding does not end the game, unless there is only one player left, in which case the remaining player takes the pot."
+fit_content = true
+
+[node name="Ending The Game" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="TabContainer/Ending The Game"]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 22
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 22
+theme_override_font_sizes/mono_font_size = 20
+text = "The game ends when someone gets a pair of 10’s. After the penalty for losing is paid, the pot is split evenly among all the surviving players, and any remaining coins remain in the pot for the next game. All the winners should retrieve their antes first, and then split what remains in the pot. You can then ante for the next round."
+fit_content = true
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 28.0
+offset_right = 211.0
+offset_bottom = 105.0
+theme_override_font_sizes/font_size = 50
+text = " < BACK "
+
+[connection signal="pressed" from="BackButton" to="." method="OnBackButtonPressed"]

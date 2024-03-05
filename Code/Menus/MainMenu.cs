@@ -18,6 +18,11 @@ public partial class MainMenu : Control
 		this.GetTree().ChangeSceneToFile("res://Scenes/CardsMain.tscn");
 	}
 
+	public void OnRulesButtonPressed()
+	{
+        this.GetTree().ChangeSceneToFile("res://Scenes/RulesMenu.tscn");
+    }
+
 	public void QuitButtonPressed()
 	{
 		this.GetTree().Quit();
