@@ -57,21 +57,29 @@ grow_vertical = 0
 
 [node name="Start" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Options")
 theme_override_font_sizes/font_size = 50
 text = "START"
 
 [node name="Options" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Start")
+focus_neighbor_bottom = NodePath("../Rules")
 theme_override_font_sizes/font_size = 50
 text = "OPTIONS"
 
 [node name="Rules" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Options")
+focus_neighbor_bottom = NodePath("../Quit")
 theme_override_font_sizes/font_size = 50
 text = "RULES"
 
 [node name="Quit" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Rules")
+focus_neighbor_bottom = NodePath("../Start")
 theme_override_font_sizes/font_size = 50
 text = "QUIT
 "
