@@ -6,8 +6,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Code\Menus\" />
-    <Folder Include="Code\Popups\" />
     <Folder Include="Scenes\" />
   </ItemGroup>
 </Project>

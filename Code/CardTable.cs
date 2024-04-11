@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 public partial class CardTable : Node2D
 {
     private SignalBus _signalBus;
+	private GameMetadata _gameMetadata;
 
     //private Card _card;
     private Sprite2D _testCard;
@@ -18,6 +19,7 @@ public partial class CardTable : Node2D
 	private Label _velocityLabel;
 	private Label _potLabel;
 	private Label _whitestoneCountLabel;
+	private Label _anteLabel;
 
 	private Dealer _dealer;
 
@@ -62,7 +64,8 @@ public partial class CardTable : Node2D
     public override void _Ready()
 	{
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
-		_signalBus.PlayerFolded += HandlePlayerFolded;
+        _gameMetadata = GetNode<GameMetadata>("/root/GameMetadata");
+        _signalBus.PlayerFolded += HandlePlayerFolded;
 		_signalBus.WhiteStoneAdded += HandleWhiteStoneAdded;
         _signalBus.PlayerLost += HandlePlayerLost;
 		_signalBus.WinningPlayersSelected += HandleWinningPlayers;
@@ -88,6 +91,8 @@ public partial class CardTable : Node2D
 		_velocityLabel = GetNode<Label>("VelocityContainer/CardVelocityValueLabel");
 		_potLabel = GetNode<Label>("PotContainer/PotValueLabel");
 		_whitestoneCountLabel = GetNode<Label>("WhitestoneContainer/WhitestoneValueLabel");
+		_anteLabel = GetNode<Label>("HBoxContainer/AnteLabel");
+		_anteLabel.Text = _gameMetadata.GameAnte.ToString();
 
 		_dealer.OnDealRequested += OnDealRequested;
 		_dealer.FirstPlayerFound += HandleFirstPlayerFound;
@@ -117,8 +122,6 @@ public partial class CardTable : Node2D
 		_cardBoxCollisionIndicator.SetIndicator(_tableBoxOrchestrator.IsCollisionEnabled);
 		_dealerCollisionIndicator.SetIndicator(_dealer.IsCollisionEnabled);
 	}
-
-	
 
     /// <summary>
     /// This is temporary as when dealing we need to place on the table
@@ -162,14 +165,14 @@ public partial class CardTable : Node2D
 	{
 		// Player pays the amount of dealt Whitestones into Pot
 
-		if (player.CurrencyAmount >= WhitestonesDealt)
+		var losingPenalty = WhitestonesDealt + _gameMetadata.GameAnte;
+
+		if (player.CurrencyAmount >= losingPenalty)
 		{ 
-			player.CurrencyAmount -= WhitestonesDealt;
-			PotTotal += WhitestonesDealt;
+			player.CurrencyAmount -= losingPenalty;
+			PotTotal += losingPenalty;
 
 			player.SetAnteButtonVisibility(false);
-			player.CurrencyAmount -= 1;
-			PotTotal += 1;
 		}
 	}
 
@@ -181,7 +184,7 @@ public partial class CardTable : Node2D
 
 	private void HandlePlayerFolded(PlayerScene player)
 	{
-		var ante = 1;
+		var ante = _gameMetadata.GameAnte;
 		var foldPenalty = WhitestonesDealt != 0 ? WhitestonesDealt / 2 : 1;
 
 		var payment = ante + foldPenalty;

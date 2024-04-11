@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://duw2qnu6671al"]
+[gd_scene load_steps=13 format=3 uid="uid://duw2qnu6671al"]
 
 [ext_resource type="Script" path="res://Code/Menus/MainMenu.cs" id="1_toqnv"]
 [ext_resource type="Texture2D" uid="uid://b7iyr7yhdon6i" path="res://Assets/Cards/md10.png" id="2_30p2s"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bmb4txaxrisy0" path="res://Assets/Cards/md7.png" id="8_ccmxb"]
 [ext_resource type="Texture2D" uid="uid://dcdxlk1btbjcr" path="res://Assets/Cards/md8.png" id="9_wphgb"]
 [ext_resource type="Texture2D" uid="uid://c85e3vf7ur2q2" path="res://Assets/Cards/md9.png" id="10_mrsh1"]
+[ext_resource type="Texture2D" uid="uid://dwyl262xlri3n" path="res://Assets/Indicators/Blackstone.png" id="12_d8thd"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -114,6 +115,7 @@ layout_mode = 2
 texture = ExtResource("6_no4x4")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 0
 offset_left = 516.0
 offset_top = 705.0
 offset_right = 1406.0
@@ -141,6 +143,15 @@ texture = ExtResource("10_mrsh1")
 layout_mode = 2
 texture = ExtResource("2_30p2s")
 
+[node name="Blackstone" type="Sprite2D" parent="."]
+position = Vector2(556, 275)
+texture = ExtResource("12_d8thd")
+
+[node name="Blackstone2" type="Sprite2D" parent="."]
+position = Vector2(1360, 278)
+texture = ExtResource("12_d8thd")
+
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="StartButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/Options" to="." method="OptionsButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/Rules" to="." method="OnRulesButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/Quit" to="." method="QuitButtonPressed"]

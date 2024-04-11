@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://8q26rlqvk4eu"]
+[gd_scene load_steps=5 format=3 uid="uid://8q26rlqvk4eu"]
 
 [ext_resource type="Script" path="res://Code/Menus/RulesMenu.cs" id="1_s8yj7"]
+[ext_resource type="Texture2D" uid="uid://dpwi08a561f8t" path="res://Assets/Buttons/B_Button_50x50.png" id="2_ccs7q"]
+[ext_resource type="Texture2D" uid="uid://cgofadmae7q2b" path="res://Assets/Buttons/LB_Button.png" id="3_yjvos"]
+[ext_resource type="Texture2D" uid="uid://dpj0b1sc0kric" path="res://Assets/Buttons/RB_Button.png" id="4_n0srv"]
 
 [node name="RulesMenu" type="Control"]
 layout_mode = 3
@@ -137,6 +140,17 @@ offset_top = 28.0
 offset_right = 211.0
 offset_bottom = 105.0
 theme_override_font_sizes/font_size = 50
-text = " < BACK "
+text = " BACK "
+icon = ExtResource("2_ccs7q")
+
+[node name="LbButton" type="Sprite2D" parent="."]
+position = Vector2(386, 43)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_yjvos")
+
+[node name="RbButton" type="Sprite2D" parent="."]
+position = Vector2(1537, 46)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("4_n0srv")
 
 [connection signal="pressed" from="BackButton" to="." method="OnBackButtonPressed"]

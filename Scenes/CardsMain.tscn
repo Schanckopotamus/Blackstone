@@ -204,3 +204,21 @@ IndicatorText = "CardBox"
 position = Vector2(1753, 275)
 scale = Vector2(0.25, 0.25)
 IndicatorText = "Dealer"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_left = 1485.0
+offset_top = -2.0
+offset_right = 1659.0
+offset_bottom = 67.0
+
+[node name="AnteLabelTitle" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 50
+text = "Ante: "
+
+[node name="AnteLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "0"

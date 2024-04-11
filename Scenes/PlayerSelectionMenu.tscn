@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dlo3iqs48mhk6"]
+[gd_scene load_steps=19 format=3 uid="uid://dlo3iqs48mhk6"]
 
 [ext_resource type="Texture2D" uid="uid://dudtbwubnqjma" path="res://Assets/PlayerIcons/pc_1.jpg" id="1_nwpq6"]
 [ext_resource type="Script" path="res://Code/Menus/PlayerSelectionMenu.cs" id="1_tl3h0"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://b807o7tme7dc5" path="res://Assets/PlayerIcons/pc_14.jpg" id="14_mxf1q"]
 [ext_resource type="Texture2D" uid="uid://brbhx10toe105" path="res://Assets/PlayerIcons/pc_15.jpg" id="15_blui8"]
 [ext_resource type="Texture2D" uid="uid://crf76bowd5dkp" path="res://Assets/PlayerIcons/pc_16.jpg" id="16_8c064"]
+[ext_resource type="Texture2D" uid="uid://dpwi08a561f8t" path="res://Assets/Buttons/B_Button_50x50.png" id="18_jk5pu"]
 
 [node name="PlayerSelectionMenu" type="Control"]
 layout_mode = 3
@@ -102,11 +103,13 @@ layout_mode = 2
 texture_normal = ExtResource("16_8c064")
 
 [node name="BackButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 31.0
 offset_top = 28.0
 offset_right = 211.0
 offset_bottom = 105.0
 theme_override_font_sizes/font_size = 50
-text = " < BACK "
+text = " BACK "
+icon = ExtResource("18_jk5pu")
 
 [connection signal="pressed" from="BackButton" to="." method="OnBackButtonPressed"]
