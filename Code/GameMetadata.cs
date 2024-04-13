@@ -14,10 +14,12 @@ namespace Blackstone.Code
     {
         public int GameAnte { get; private set; }
         public List<PlayerScene> Players { get; private set; }
+        public int DrawAmount { get; private set; }
 
         public override void _Ready()
         {
             GameAnte = 1;
+            DrawAmount = 1;
         }
 
         /// <summary>
@@ -57,6 +59,16 @@ namespace Blackstone.Code
         public void ClearPlayers()
         { 
             Players.Clear(); 
+        }
+
+        public void IncreaseDrawAmount(int amount)
+        {
+            DrawAmount += amount;
+        }
+
+        public void ResetDrawAmount()
+        {
+            DrawAmount = 1;
         }
     }
 }

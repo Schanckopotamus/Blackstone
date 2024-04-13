@@ -12,6 +12,8 @@ public partial class CardTable : Node2D
     private SignalBus _signalBus;
 	private GameMetadata _gameMetadata;
 
+    private PackedScene _playerDrawPackedScene;
+
     //private Card _card;
     private Sprite2D _testCard;
 	private Label _positionLabel;
@@ -27,7 +29,7 @@ public partial class CardTable : Node2D
 	private PlayerOrchestrator _playerOrchestrator;
 	
 	// Used when players are in the game round.
-	private PlayerDrawPopup _playerDrawPopup;
+	//private PlayerDrawPopup _playerDrawPopup;
 
     public int PotTotal 
 	{
@@ -65,6 +67,9 @@ public partial class CardTable : Node2D
 	{
 		_signalBus = GetNode<SignalBus>("/root/SignalBus");
         _gameMetadata = GetNode<GameMetadata>("/root/GameMetadata");
+
+        _playerDrawPackedScene = ResourceLoader.Load<PackedScene>("res://Scenes/PlayerDrawPopup.tscn");
+
         _signalBus.PlayerFolded += HandlePlayerFolded;
 		_signalBus.WhiteStoneAdded += HandleWhiteStoneAdded;
         _signalBus.PlayerLost += HandlePlayerLost;
@@ -75,8 +80,8 @@ public partial class CardTable : Node2D
 		_tableBoxOrchestrator = GetNode<TableBoxOrchestrator>("TableBoxOrchestrator");
         _playerOrchestrator = GetNode<PlayerOrchestrator>("PlayerOrchestrator");
 
-		_playerDrawPopup = GetNode<PlayerDrawPopup>("PlayerDrawPopup");
-		_playerDrawPopup.Hide();
+		//_playerDrawPopup = GetNode<PlayerDrawPopup>("PlayerDrawPopup");
+		//_playerDrawPopup.Hide();
         _signalBus.PlayerPopUpRequested += HandlePlayerPanelPopup;
 
         //TODO: Will need to be able to change the seating arrangment based on the number of players whenever a setup screen is created.
@@ -177,9 +182,13 @@ public partial class CardTable : Node2D
 	}
 
     private void HandlePlayerPanelPopup(string name, int numPlayers)
-	{ 
-		_playerDrawPopup.Reset(name, numPlayers, 0);
-		_playerDrawPopup.Popup();
+	{
+		var playerDrawScene = (PlayerDrawPopup)_playerDrawPackedScene.Instantiate();
+		this.AddChild(playerDrawScene);
+		playerDrawScene.Reset(name, numPlayers, 0);
+
+		//_playerDrawPopup.Reset(name, numPlayers, 0);
+		//_playerDrawPopup.Popup();
 	}
 
 	private void HandlePlayerFolded(PlayerScene player)
