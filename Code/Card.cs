@@ -73,14 +73,6 @@ public partial class Card : Area2D
 		//this.SetNotifyTransform(true);
     }
 
-    public override void _Notification(int what)
-    {
-		if (what == NotificationTransformChanged) 
-		{
-			GD.Print("*** Card Transform Changed ***");
-		}
-    }
-
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
 	{

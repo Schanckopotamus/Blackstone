@@ -14,6 +14,7 @@ RotationPerSecond = 1.5
 texture = ExtResource("2_wv264")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["card"]]
+visible = false
 position = Vector2(-1.90735e-06, -1.90735e-06)
 shape = SubResource("RectangleShape2D_i26t4")
 

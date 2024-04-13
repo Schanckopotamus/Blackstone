@@ -1,3 +1,4 @@
+using Blackstone.Code;
 using Blackstone.Code.Buses;
 using Blackstone.Code.Enums;
 using Blackstone.Code.States.Dealer;
@@ -8,12 +9,14 @@ using System.Collections.Generic;
 public partial class EndGameState : DealerStateBase
 {
     private SignalBus _signalBus;
+    private GameMetadata _gameMetadata;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         this.State = DealerState.EndGame;
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+        _gameMetadata = GetNode<GameMetadata>("/root/GameMetadata");
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

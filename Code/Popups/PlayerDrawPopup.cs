@@ -1,3 +1,4 @@
+using Blackstone.Code;
 using Blackstone.Code.Buses;
 using Godot;
 using System;
@@ -5,6 +6,7 @@ using System;
 public partial class PlayerDrawPopup : Control
 {
     private SignalBus _signalBus;
+    private GameMetadata _gameMetadata;
 
     private PopupPanel _popupPanel;
 
@@ -22,46 +24,34 @@ public partial class PlayerDrawPopup : Control
     private int _viewportWidth;
     private int _viewportHeight;
 
-    public int BaseDealCount 
+	public int DealMoreCount
 	{
 		get
 		{
-			return int.TryParse(_defaultDrawCount.Text, out int baseDealCount)
-					? baseDealCount
+			return int.TryParse(_dealMoreCount.Text, out int dealMoreCount)
+					? dealMoreCount
 					: 1;
 		}
 		set
 		{
-            _defaultDrawCount.Text = value.ToString();
-        } 
+			_dealMoreCount.Text = value.ToString();
+		}
 	}
-    public int DealMoreCount
-    {
-        get
-        {
-            return int.TryParse(_dealMoreCount.Text, out int dealMoreCount)
-                    ? dealMoreCount
-                    : 1;
-        }
-        set
-        {
-            _dealMoreCount.Text = value.ToString();
-        }
-    }
 
-    public int NumberOfCardsToDeal 
+	public int NumberOfCardsToDeal
 	{
 		get
 		{
-			return this.BaseDealCount + DealMoreCount;
-        }
+			return _gameMetadata.DrawAmount + DealMoreCount;
+		}
 	}
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
     {
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
-		_signalBus.OnEndGame += HandleEndGame;
+        _gameMetadata = GetNode<GameMetadata>("/root/GameMetadata");
+        _signalBus.OnEndGame += HandleEndGame;
 
         _viewportWidth = ProjectSettings.GetSetting("display/window/size/viewport_width").AsInt32();
         _viewportHeight = ProjectSettings.GetSetting("display/window/size/viewport_height").AsInt32();
@@ -72,8 +62,7 @@ public partial class PlayerDrawPopup : Control
 		_popupPanel.Position = new Vector2I(_viewportWidth/2-halfPanalX, _viewportHeight/2-halfPanalY);
         _popupPanel.Transient = true;
         _popupPanel.Exclusive = true;
-		_popupPanel.PopupWindow = false;
-		_popupPanel.Hide();		
+		_popupPanel.PopupWindow = false;		
 
 		_playerNameLabel = GetNode<Label>("PopupPanel/VBoxContainer/PlayerNameLabel");
 		_playerNameLabel.Text = "Player 1";
@@ -82,14 +71,11 @@ public partial class PlayerDrawPopup : Control
         _dealButton = GetNode<Button>("PopupPanel/VBoxContainer/HBoxContainer/DealButton");
 
 		_defaultDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/CardsToDrawContainer/CardDrawCount");
-		BaseDealCount = 1;
 
 		_dealMoreCount = GetNode<Label>("PopupPanel/VBoxContainer/DealMoreContainer/DealMoreCount");
 		_drawSlider = GetNode<HSlider>("PopupPanel/VBoxContainer/DrawSlider");
 
 		_totalCardsToDeal = GetNode<Label>("PopupPanel/VBoxContainer/TotalCardsToDealContainer/CardsToDealCount");
-
-		//_cardDrawCount = GetNode<Label>("PopupPanel/VBoxContainer/CardsToDrawContainer/CardDrawCount");
     }
 
 	public void Reset(string name, int numPlayers, int drawCount)
@@ -98,12 +84,8 @@ public partial class PlayerDrawPopup : Control
 		_drawSlider.MaxValue = numPlayers;
 		_drawSlider.TickCount = numPlayers+1;
 		_drawSlider.Value = 0;
-		//_defaultDrawCount.Text = drawCount.ToString();
-	}
-
-	public void Popup()
-	{
-		_popupPanel.Show();
+		_defaultDrawCount.Text = _gameMetadata.DrawAmount.ToString();
+		_totalCardsToDeal.Text = _defaultDrawCount.Text;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -113,31 +95,28 @@ public partial class PlayerDrawPopup : Control
 
 	private void HandleFoldButtonPressed()
 	{
-		_popupPanel.Hide();
+		_popupPanel.QueueFree();
 		_signalBus.EmitPlayerFoldRequestSignal();
 	}
 
 	private void HandleDealButtonPressed() 
 	{
-		_signalBus.EmitDealRequestSignal(NumberOfCardsToDeal);
+		_gameMetadata.IncreaseDrawAmount(DealMoreCount);
+		_signalBus.EmitDealRequestSignal(_gameMetadata.DrawAmount);
 
-		_popupPanel.Hide();
-
-		BaseDealCount += DealMoreCount;
+		_popupPanel.QueueFree();
 	}
 
 	private void HandleSliderValueChanged(float newValue) 
 	{
-        //_defaultDrawCount.Text = newValue.ToString();
 		_dealMoreCount.Text = newValue.ToString();
 		_totalCardsToDeal.Text = NumberOfCardsToDeal.ToString();
     }
 
 	private void HandleEndGame()
 	{
-		//NumberOfCardsToDeal = 1;
-		BaseDealCount = 1;
+		_gameMetadata.ResetDrawAmount();
 		DealMoreCount = 0;
-        _totalCardsToDeal.Text = BaseDealCount.ToString();
+        _totalCardsToDeal.Text = _gameMetadata.DrawAmount.ToString();
     }
 }

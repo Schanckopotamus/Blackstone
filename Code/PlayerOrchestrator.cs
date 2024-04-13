@@ -38,6 +38,16 @@ public partial class PlayerOrchestrator : Node2D
 	{
 	}
 
+	public void SetPlayers(List<PlayerScene> players) 
+	{
+		Players = players;
+	}
+
+	public void ClearPlayers()
+	{ 
+		Players?.Clear();
+	}
+
 	public void SetActivePlayer(PlayerScene player)
 	{
 		var playerInstanceId = player.GetInstanceId();

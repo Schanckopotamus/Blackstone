@@ -106,11 +106,6 @@ public partial class PlayerScene : Node2D
 	{
 		_collisionLight.SetIndicator(!_collisionBox.Disabled);
 
-		var loweredName = this.Name.ToString().ToLower();
-		if (loweredName == "playerseat1")
-		{
-			GD.PrintRich("PlayerSeat1");
-		}
 		_markerPositionLabel.Text = DealPosition.ToString("0.00");
 		_defaultMarkerPositionLabel.Text = _originalGlobalMarkerPosition.ToString("0.00");
 	}
