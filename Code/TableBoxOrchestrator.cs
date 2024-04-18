@@ -99,10 +99,10 @@ public partial class TableBoxOrchestrator : Node2D
     private void PrepBoxStates()
     {
         // Initially set all other pairs but the first to not be visible. Limits the feel of a cluttered table
-        _tableBoxPairs[1].SetBoxVisibility(false);
-        _tableBoxPairs[2].SetBoxVisibility(false);
-        _tableBoxPairs[3].SetBoxVisibility(false);
-        _tableBoxPairs[4].SetBoxVisibility(false);
+        //_tableBoxPairs[1].SetBoxVisibility(false);
+        //_tableBoxPairs[2].SetBoxVisibility(false);
+        //_tableBoxPairs[3].SetBoxVisibility(false);
+        //_tableBoxPairs[4].SetBoxVisibility(false);
 
         // Ensure starting states
         foreach (var pair in _tableBoxPairs)

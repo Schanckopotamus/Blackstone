@@ -17,7 +17,7 @@ script = ExtResource("1_txsa2")
 
 [node name="Box" type="Area2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="Box"]
+[node name="BoxOutline" type="Sprite2D" parent="Box"]
 scale = Vector2(1.1, 1)
 texture = ExtResource("1_re76y")
 

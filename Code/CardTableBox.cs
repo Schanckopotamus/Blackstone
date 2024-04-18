@@ -26,6 +26,7 @@ public partial class CardTableBox : Node2D
 	public bool IsBoxFull { get; private set; }
     public bool IsBoxActive { get; set; }
     private int _numSlots;
+	private Sprite2D _boxOutline;
 	private List<Marker2D> _markers = new List<Marker2D>();
 	private Stack<Node2D> _slots = new Stack<Node2D>();
 	private Node2D _cardStack;
@@ -37,6 +38,8 @@ public partial class CardTableBox : Node2D
     public override void _Ready()
     {
         _signalBus = GetNode<SignalBus>("/root/SignalBus");
+
+		_boxOutline = GetNode<Sprite2D>("Box/BoxOutline");
         
 		_m1 = GetNode<Marker2D>("Box/Slot1");
 		_m2 = GetNode<Marker2D>("Box/Slot2");
@@ -104,6 +107,11 @@ public partial class CardTableBox : Node2D
 
 			return true;
 		}
+	}
+
+	public void SetBoxOutlineVisibility(bool isVisible) 
+	{
+		_boxOutline.Visible = isVisible;
 	}
 
 	public void SetCollisionDisabled(bool collisionDisabled) 
