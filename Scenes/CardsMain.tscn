@@ -23,26 +23,35 @@ scale = Vector2(0.15, 0.15)
 script = ExtResource("3_7kwn7")
 
 [node name="PlayerSeat1" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(540, 6526.67)
+position = Vector2(466.667, 6233.34)
 SeatPositon = 1
 
 [node name="PlayerSeat2" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(3626.67, 6473.33)
+position = Vector2(3553.34, 6180)
 SeatPositon = 2
 
 [node name="PlayerSeat3" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(6786.67, 6466.67)
+position = Vector2(6713.34, 6173.34)
 SeatPositon = 3
 
 [node name="PlayerSeat4" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
-position = Vector2(9720, 6440)
+position = Vector2(9646.67, 6146.67)
+SeatPositon = 4
+
+[node name="PlayerSeat5" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+position = Vector2(10253.3, 4513.33)
+SeatPositon = 4
+
+[node name="PlayerSeat6" parent="PlayerOrchestrator" instance=ExtResource("2_4qlsy")]
+visible = false
+position = Vector2(466.666, 4613.33)
 SeatPositon = 4
 
 [node name="PotContainer" type="VBoxContainer" parent="."]
-offset_left = 652.0
-offset_top = 425.0
-offset_right = 1157.0
-offset_bottom = 566.0
+offset_left = 348.0
+offset_top = -3.0
+offset_right = 853.0
+offset_bottom = 138.0
 metadata/_edit_group_ = true
 
 [node name="PotLabel" type="Label" parent="PotContainer"]
@@ -60,10 +69,10 @@ text = "0
 vertical_alignment = 1
 
 [node name="WhitestoneContainer" type="VBoxContainer" parent="."]
-offset_left = 652.0
-offset_top = 540.0
-offset_right = 1157.0
-offset_bottom = 628.0
+offset_left = 66.0
+offset_top = -5.0
+offset_right = 571.0
+offset_bottom = 83.0
 metadata/_edit_group_ = true
 
 [node name="WhitestoneTitleLabel" type="Label" parent="WhitestoneContainer"]
@@ -85,42 +94,42 @@ scale = Vector2(0.75, 0.75)
 script = ExtResource("4_kvw87")
 
 [node name="CardTableBox1" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(613.333, 404)
+position = Vector2(780, 597.333)
 
 [node name="CardTableBox2" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1006, 404)
+position = Vector2(1638.67, 588)
 
 [node name="CardTableBox3" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1556, 405.333)
+position = Vector2(382.667, 596)
 
 [node name="CardTableBox4" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1948, 405.333)
+position = Vector2(2036, 590.667)
 
 [node name="CardTableBox5" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(612, 994.667)
+position = Vector2(780, 897.333)
 
 [node name="CardTableBox6" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1005.33, 994.667)
+position = Vector2(1638.67, 886.667)
 
 [node name="CardTableBox7" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1554.67, 992)
+position = Vector2(589.333, 298.667)
 
 [node name="CardTableBox8" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1948, 990.667)
+position = Vector2(1830.67, 292)
 
 [node name="CardTableBox9" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(613.333, 698.667)
+position = Vector2(193.333, 296)
 
 [node name="CardTableBox10" parent="TableBoxOrchestrator" instance=ExtResource("5_064hd")]
-position = Vector2(1946.67, 698.667)
+position = Vector2(2226.67, 292)
 
 [node name="Coin4" type="Sprite2D" parent="."]
-position = Vector2(1102, 561)
+position = Vector2(990, 417)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_28htt")
 
 [node name="Bar" type="Sprite2D" parent="."]
-position = Vector2(1210, 473)
+position = Vector2(860, 368)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("6_qgrjx")
 
@@ -181,20 +190,20 @@ text = "0
 "
 
 [node name="Dealer" parent="." instance=ExtResource("7_ocbk2")]
-position = Vector2(106, 99)
+position = Vector2(959, 91)
 
 [node name="PlayerLight" parent="." instance=ExtResource("11_lxmjv")]
-position = Vector2(1752, 87)
+position = Vector2(914, 513)
 scale = Vector2(0.25, 0.25)
 IndicatorText = "Player"
 
 [node name="CardBoxLight" parent="." instance=ExtResource("11_lxmjv")]
-position = Vector2(1753, 180)
+position = Vector2(915, 606)
 scale = Vector2(0.25, 0.25)
 IndicatorText = "CardBox"
 
 [node name="DealerLight" parent="." instance=ExtResource("11_lxmjv")]
-position = Vector2(1753, 275)
+position = Vector2(915, 701)
 scale = Vector2(0.25, 0.25)
 IndicatorText = "Dealer"
 
