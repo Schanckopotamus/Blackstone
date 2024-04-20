@@ -40,9 +40,9 @@ namespace Blackstone.Code
         //    return card;
         //}
 
-        public static CardDeck CreateDeck()
+        public static CardDeck CreateDeck(bool shouldRemoveBlackstones = false)
         {
-            return new CardDeck();
+            return new CardDeck(true, shouldRemoveBlackstones);
         }
 
         ///// <summary>
@@ -71,7 +71,7 @@ namespace Blackstone.Code
 
         private Stack<ModeganCard> _cards;
 
-        public CardDeck(bool shouldBeShuffled = true)
+        public CardDeck(bool shouldBeShuffled = true, bool shouldRemoveBlackstones = false)
         {
             _cards = new Stack<ModeganCard>();
 
@@ -83,6 +83,20 @@ namespace Blackstone.Code
                 cardList.Shuffle(numberOfShuffles: 3);
                 
                 _cards = new Stack<ModeganCard>(cardList);
+            }
+
+            // THIS IS FOR TESTING PURPOSES
+            if (shouldRemoveBlackstones) 
+            {
+                var cleanStack = new Stack<ModeganCard>();
+                var removedCards = _cards.ToList().Where(c => c.Value != 10);
+
+                foreach (var card in removedCards) 
+                {
+                    cleanStack.Push(card);
+                }
+
+                _cards = cleanStack;
             }
         }
 

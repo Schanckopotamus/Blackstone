@@ -112,17 +112,6 @@ public partial class CardTable : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		//_positionLabel.Text = _card.GlobalPosition.ToString("0.0");
-		//_rotationLabel.Text = _card.GlobalRotation.ToString("0.0");
-		//_velocityLabel.Text = _card.Velocity.ToString();
-
-		// TODO: Keep track of active CardBoxPairs for visibility and active. Only one Pair should be active at any time.
-		//var activePairs = _tableBoxPairs.Where(tb => tb.GetActiveBoxes().Any());
-		//if (activePairs.Count() > 1)
-		//{
-
-		//}
-
 		_playerCollisionIndicator.SetIndicator(_playerOrchestrator.IsCollisionEnabled);
 		_cardBoxCollisionIndicator.SetIndicator(_tableBoxOrchestrator.IsCollisionEnabled);
 		_dealerCollisionIndicator.SetIndicator(_dealer.IsCollisionEnabled);

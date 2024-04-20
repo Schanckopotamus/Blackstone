@@ -30,14 +30,14 @@ scale = Vector2(0.75, 0.75)
 script = ExtResource("1_6i0c1")
 
 [node name="DealMarker" type="Marker2D" parent="."]
-visible = false
-position = Vector2(-105.333, 468)
+position = Vector2(-396, 176)
 scale = Vector2(0.75, 0.75)
 
 [node name="MarkerPosition" type="Node2D" parent="DealMarker"]
 position = Vector2(1.35899e-05, 1.77767)
 
 [node name="PositionLabel" type="Label" parent="DealMarker/MarkerPosition"]
+visible = false
 offset_left = -113.778
 offset_top = 92.4444
 offset_right = 2.22221
@@ -46,6 +46,7 @@ theme_override_font_sizes/font_size = 30
 text = "Position"
 
 [node name="PositionValueLabel" type="Label" parent="DealMarker/MarkerPosition"]
+visible = false
 offset_left = 12.4444
 offset_top = 90.6667
 offset_right = 158.444
@@ -54,6 +55,7 @@ theme_override_font_sizes/font_size = 30
 text = "(0.00,0.00)"
 
 [node name="GPositionLabel" type="Label" parent="DealMarker/MarkerPosition"]
+visible = false
 offset_left = -167.111
 offset_top = 149.333
 offset_right = 40.8889
@@ -62,6 +64,7 @@ theme_override_font_sizes/font_size = 30
 text = "GlobalPosition"
 
 [node name="GPositionValueLabel" type="Label" parent="DealMarker/MarkerPosition"]
+visible = false
 offset_left = 55.1111
 offset_top = 149.333
 offset_right = 201.111
@@ -191,10 +194,10 @@ script = ExtResource("21_d7iiq")
 script = ExtResource("22_pjbws")
 
 [node name="CurrentStateContainer" type="VBoxContainer" parent="."]
-offset_left = -138.667
-offset_top = 165.333
-offset_right = 140.333
-offset_bottom = 273.333
+offset_left = -393.333
+offset_top = -112.0
+offset_right = -114.333
+offset_bottom = -3.99998
 
 [node name="Title" type="Label" parent="CurrentStateContainer"]
 layout_mode = 2
